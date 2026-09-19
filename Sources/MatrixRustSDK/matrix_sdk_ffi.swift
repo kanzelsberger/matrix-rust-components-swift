@@ -1617,6 +1617,10 @@ public protocol ClientProtocol: AnyObject, Sendable {
      */
     func getRecentEmojis() async throws  -> [RecentEmoji]
     
+    func getUserPresence(userId: String) async throws  -> UserPresence
+    
+    func subscribeToPresenceUpdates(listener: PresenceListener)  -> TaskHandle
+    
     /**
      * Create a search service.
      *
@@ -4021,6 +4025,32 @@ open func getRecentEmojis()async throws  -> [RecentEmoji]  {
             liftFunc: FfiConverterSequenceTypeRecentEmoji.lift,
             errorHandler: FfiConverterTypeClientError_lift
         )
+}
+    
+open func getUserPresence(userId: String)async throws  -> UserPresence  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_client_get_user_presence(
+                    self.uniffiCloneHandle(),
+                    FfiConverterString.lower(userId)
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_rust_buffer,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_rust_buffer,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterTypeUserPresence_lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
+}
+    
+open func subscribeToPresenceUpdates(listener: PresenceListener) -> TaskHandle  {
+    return try!  FfiConverterTypeTaskHandle_lift(try! rustCall() {
+    uniffi_matrix_sdk_ffi_fn_method_client_subscribe_to_presence_updates(
+            self.uniffiCloneHandle(),
+        FfiConverterCallbackInterfacePresenceListener_lower(listener),$0
+    )
+})
 }
     
     /**
@@ -29037,6 +29067,72 @@ public func FfiConverterTypeUserPowerLevelUpdate_lower(_ value: UserPowerLevelUp
 }
 
 
+public struct UserPresence: Equatable, Hashable {
+    public var userId: String
+    public var presence: PresenceState
+    public var statusMsg: String?
+    public var lastActiveAgo: TimeInterval?
+    public var currentlyActive: Bool?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(userId: String, presence: PresenceState, statusMsg: String?, lastActiveAgo: TimeInterval?, currentlyActive: Bool?) {
+        self.userId = userId
+        self.presence = presence
+        self.statusMsg = statusMsg
+        self.lastActiveAgo = lastActiveAgo
+        self.currentlyActive = currentlyActive
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension UserPresence: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeUserPresence: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UserPresence {
+        return
+            try UserPresence(
+                userId: FfiConverterString.read(from: &buf), 
+                presence: FfiConverterTypePresenceState.read(from: &buf), 
+                statusMsg: FfiConverterOptionString.read(from: &buf), 
+                lastActiveAgo: FfiConverterOptionDuration.read(from: &buf), 
+                currentlyActive: FfiConverterOptionBool.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: UserPresence, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.userId, into: &buf)
+        FfiConverterTypePresenceState.write(value.presence, into: &buf)
+        FfiConverterOptionString.write(value.statusMsg, into: &buf)
+        FfiConverterOptionDuration.write(value.lastActiveAgo, into: &buf)
+        FfiConverterOptionBool.write(value.currentlyActive, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeUserPresence_lift(_ buf: RustBuffer) throws -> UserPresence {
+    return try FfiConverterTypeUserPresence.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeUserPresence_lower(_ value: UserPresence) -> RustBuffer {
+    return FfiConverterTypeUserPresence.lower(value)
+}
+
+
 public struct UserProfile: Equatable, Hashable {
     public var userId: String
     public var displayName: String?
@@ -47667,6 +47763,130 @@ public func FfiConverterCallbackInterfacePaginationStatusListener_lower(_ v: Pag
 
 
 
+public protocol PresenceListener: AnyObject, Sendable {
+    
+    func onUpdate(presence: UserPresence) 
+    
+}
+
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+fileprivate struct UniffiCallbackInterfacePresenceListener {
+
+    // Create the VTable using a series of closures.
+    // Swift automatically converts these into C callback functions.
+    //
+    // This creates 1-element array, since this seems to be the only way to construct a const
+    // pointer that we can pass to the Rust code.
+    static let vtable: [UniffiVTableCallbackInterfacePresenceListener] = [UniffiVTableCallbackInterfacePresenceListener(
+        uniffiFree: { (uniffiHandle: UInt64) -> () in
+            do {
+                try FfiConverterCallbackInterfacePresenceListener.handleMap.remove(handle: uniffiHandle)
+            } catch {
+                print("Uniffi callback interface PresenceListener: handle missing in uniffiFree")
+            }
+        },
+        uniffiClone: { (uniffiHandle: UInt64) -> UInt64 in
+            do {
+                return try FfiConverterCallbackInterfacePresenceListener.handleMap.clone(handle: uniffiHandle)
+            } catch {
+                fatalError("Uniffi callback interface PresenceListener: handle missing in uniffiClone")
+            }
+        },
+        onUpdate: { (
+            uniffiHandle: UInt64,
+            presence: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterCallbackInterfacePresenceListener.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.onUpdate(
+                     presence: try FfiConverterTypeUserPresence_lift(presence)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        }
+    )]
+}
+
+private func uniffiCallbackInitPresenceListener() {
+    uniffi_matrix_sdk_ffi_fn_init_callback_vtable_presencelistener(UniffiCallbackInterfacePresenceListener.vtable)
+}
+
+// FfiConverter protocol for callback interfaces
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterCallbackInterfacePresenceListener {
+    fileprivate static let handleMap = UniffiHandleMap<PresenceListener>()
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+extension FfiConverterCallbackInterfacePresenceListener : FfiConverter {
+    typealias SwiftType = PresenceListener
+    typealias FfiType = UInt64
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lift(_ handle: UInt64) throws -> SwiftType {
+        try handleMap.get(handle: handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lower(_ v: SwiftType) -> UInt64 {
+        return handleMap.insert(obj: v)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func write(_ v: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(v))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfacePresenceListener_lift(_ handle: UInt64) throws -> PresenceListener {
+    return try FfiConverterCallbackInterfacePresenceListener.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfacePresenceListener_lower(_ v: PresenceListener) -> UInt64 {
+    return FfiConverterCallbackInterfacePresenceListener.lower(v)
+}
+
+
+
+
 /**
  * A listener for the current user's global profile.
  */
@@ -56566,6 +56786,12 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_recent_emojis() != 49975) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_user_presence() != 44826) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_presence_updates() != 28553) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_search_service() != 60223) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -57913,6 +58139,9 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettingsdelegate_settings_did_change() != 52554) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_matrix_sdk_ffi_checksum_method_presencelistener_on_update() != 21629) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_matrix_sdk_ffi_checksum_method_generatedqrloginprogresslistener_on_update() != 30858) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -58045,6 +58274,7 @@ private let initializationResult: InitializationResult = {
     uniffiCallbackInitMediaPreviewConfigListener()
     uniffiCallbackInitNotificationSettingsDelegate()
     uniffiCallbackInitPaginationStatusListener()
+    uniffiCallbackInitPresenceListener()
     uniffiCallbackInitProfileListener()
     uniffiCallbackInitProgressWatcher()
     uniffiCallbackInitQrLoginProgressListener()
