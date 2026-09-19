@@ -1,0 +1,68 @@
+name: Build Mango SDK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SDK_REVISION: 67b741d7c
+  RELEASE_VERSION: 26.9.7-mango.1
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  build:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [aarch64-apple-darwin, x86_64-apple-darwin, aarch64-apple-ios, aarch64-apple-ios-sim, x86_64-apple-ios]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: kanzelsberger/matrix-rust-sdk
+          ref: ${{ env.SDK_REVISION }}
+          persist-credentials: false
+      - name: Install Rust
+        run: rustup toolchain install 1.96.0 --profile minimal --target "${{ matrix.target }}"
+      - name: Build framework
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('xtask/src/swift.rs')
+          p.write_text(p.read_text().replace('rustup run stable', 'rustup run 1.96.0'))
+          PY
+          cargo +1.96.0 xtask swift build-framework --release --target "${{ matrix.target }}" --macos-deployment-target 15.0 --ios-deployment-target 17.0
+      - name: Test FFI
+        if: matrix.target == 'aarch64-apple-darwin'
+        run: cargo +1.96.0 test -p matrix-sdk-ffi --lib
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: bindings/apple/generated
+          retention-days: 7
+  release:
+    needs: build
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Assemble package
+        run: python3 Tools/assemble-mango-release.py
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Package.swift Sources/MatrixRustSDK
+          git commit -m "Release $RELEASE_VERSION"
+          git tag "$RELEASE_VERSION"
+          git push origin HEAD:main
+          git push origin "$RELEASE_VERSION"
+          gh release create "$RELEASE_VERSION" MatrixSDKFFI.xcframework.zip --title "$RELEASE_VERSION" --notes "SDK: https://github.com/kanzelsberger/matrix-rust-sdk/commit/$SDK_REVISION"
