@@ -1619,6 +1619,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
     
     func getUserPresence(userId: String) async throws  -> UserPresence
     
+    func setPresenceWithStatus(presence: PresenceState, statusMsg: String?, immediate: Bool) async throws 
+    
     func subscribeToPresenceUpdates(listener: PresenceListener)  -> TaskHandle
     
     /**
@@ -4040,6 +4042,23 @@ open func getUserPresence(userId: String)async throws  -> UserPresence  {
             completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_rust_buffer,
             freeFunc: ffi_matrix_sdk_ffi_rust_future_free_rust_buffer,
             liftFunc: FfiConverterTypeUserPresence_lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
+}
+    
+open func setPresenceWithStatus(presence: PresenceState, statusMsg: String?, immediate: Bool)async throws   {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_client_set_presence_with_status(
+                    self.uniffiCloneHandle(),
+                    FfiConverterTypePresenceState_lower(presence),FfiConverterOptionString.lower(statusMsg),FfiConverterBool.lower(immediate)
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
+            liftFunc: { $0 },
             errorHandler: FfiConverterTypeClientError_lift
         )
 }
@@ -56787,6 +56806,9 @@ private let initializationResult: InitializationResult = {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_user_presence() != 44826) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_set_presence_with_status() != 11498) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_presence_updates() != 28553) {
