@@ -8,7 +8,7 @@ permissions:
 
 env:
   SDK_REVISION: bbf9286185c5d20c976865bdf892a505cf982bfb
-  RELEASE_VERSION: 26.9.25-mango.1
+  RELEASE_VERSION: 26.9.25-mango.2
   CARGO_INCREMENTAL: 0
 
 jobs:
@@ -54,6 +54,8 @@ jobs:
           path: artifacts
       - name: Assemble package
         run: python3 Tools/assemble-mango-release.py
+      - name: Validate Swift package
+        run: python3 Tools/validate-mango-release.py
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
