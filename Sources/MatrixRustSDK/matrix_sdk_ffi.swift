@@ -915,8 +915,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
     func cachedAvatarUrl() async throws  -> String?
     
     /**
-     * Lets the user know whether this is an `m.login.password` based
-     * auth and if the account can actually be deactivated
+     * Lets the user know whether this is an `m.login.password` based auth and
+     * if the account can actually be deactivated
      */
     func canDeactivateAccount()  -> Bool
     
@@ -928,15 +928,15 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * calling it.
      *
      * In particular, if a [`SyncService`] is running, it must be passed here
-     * as a parameter, or stopped before calling this method. Ideally, the
-     * send queues should have been disabled and must all be inactive (i.e.
-     * not sending events); this method will disable them, but it might not
-     * be enough if the queues are still processing events.
+     * as a parameter, or stopped before calling this method. Ideally, the send
+     * queues should have been disabled and must all be inactive (i.e. not
+     * sending events); this method will disable them, but it might not be
+     * enough if the queues are still processing events.
      *
-     * After the method returns, the Client will be in an unstable
-     * state, and it is required that the caller reinstantiates a new
-     * Client instance, be it via dropping the previous and re-creating it,
-     * restarting their application, or any other similar means.
+     * After the method returns, the Client will be in an unstable state, and
+     * it is required that the caller reinstantiates a new Client instance, be
+     * it via dropping the previous and re-creating it, restarting their
+     * application, or any other similar means.
      *
      * - This will get rid of the backing state store file, if provided.
      * - This will empty all the room's persisted event caches, so all rooms
@@ -963,20 +963,21 @@ public protocol ClientProtocol: AnyObject, Sendable {
     func createRoom(request: CreateRoomParameters) async throws  -> String
     
     /**
-     * Login using JWT
-     * This is an implementation of the custom_login https://docs.rs/matrix-sdk/latest/matrix_sdk/matrix_auth/struct.MatrixAuth.html#method.login_custom
-     * For more information on logging in with JWT: https://element-hq.github.io/synapse/latest/jwt.html
+     * Login using JWT This is an implementation of the custom_login
+     * https://docs.rs/matrix-sdk/latest/matrix_sdk/matrix_auth/struct.MatrixAuth.html#method.login_custom
+     * For more information on logging in with JWT:
+     * https://element-hq.github.io/synapse/latest/jwt.html
      */
     func customLoginWithJwt(jwt: String, initialDeviceName: String?, deviceId: String?) async throws 
     
     /**
-     * Deactivate this account definitively.
-     * Similarly to `encryption::reset_identity` this
-     * will only work with password-based authentication (`m.login.password`)
+     * Deactivate this account definitively. Similarly to
+     * `encryption::reset_identity` this will only work with password-based
+     * authentication (`m.login.password`)
      *
      * # Arguments
      *
-     * * `auth_data` - This request uses the [User-Interactive Authentication
+     * - `auth_data` - This request uses the [User-Interactive Authentication
      * API][uiaa]. The first request needs to set this to `None` and will
      * always fail and the same request needs to be made but this time with
      * some `auth_data` provided.
@@ -1001,6 +1002,22 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * `m.rtc_foci`, relying only on the MSC4143 discovery endpoint.
      */
     func disableWellKnownLookup(disable: Bool) 
+    
+    /**
+     * Discover the RTC transports advertised by the homeserver.
+     *
+     * The transports are first looked up through the authenticated
+     * `GET /_matrix/client/v1/rtc/transports` endpoint (MSC4143). If the
+     * homeserver doesn't implement that endpoint, this falls back to the
+     * `m.rtc_foci` field of the well-known, unless well-known discovery was
+     * disabled with [`ClientBuilder::disable_well_known_lookup`] or
+     * [`Client::disable_well_known_lookup`].
+     *
+     * Returns `None` if neither source could provide transports, which is kept
+     * distinct from an empty list, i.e. a homeserver that advertises no
+     * transports at all.
+     */
+    func discoverRtcTransports() async throws  -> [RtcTransport]?
     
     func displayName() async throws  -> String
     
@@ -1045,8 +1062,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
     func getDmRooms(userId: String) throws  -> [Room]
     
     /**
-     * Get the invite request avatars display policy
-     * currently stored in the cache.
+     * Get the invite request avatars display policy currently stored in the
+     * cache.
      */
     func getInviteAvatarsDisplayPolicy() async throws  -> InviteAvatars?
     
@@ -1066,8 +1083,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
     func getMediaFile(mediaSource: MediaSource, filename: String?, mimeType: String, useCache: Bool, tempDir: String?) async throws  -> MediaFileHandle
     
     /**
-     * Get the media previews timeline display policy
-     * currently stored in the cache.
+     * Get the media previews timeline display policy currently stored in the
+     * cache.
      */
     func getMediaPreviewDisplayPolicy() async throws  -> MediaPreviews?
     
@@ -1084,13 +1101,12 @@ public protocol ClientProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `room_id` - The ID of the room to get.
+     * - `room_id` - The ID of the room to get.
      *
      * # Returns
      *
-     * A `Result` containing an optional room, or a `ClientError`.
-     * This method will not initialize the room's timeline or populate it with
-     * events.
+     * A `Result` containing an optional room, or a `ClientError`. This method
+     * will not initialize the room's timeline or populate it with events.
      */
     func getRoom(roomId: String) throws  -> Room?
     
@@ -1102,9 +1118,9 @@ public protocol ClientProtocol: AnyObject, Sendable {
     /**
      * Given a room id, get the preview of a room, to interact with it.
      *
-     * The list of `via_servers` must be a list of servers that know
-     * about the room and can resolve it, and that may appear as a `via`
-     * parameter in e.g. a permalink URL. This list can be empty.
+     * The list of `via_servers` must be a list of servers that know about the
+     * room and can resolve it, and that may appear as a `via` parameter in
+     * e.g. a permalink URL. This list can be empty.
      */
     func getRoomPreviewFromRoomId(roomId: String, viaServers: [String]) async throws  -> RoomPreview
     
@@ -1132,9 +1148,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `url` - The URL to generate a preview for.
-     *
-     * * `ts` - The preferred point in time to return a preview for, as a Unix
+     * - `url` - The URL to generate a preview for.
+     * - `ts` - The preferred point in time to return a preview for, as a Unix
      * timestamp in milliseconds. Deprecated since Matrix 1.11; pass `None`.
      */
     func getUrlPreview(url: String, ts: UInt64?) async throws  -> String?
@@ -1186,12 +1201,21 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * Checks if a room alias is not in use yet.
      *
      * Returns:
+     *
      * - `Ok(true)` if the room alias is available.
      * - `Ok(false)` if it's not (the resolve alias request returned a `404`
      * status code).
      * - An `Err` otherwise.
      */
     func isRoomAliasAvailable(alias: String) async throws  -> Bool
+    
+    /**
+     * Checks if the server supports sticky events.
+     *
+     * This is async and fallible as it may use the network to retrieve the
+     * server supported features, if they aren't cached already.
+     */
+    func isStickyEventsSupported() async throws  -> Bool
     
     /**
      * Checks if the server supports user status.
@@ -1211,9 +1235,9 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * Join a room by its ID or alias.
      *
      * When supplying the room's ID, you can also supply a list of server names
-     * for the homeserver to find the room. Typically these server names
-     * come from a permalink's `via` parameters, or from resolving a room's
-     * alias into an ID.
+     * for the homeserver to find the room. Typically these server names come
+     * from a permalink's `via` parameters, or from resolving a room's alias
+     * into an ID.
      */
     func joinRoomByIdOrAlias(roomIdOrAlias: String, serverNames: [String]) async throws  -> Room
     
@@ -1247,8 +1271,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * receipts on each room's latest event.
      *
      * This is a best-effort operation — per-room errors are logged and
-     * skipped. Receipts are sent unthreaded, which per the Matrix spec
-     * covers all events in a room including those inside threads.
+     * skipped. Receipts are sent unthreaded, which per the Matrix spec covers
+     * all events in a room including those inside threads.
      *
      * This is useful to mitigate backend led wrong iOS app badges and work
      * around https://github.com/element-hq/element-x-ios/issues/3151
@@ -1267,7 +1291,7 @@ public protocol ClientProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `oauth_configuration` - The data to restore or register the client
+     * - `oauth_configuration` - The data to restore or register the client
      * with the server.
      */
     func newLoginWithQrCodeHandler(oauthConfiguration: OAuthConfiguration)  -> LoginWithQrCodeHandler
@@ -1316,6 +1340,7 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * Pause the client for background suspension.
      *
      * This method:
+     *
      * 1. Disables all send queues (prevents new message sends).
      * 2. Pauses all database stores, waiting for in-flight operations and
      * releasing all connections and file locks.
@@ -1327,7 +1352,7 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * Call this before the app is suspended to avoid `0xdead10cc` kills.
      * Typically called from
      * [`applicationDidEnterBackground`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/applicationdidenterbackground(_:))
-     * or an equivalent SwiftUI lifecycle event, *after* stopping the
+     * or an equivalent SwiftUI lifecycle event, _after_ stopping the
      * `matrix_sdk_ui::sync_service::SyncService`.
      */
     func pause() async throws 
@@ -1335,10 +1360,11 @@ public protocol ClientProtocol: AnyObject, Sendable {
     /**
      * Register a handler for notifications generated from sync responses.
      *
-     * The handler will be called during sync for each event that triggers
-     * a notification based on the user's push rules.
+     * The handler will be called during sync for each event that triggers a
+     * notification based on the user's push rules.
      *
      * The handler receives:
+     *
      * - The notification with push actions and event data
      * - The room ID where the notification occurred
      *
@@ -1363,9 +1389,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
     /**
      * Empty the well-known cache.
      *
-     * Since the SDK caches the well-known, it's possible to have a stale
-     * entry in the cache. This functions makes it possible to force reset
-     * it.
+     * Since the SDK caches the well-known, it's possible to have a stale entry
+     * in the cache. This functions makes it possible to force reset it.
      */
     func resetWellKnown() async throws 
     
@@ -1412,6 +1437,18 @@ public protocol ClientProtocol: AnyObject, Sendable {
     
     func rooms()  -> [Room]
     
+    /**
+     * Start a search backfill sweep in the background.
+     *
+     * Back-paginates message history for every room, down to a ~3-month floor,
+     * front-loaded by recency (the last week for all rooms first, then the
+     * previous week, and so on), to populate the search index.
+     *
+     * Requires `ClientBuilder::enable_automatic_back_pagination` to have been
+     * enabled, otherwise this no-ops.
+     */
+    func runSearchBackfill(strategy: SearchBackfillStrategy)  -> TaskHandle
+    
     func searchUsers(searchTerm: String, limit: UInt64) async throws  -> SearchUsersResults
     
     /**
@@ -1420,13 +1457,12 @@ public protocol ClientProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `event_type` - The type of the to-device event to send.
-     *
-     * * `recipients` - The devices to send the message to, as a `user id ->
+     * - `event_type` - The type of the to-device event to send.
+     * - `recipients` - The devices to send the message to, as a `user id ->
      * device ids` map. The special device id `"*"` targets every device of
      * that user we know about.
      *
-     * * `content` - The content of the to-device event, as a JSON string,
+     * - `content` - The content of the to-device event, as a JSON string,
      * encrypted for and sent to every recipient.
      *
      * The returned value contains details of any recipients that did not
@@ -1437,13 +1473,13 @@ public protocol ClientProtocol: AnyObject, Sendable {
     /**
      * The URL of the server.
      *
-     * Not to be confused with the `Self::homeserver`. `server` is usually
-     * the server part in a user ID, e.g. with `@mnt_io:matrix.org`, here
+     * Not to be confused with the `Self::homeserver`. `server` is usually the
+     * server part in a user ID, e.g. with `@mnt_io:matrix.org`, here
      * `matrix.org` is the server, whilst `matrix-client.matrix.org` is the
      * homeserver (at the time of writing — 2024-08-28).
      *
-     * This value is optional depending on how the `Client` has been built.
-     * If it's been built from a homeserver URL directly, we don't know the
+     * This value is optional depending on how the `Client` has been built. If
+     * it's been built from a homeserver URL directly, we don't know the
      * server. However, if the `Client` has been built from a server URL or
      * name, then the homeserver has been discovered, and we know both.
      */
@@ -1452,8 +1488,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
     /**
      * Get server vendor information from the federation API.
      *
-     * This method retrieves information about the server's name and version
-     * by calling the `/_matrix/federation/v1/version` endpoint.
+     * This method retrieves information about the server's name and version by
+     * calling the `/_matrix/federation/v1/version` endpoint.
      */
     func serverVendorInfo() async throws  -> ServerVendorInfo
     
@@ -1518,8 +1554,8 @@ public protocol ClientProtocol: AnyObject, Sendable {
     /**
      * Set the current user's status (MSC4426 `m.status` profile field).
      *
-     * Replaces any existing status. Use [`Self::clear_user_status`] to
-     * remove it.
+     * Replaces any existing status. Use [`Self::clear_user_status`] to remove
+     * it.
      */
     func setUserStatus(status: UserStatus) async throws 
     
@@ -1544,10 +1580,10 @@ public protocol ClientProtocol: AnyObject, Sendable {
     /**
      * Subscribe to the custom to-device messages received by this client.
      *
-     * The listener is called with every to-device message whose type is one
-     * of `event_types`, or with every custom to-device message if
-     * `event_types` is empty. A message that was sent encrypted is delivered
-     * decrypted, along with its encryption info.
+     * The listener is called with every to-device message whose type is one of
+     * `event_types`, or with every custom to-device message if `event_types`
+     * is empty. A message that was sent encrypted is delivered decrypted,
+     * along with its encryption info.
      *
      * The to-device traffic the SDK uses for its own crypto machinery and the
      * messages it could not decrypt are never delivered.
@@ -1596,9 +1632,9 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * are processed.
      *
      * Note this method should be used sparingly since using callback
-     * interfaces is expensive, as well as keeping them alive for a long
-     * time. Usages of this method should be short-lived and dropped as
-     * soon as possible.
+     * interfaces is expensive, as well as keeping them alive for a long time.
+     * Usages of this method should be short-lived and dropped as soon as
+     * possible.
      */
     func subscribeToRoomInfo(roomId: String, listener: RoomInfoListener) async throws  -> TaskHandle
     
@@ -1612,20 +1648,20 @@ public protocol ClientProtocol: AnyObject, Sendable {
     func subscribeToSendQueueStatus(listener: SendQueueRoomErrorListener)  -> TaskHandle
     
     /**
-     * Subscribe to the global send queue update reporter, at the
-     * client-wide level.
+     * Subscribe to the global send queue update reporter, at the client-wide
+     * level.
      *
      * The given listener will be immediately called with
-     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in
-     * the queue.
+     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in the
+     * queue.
      */
     func subscribeToSendQueueUpdates(listener: SendQueueRoomUpdateListener) async throws  -> TaskHandle
     
     /**
      * Perform a single sync v2 call.
      *
-     * This is useful for performing an initial sync or a one-shot sync
-     * without entering a continuous loop.
+     * This is useful for performing an initial sync or a one-shot sync without
+     * entering a continuous loop.
      */
     func syncOnceV2(settings: SyncSettingsV2) async throws  -> SyncResponseV2
     
@@ -1635,11 +1671,11 @@ public protocol ClientProtocol: AnyObject, Sendable {
      * Start a sync v2 loop.
      *
      * This is an alternative to [`Client::sync_service`] (which uses Sliding
-     * Sync / MSC4186). It works with any homeserver, including older
-     * Synapse versions that do not support Sliding Sync.
+     * Sync / MSC4186). It works with any homeserver, including older Synapse
+     * versions that do not support Sliding Sync.
      *
-     * Returns a `TaskHandle` that can be used to cancel the sync loop.
-     * The listener is called after each successful sync response.
+     * Returns a `TaskHandle` that can be used to cancel the sync loop. The
+     * listener is called after each successful sync response.
      */
     func syncV2(settings: SyncSettingsV2, listener: SyncListenerV2)  -> TaskHandle
     
@@ -1675,29 +1711,31 @@ public protocol ClientProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `oauth_configuration` - The configuration used to load the credentials
+     * - `oauth_configuration` - The configuration used to load the credentials
      * of the client if it is already registered with the authorization
      * server, or register the client and store its credentials if it isn't.
      *
-     * * `prompt` - The desired user experience in the web UI. No value means
+     * - `prompt` - The desired user experience in the web UI. No value means
      * that the user wishes to login into an existing account, and a value of
      * `Create` means that the user wishes to register a new account.
      *
-     * * `login_hint` - A generic login hint that an identity provider can use
+     * - `login_hint` - A generic login hint that an identity provider can use
      * to pre-fill the login form. The format of this hint is not restricted
-     * by the spec as external providers all have their own way to handle the hint.
-     * However, it should be noted that when providing a user ID as a hint
-     * for MAS (with no upstream provider), then the format to use is defined
-     * by [MSC4198]: https://github.com/matrix-org/matrix-spec-proposals/pull/4198
+     * by the spec as external providers all have their own way to handle the
+     * hint. However, it should be noted that when providing a user ID as a
+     * hint for MAS (with no upstream provider), then the format to use is
+     * defined by [MSC4198]:
+     * https://github.com/matrix-org/matrix-spec-proposals/pull/4198
      *
-     * * `device_id` - The unique ID that will be associated with the session.
+     * - `device_id` - The unique ID that will be associated with the session.
      * If not set, a random one will be generated. It can be an existing
      * device ID from a previous login call. Note that this should be done
      * only if the client also holds the corresponding encryption keys.
      *
-     * * `additional_scopes` - Additional scopes to request from the
-     * authorization server, e.g. "urn:matrix:client:com.example.msc9999.foo".
-     * The scopes for API access and the device ID according to the
+     * - `additional_scopes` - Additional scopes to request from the
+     * authorization server, e.g.
+     * "urn:matrix:client:com.example.msc9999.foo". The scopes for API access
+     * and the device ID according to the
      * [specification](https://spec.matrix.org/v1.15/client-server-api/#allocated-scope-tokens)
      * are always requested.
      */
@@ -1940,8 +1978,8 @@ open func cachedAvatarUrl()async throws  -> String?  {
 }
     
     /**
-     * Lets the user know whether this is an `m.login.password` based
-     * auth and if the account can actually be deactivated
+     * Lets the user know whether this is an `m.login.password` based auth and
+     * if the account can actually be deactivated
      */
 open func canDeactivateAccount() -> Bool  {
     return try!  FfiConverterBool.lift(try! rustCall() {
@@ -1960,15 +1998,15 @@ open func canDeactivateAccount() -> Bool  {
      * calling it.
      *
      * In particular, if a [`SyncService`] is running, it must be passed here
-     * as a parameter, or stopped before calling this method. Ideally, the
-     * send queues should have been disabled and must all be inactive (i.e.
-     * not sending events); this method will disable them, but it might not
-     * be enough if the queues are still processing events.
+     * as a parameter, or stopped before calling this method. Ideally, the send
+     * queues should have been disabled and must all be inactive (i.e. not
+     * sending events); this method will disable them, but it might not be
+     * enough if the queues are still processing events.
      *
-     * After the method returns, the Client will be in an unstable
-     * state, and it is required that the caller reinstantiates a new
-     * Client instance, be it via dropping the previous and re-creating it,
-     * restarting their application, or any other similar means.
+     * After the method returns, the Client will be in an unstable state, and
+     * it is required that the caller reinstantiates a new Client instance, be
+     * it via dropping the previous and re-creating it, restarting their
+     * application, or any other similar means.
      *
      * - This will get rid of the backing state store file, if provided.
      * - This will empty all the room's persisted event caches, so all rooms
@@ -2052,9 +2090,10 @@ open func createRoom(request: CreateRoomParameters)async throws  -> String  {
 }
     
     /**
-     * Login using JWT
-     * This is an implementation of the custom_login https://docs.rs/matrix-sdk/latest/matrix_sdk/matrix_auth/struct.MatrixAuth.html#method.login_custom
-     * For more information on logging in with JWT: https://element-hq.github.io/synapse/latest/jwt.html
+     * Login using JWT This is an implementation of the custom_login
+     * https://docs.rs/matrix-sdk/latest/matrix_sdk/matrix_auth/struct.MatrixAuth.html#method.login_custom
+     * For more information on logging in with JWT:
+     * https://element-hq.github.io/synapse/latest/jwt.html
      */
 open func customLoginWithJwt(jwt: String, initialDeviceName: String?, deviceId: String?)async throws   {
     return
@@ -2073,13 +2112,13 @@ open func customLoginWithJwt(jwt: String, initialDeviceName: String?, deviceId: 
 }
     
     /**
-     * Deactivate this account definitively.
-     * Similarly to `encryption::reset_identity` this
-     * will only work with password-based authentication (`m.login.password`)
+     * Deactivate this account definitively. Similarly to
+     * `encryption::reset_identity` this will only work with password-based
+     * authentication (`m.login.password`)
      *
      * # Arguments
      *
-     * * `auth_data` - This request uses the [User-Interactive Authentication
+     * - `auth_data` - This request uses the [User-Interactive Authentication
      * API][uiaa]. The first request needs to set this to `None` and will
      * always fail and the same request needs to be made but this time with
      * some `auth_data` provided.
@@ -2145,6 +2184,36 @@ open func disableWellKnownLookup(disable: Bool)  {try! rustCall() {
         FfiConverterBool.lower(disable),uniffiCallStatus
     )
 }
+}
+    
+    /**
+     * Discover the RTC transports advertised by the homeserver.
+     *
+     * The transports are first looked up through the authenticated
+     * `GET /_matrix/client/v1/rtc/transports` endpoint (MSC4143). If the
+     * homeserver doesn't implement that endpoint, this falls back to the
+     * `m.rtc_foci` field of the well-known, unless well-known discovery was
+     * disabled with [`ClientBuilder::disable_well_known_lookup`] or
+     * [`Client::disable_well_known_lookup`].
+     *
+     * Returns `None` if neither source could provide transports, which is kept
+     * distinct from an empty list, i.e. a homeserver that advertises no
+     * transports at all.
+     */
+open func discoverRtcTransports()async throws  -> [RtcTransport]?  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_client_discover_rtc_transports(
+                        self.uniffiCloneHandle()
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_rust_buffer,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_rust_buffer,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterOptionSequenceTypeRtcTransport.lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
 }
     
 open func displayName()async throws  -> String  {
@@ -2270,8 +2339,8 @@ open func getDmRooms(userId: String)throws  -> [Room]  {
 }
     
     /**
-     * Get the invite request avatars display policy
-     * currently stored in the cache.
+     * Get the invite request avatars display policy currently stored in the
+     * cache.
      */
 open func getInviteAvatarsDisplayPolicy()async throws  -> InviteAvatars?  {
     return
@@ -2347,8 +2416,8 @@ open func getMediaFile(mediaSource: MediaSource, filename: String?, mimeType: St
 }
     
     /**
-     * Get the media previews timeline display policy
-     * currently stored in the cache.
+     * Get the media previews timeline display policy currently stored in the
+     * cache.
      */
 open func getMediaPreviewDisplayPolicy()async throws  -> MediaPreviews?  {
     return
@@ -2436,13 +2505,12 @@ open func getRecentlyVisitedRooms()async throws  -> [String]  {
      *
      * # Arguments
      *
-     * * `room_id` - The ID of the room to get.
+     * - `room_id` - The ID of the room to get.
      *
      * # Returns
      *
-     * A `Result` containing an optional room, or a `ClientError`.
-     * This method will not initialize the room's timeline or populate it with
-     * events.
+     * A `Result` containing an optional room, or a `ClientError`. This method
+     * will not initialize the room's timeline or populate it with events.
      */
 open func getRoom(roomId: String)throws  -> Room?  {
     return try  FfiConverterOptionTypeRoom.lift(try rustCallWithError(FfiConverterTypeClientError_lift) {
@@ -2476,9 +2544,9 @@ open func getRoomPreviewFromRoomAlias(roomAlias: String)async throws  -> RoomPre
     /**
      * Given a room id, get the preview of a room, to interact with it.
      *
-     * The list of `via_servers` must be a list of servers that know
-     * about the room and can resolve it, and that may appear as a `via`
-     * parameter in e.g. a permalink URL. This list can be empty.
+     * The list of `via_servers` must be a list of servers that know about the
+     * room and can resolve it, and that may appear as a `via` parameter in
+     * e.g. a permalink URL. This list can be empty.
      */
 open func getRoomPreviewFromRoomId(roomId: String, viaServers: [String])async throws  -> RoomPreview  {
     return
@@ -2562,9 +2630,8 @@ open func getUrl(url: String)async throws  -> Data  {
      *
      * # Arguments
      *
-     * * `url` - The URL to generate a preview for.
-     *
-     * * `ts` - The preferred point in time to return a preview for, as a Unix
+     * - `url` - The URL to generate a preview for.
+     * - `ts` - The preferred point in time to return a preview for, as a Unix
      * timestamp in milliseconds. Deprecated since Matrix 1.11; pass `None`.
      */
 open func getUrlPreview(url: String, ts: UInt64?)async throws  -> String?  {
@@ -2743,6 +2810,7 @@ open func isReportRoomApiSupported()async throws  -> Bool  {
      * Checks if a room alias is not in use yet.
      *
      * Returns:
+     *
      * - `Ok(true)` if the room alias is available.
      * - `Ok(false)` if it's not (the resolve alias request returned a `404`
      * status code).
@@ -2754,6 +2822,28 @@ open func isRoomAliasAvailable(alias: String)async throws  -> Bool  {
             rustFutureFunc: {
                 uniffi_matrix_sdk_ffi_fn_method_client_is_room_alias_available(
                         self.uniffiCloneHandle(),FfiConverterString.lower(alias)
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_i8,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_i8,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_i8,
+            liftFunc: FfiConverterBool.lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
+}
+    
+    /**
+     * Checks if the server supports sticky events.
+     *
+     * This is async and fallible as it may use the network to retrieve the
+     * server supported features, if they aren't cached already.
+     */
+open func isStickyEventsSupported()async throws  -> Bool  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_client_is_sticky_events_supported(
+                        self.uniffiCloneHandle()
                 )
             },
             pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_i8,
@@ -2810,9 +2900,9 @@ open func joinRoomById(roomId: String)async throws  -> Room  {
      * Join a room by its ID or alias.
      *
      * When supplying the room's ID, you can also supply a list of server names
-     * for the homeserver to find the room. Typically these server names
-     * come from a permalink's `via` parameters, or from resolving a room's
-     * alias into an ID.
+     * for the homeserver to find the room. Typically these server names come
+     * from a permalink's `via` parameters, or from resolving a room's alias
+     * into an ID.
      */
 open func joinRoomByIdOrAlias(roomIdOrAlias: String, serverNames: [String])async throws  -> Room  {
     return
@@ -2930,8 +3020,8 @@ open func logout()async throws   {
      * receipts on each room's latest event.
      *
      * This is a best-effort operation — per-room errors are logged and
-     * skipped. Receipts are sent unthreaded, which per the Matrix spec
-     * covers all events in a room including those inside threads.
+     * skipped. Receipts are sent unthreaded, which per the Matrix spec covers
+     * all events in a room including those inside threads.
      *
      * This is useful to mitigate backend led wrong iOS app badges and work
      * around https://github.com/element-hq/element-x-ios/issues/3151
@@ -2971,7 +3061,7 @@ open func newGrantLoginWithQrCodeHandler() -> GrantLoginWithQrCodeHandler  {
      *
      * # Arguments
      *
-     * * `oauth_configuration` - The data to restore or register the client
+     * - `oauth_configuration` - The data to restore or register the client
      * with the server.
      */
 open func newLoginWithQrCodeHandler(oauthConfiguration: OAuthConfiguration) -> LoginWithQrCodeHandler  {
@@ -3089,6 +3179,7 @@ open func optimizeStores()async throws   {
      * Pause the client for background suspension.
      *
      * This method:
+     *
      * 1. Disables all send queues (prevents new message sends).
      * 2. Pauses all database stores, waiting for in-flight operations and
      * releasing all connections and file locks.
@@ -3100,7 +3191,7 @@ open func optimizeStores()async throws   {
      * Call this before the app is suspended to avoid `0xdead10cc` kills.
      * Typically called from
      * [`applicationDidEnterBackground`](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/applicationdidenterbackground(_:))
-     * or an equivalent SwiftUI lifecycle event, *after* stopping the
+     * or an equivalent SwiftUI lifecycle event, _after_ stopping the
      * `matrix_sdk_ui::sync_service::SyncService`.
      */
 open func pause()async throws   {
@@ -3122,10 +3213,11 @@ open func pause()async throws   {
     /**
      * Register a handler for notifications generated from sync responses.
      *
-     * The handler will be called during sync for each event that triggers
-     * a notification based on the user's push rules.
+     * The handler will be called during sync for each event that triggers a
+     * notification based on the user's push rules.
      *
      * The handler receives:
+     *
      * - The notification with push actions and event data
      * - The room ID where the notification occurred
      *
@@ -3207,9 +3299,8 @@ open func resetSupportedVersions()async throws   {
     /**
      * Empty the well-known cache.
      *
-     * Since the SDK caches the well-known, it's possible to have a stale
-     * entry in the cache. This functions makes it possible to force reset
-     * it.
+     * Since the SDK caches the well-known, it's possible to have a stale entry
+     * in the cache. This functions makes it possible to force reset it.
      */
 open func resetWellKnown()async throws   {
     return
@@ -3354,6 +3445,26 @@ open func rooms() -> [Room]  {
 })
 }
     
+    /**
+     * Start a search backfill sweep in the background.
+     *
+     * Back-paginates message history for every room, down to a ~3-month floor,
+     * front-loaded by recency (the last week for all rooms first, then the
+     * previous week, and so on), to populate the search index.
+     *
+     * Requires `ClientBuilder::enable_automatic_back_pagination` to have been
+     * enabled, otherwise this no-ops.
+     */
+open func runSearchBackfill(strategy: SearchBackfillStrategy) -> TaskHandle  {
+    return try!  FfiConverterTypeTaskHandle_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_client_run_search_backfill(
+            self.uniffiCloneHandle(),
+        FfiConverterTypeSearchBackfillStrategy_lower(strategy),uniffiCallStatus
+    )
+})
+}
+    
 open func searchUsers(searchTerm: String, limit: UInt64)async throws  -> SearchUsersResults  {
     return
         try  await uniffiRustCallAsync(
@@ -3376,13 +3487,12 @@ open func searchUsers(searchTerm: String, limit: UInt64)async throws  -> SearchU
      *
      * # Arguments
      *
-     * * `event_type` - The type of the to-device event to send.
-     *
-     * * `recipients` - The devices to send the message to, as a `user id ->
+     * - `event_type` - The type of the to-device event to send.
+     * - `recipients` - The devices to send the message to, as a `user id ->
      * device ids` map. The special device id `"*"` targets every device of
      * that user we know about.
      *
-     * * `content` - The content of the to-device event, as a JSON string,
+     * - `content` - The content of the to-device event, as a JSON string,
      * encrypted for and sent to every recipient.
      *
      * The returned value contains details of any recipients that did not
@@ -3407,13 +3517,13 @@ open func sendEncryptedToDeviceMessage(eventType: String, recipients: [String: [
     /**
      * The URL of the server.
      *
-     * Not to be confused with the `Self::homeserver`. `server` is usually
-     * the server part in a user ID, e.g. with `@mnt_io:matrix.org`, here
+     * Not to be confused with the `Self::homeserver`. `server` is usually the
+     * server part in a user ID, e.g. with `@mnt_io:matrix.org`, here
      * `matrix.org` is the server, whilst `matrix-client.matrix.org` is the
      * homeserver (at the time of writing — 2024-08-28).
      *
-     * This value is optional depending on how the `Client` has been built.
-     * If it's been built from a homeserver URL directly, we don't know the
+     * This value is optional depending on how the `Client` has been built. If
+     * it's been built from a homeserver URL directly, we don't know the
      * server. However, if the `Client` has been built from a server URL or
      * name, then the homeserver has been discovered, and we know both.
      */
@@ -3429,8 +3539,8 @@ open func server() -> String?  {
     /**
      * Get server vendor information from the federation API.
      *
-     * This method retrieves information about the server's name and version
-     * by calling the `/_matrix/federation/v1/version` endpoint.
+     * This method retrieves information about the server's name and version by
+     * calling the `/_matrix/federation/v1/version` endpoint.
      */
 open func serverVendorInfo()async throws  -> ServerVendorInfo  {
     return
@@ -3651,8 +3761,8 @@ open func setPusher(identifiers: PusherIdentifiers, kind: PusherKind, appDisplay
     /**
      * Set the current user's status (MSC4426 `m.status` profile field).
      *
-     * Replaces any existing status. Use [`Self::clear_user_status`] to
-     * remove it.
+     * Replaces any existing status. Use [`Self::clear_user_status`] to remove
+     * it.
      */
 open func setUserStatus(status: UserStatus)async throws   {
     return
@@ -3741,10 +3851,10 @@ open func startSsoLogin(redirectUrl: String, idpId: String?)async throws  -> Sso
     /**
      * Subscribe to the custom to-device messages received by this client.
      *
-     * The listener is called with every to-device message whose type is one
-     * of `event_types`, or with every custom to-device message if
-     * `event_types` is empty. A message that was sent encrypted is delivered
-     * decrypted, along with its encryption info.
+     * The listener is called with every to-device message whose type is one of
+     * `event_types`, or with every custom to-device message if `event_types`
+     * is empty. A message that was sent encrypted is delivered decrypted,
+     * along with its encryption info.
      *
      * The to-device traffic the SDK uses for its own crypto machinery and the
      * messages it could not decrypt are never delivered.
@@ -3848,9 +3958,9 @@ open func subscribeToOwnProfile(listener: ProfileListener)throws  -> TaskHandle 
      * are processed.
      *
      * Note this method should be used sparingly since using callback
-     * interfaces is expensive, as well as keeping them alive for a long
-     * time. Usages of this method should be short-lived and dropped as
-     * soon as possible.
+     * interfaces is expensive, as well as keeping them alive for a long time.
+     * Usages of this method should be short-lived and dropped as soon as
+     * possible.
      */
 open func subscribeToRoomInfo(roomId: String, listener: RoomInfoListener)async throws  -> TaskHandle  {
     return
@@ -3886,12 +3996,12 @@ open func subscribeToSendQueueStatus(listener: SendQueueRoomErrorListener) -> Ta
 }
     
     /**
-     * Subscribe to the global send queue update reporter, at the
-     * client-wide level.
+     * Subscribe to the global send queue update reporter, at the client-wide
+     * level.
      *
      * The given listener will be immediately called with
-     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in
-     * the queue.
+     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in the
+     * queue.
      */
 open func subscribeToSendQueueUpdates(listener: SendQueueRoomUpdateListener)async throws  -> TaskHandle  {
     return
@@ -3912,8 +4022,8 @@ open func subscribeToSendQueueUpdates(listener: SendQueueRoomUpdateListener)asyn
     /**
      * Perform a single sync v2 call.
      *
-     * This is useful for performing an initial sync or a one-shot sync
-     * without entering a continuous loop.
+     * This is useful for performing an initial sync or a one-shot sync without
+     * entering a continuous loop.
      */
 open func syncOnceV2(settings: SyncSettingsV2)async throws  -> SyncResponseV2  {
     return
@@ -3944,11 +4054,11 @@ open func syncService() -> SyncServiceBuilder  {
      * Start a sync v2 loop.
      *
      * This is an alternative to [`Client::sync_service`] (which uses Sliding
-     * Sync / MSC4186). It works with any homeserver, including older
-     * Synapse versions that do not support Sliding Sync.
+     * Sync / MSC4186). It works with any homeserver, including older Synapse
+     * versions that do not support Sliding Sync.
      *
-     * Returns a `TaskHandle` that can be used to cancel the sync loop.
-     * The listener is called after each successful sync response.
+     * Returns a `TaskHandle` that can be used to cancel the sync loop. The
+     * listener is called after each successful sync response.
      */
 open func syncV2(settings: SyncSettingsV2, listener: SyncListenerV2) -> TaskHandle  {
     return try!  FfiConverterTypeTaskHandle_lift(try! rustCall() {
@@ -4071,29 +4181,31 @@ open func uploadMedia(mimeType: String, data: Data, progressWatcher: ProgressWat
      *
      * # Arguments
      *
-     * * `oauth_configuration` - The configuration used to load the credentials
+     * - `oauth_configuration` - The configuration used to load the credentials
      * of the client if it is already registered with the authorization
      * server, or register the client and store its credentials if it isn't.
      *
-     * * `prompt` - The desired user experience in the web UI. No value means
+     * - `prompt` - The desired user experience in the web UI. No value means
      * that the user wishes to login into an existing account, and a value of
      * `Create` means that the user wishes to register a new account.
      *
-     * * `login_hint` - A generic login hint that an identity provider can use
+     * - `login_hint` - A generic login hint that an identity provider can use
      * to pre-fill the login form. The format of this hint is not restricted
-     * by the spec as external providers all have their own way to handle the hint.
-     * However, it should be noted that when providing a user ID as a hint
-     * for MAS (with no upstream provider), then the format to use is defined
-     * by [MSC4198]: https://github.com/matrix-org/matrix-spec-proposals/pull/4198
+     * by the spec as external providers all have their own way to handle the
+     * hint. However, it should be noted that when providing a user ID as a
+     * hint for MAS (with no upstream provider), then the format to use is
+     * defined by [MSC4198]:
+     * https://github.com/matrix-org/matrix-spec-proposals/pull/4198
      *
-     * * `device_id` - The unique ID that will be associated with the session.
+     * - `device_id` - The unique ID that will be associated with the session.
      * If not set, a random one will be generated. It can be an existing
      * device ID from a previous login call. Note that this should be done
      * only if the client also holds the corresponding encryption keys.
      *
-     * * `additional_scopes` - Additional scopes to request from the
-     * authorization server, e.g. "urn:matrix:client:com.example.msc9999.foo".
-     * The scopes for API access and the device ID according to the
+     * - `additional_scopes` - Additional scopes to request from the
+     * authorization server, e.g.
+     * "urn:matrix:client:com.example.msc9999.foo". The scopes for API access
+     * and the device ID according to the
      * [specification](https://spec.matrix.org/v1.15/client-server-api/#allocated-scope-tokens)
      * are always requested.
      */
@@ -4295,8 +4407,8 @@ public protocol ClientBuilderProtocol: AnyObject, Sendable {
     func autoEnableCrossSigning(autoEnableCrossSigning: Bool)  -> ClientBuilder
     
     /**
-     * Select a strategy to download room keys from the backup. By default
-     * we download after a decryption failure.
+     * Select a strategy to download room keys from the backup. By default we
+     * download after a decryption failure.
      *
      * Take a look at the [`BackupDownloadStrategy`] enum for more options.
      */
@@ -4450,9 +4562,9 @@ public protocol ClientBuilderProtocol: AnyObject, Sendable {
      * Sets the paths that the client will use to store its data and caches
      * with SQLite.
      *
-     * Both paths **must** be unique per session as the SDK
-     * stores aren't capable of handling multiple users, however it is
-     * valid to use the same path for both stores on a single session.
+     * Both paths **must** be unique per session as the SDK stores aren't
+     * capable of handling multiple users, however it is valid to use the same
+     * path for both stores on a single session.
      */
     func sessionPaths(dataPath: String, cachePath: String)  -> ClientBuilder
     
@@ -4471,8 +4583,7 @@ public protocol ClientBuilderProtocol: AnyObject, Sendable {
      *
      * So far, at the time of writing (2025-04-07), it changes the defaults of
      * `matrix_sdk::SqliteStoreConfig` (if the `sqlite` feature is enabled).
-     * Please check
-     * `matrix_sdk::SqliteStoreConfig::with_low_memory_config`.
+     * Please check `matrix_sdk::SqliteStoreConfig::with_low_memory_config`.
      */
     func systemIsMemoryConstrained()  -> ClientBuilder
     
@@ -4595,8 +4706,8 @@ open func autoEnableCrossSigning(autoEnableCrossSigning: Bool) -> ClientBuilder 
 }
     
     /**
-     * Select a strategy to download room keys from the backup. By default
-     * we download after a decryption failure.
+     * Select a strategy to download room keys from the backup. By default we
+     * download after a decryption failure.
      *
      * Take a look at the [`BackupDownloadStrategy`] enum for more options.
      */
@@ -4904,9 +5015,9 @@ open func serverNameOrHomeserverUrl(serverNameOrUrl: String) -> ClientBuilder  {
      * Sets the paths that the client will use to store its data and caches
      * with SQLite.
      *
-     * Both paths **must** be unique per session as the SDK
-     * stores aren't capable of handling multiple users, however it is
-     * valid to use the same path for both stores on a single session.
+     * Both paths **must** be unique per session as the SDK stores aren't
+     * capable of handling multiple users, however it is valid to use the same
+     * path for both stores on a single session.
      */
 open func sessionPaths(dataPath: String, cachePath: String) -> ClientBuilder  {
     return try!  FfiConverterTypeClientBuilder_lift(try! rustCall() {
@@ -4958,8 +5069,7 @@ open func sqliteStore(config: SqliteStoreBuilder) -> ClientBuilder  {
      *
      * So far, at the time of writing (2025-04-07), it changes the defaults of
      * `matrix_sdk::SqliteStoreConfig` (if the `sqlite` feature is enabled).
-     * Please check
-     * `matrix_sdk::SqliteStoreConfig::with_low_memory_config`.
+     * Please check `matrix_sdk::SqliteStoreConfig::with_low_memory_config`.
      */
 open func systemIsMemoryConstrained() -> ClientBuilder  {
     return try!  FfiConverterTypeClientBuilder_lift(try! rustCall() {
@@ -5383,9 +5493,9 @@ public protocol EncryptionProtocol: AnyObject, Sendable {
      * Does a backup exist on the server?
      *
      * Because the homeserver doesn't notify us about changes to the backup
-     * version, the [`BackupState`] and its listener are a bit crippled.
-     * The `BackupState::Unknown` state might mean there is no backup at all or
-     * a backup exists but we don't have access to it.
+     * version, the [`BackupState`] and its listener are a bit crippled. The
+     * `BackupState::Unknown` state might mean there is no backup at all or a
+     * backup exists but we don't have access to it.
      *
      * Therefore it is necessary to poll the server for an answer every time
      * you want to differentiate between those two states.
@@ -5413,15 +5523,15 @@ public protocol EncryptionProtocol: AnyObject, Sendable {
     func curve25519Key() async  -> String?
     
     /**
-     * Subscribe to lifecycle events emitted by the dehydrated-device
-     * manager. The returned [`TaskHandle`] keeps the listener alive; drop
-     * it to unsubscribe.
+     * Subscribe to lifecycle events emitted by the dehydrated-device manager.
+     * The returned [`TaskHandle`] keeps the listener alive; drop it to
+     * unsubscribe.
      */
     func dehydratedDeviceEventListener(listener: DehydratedDeviceEventListener)  -> TaskHandle
     
     /**
-     * Delete the current dehydrated device, if one exists. Silent if no
-     * device is on the server or the server does not implement MSC3814.
+     * Delete the current dehydrated device, if one exists. Silent if no device
+     * is on the server or the server does not implement MSC3814.
      */
     func deleteDehydratedDevice() async throws 
     
@@ -5447,8 +5557,8 @@ public protocol EncryptionProtocol: AnyObject, Sendable {
     func hasDevicesToVerifyAgainst() async throws  -> Bool
     
     /**
-     * This method will import all the private cross-signing keys and
-     * the private part of a backup key and its accompanying version into the
+     * This method will import all the private cross-signing keys and the
+     * private part of a backup key and its accompanying version into the
      * store.
      *
      * Importing all the secrets will mark the device as verified and enable
@@ -5463,8 +5573,8 @@ public protocol EncryptionProtocol: AnyObject, Sendable {
     func importSecretsBundle(secretsBundle: SecretsBundleWithUserId) async throws 
     
     /**
-     * Return whether the homeserver advertises support for MSC3814
-     * dehydrated devices.
+     * Return whether the homeserver advertises support for MSC3814 dehydrated
+     * devices.
      */
     func isDehydratedDeviceSupported() async throws  -> Bool
     
@@ -5481,9 +5591,9 @@ public protocol EncryptionProtocol: AnyObject, Sendable {
      *
      * This will create a new key backup if:
      *
-     * * Key backup is enabled and the backup decryption key is missing from
+     * - Key backup is enabled and the backup decryption key is missing from
      * Recovery, or
-     * * Key backup is enabled and the backup decryption key does not match the
+     * - Key backup is enabled and the backup decryption key does not match the
      * public key
      */
     func recoverAndFixBackup(recoveryKey: String) async throws 
@@ -5511,20 +5621,20 @@ public protocol EncryptionProtocol: AnyObject, Sendable {
     func resetRecoveryKey() async throws  -> String
     
     /**
-     * Start using dehydrated devices for this client, resolving the pickle
-     * key through Secret Storage and scheduling weekly rotation.
+     * Start using dehydrated devices for this client, resolving the pickle key
+     * through Secret Storage and scheduling weekly rotation.
      *
-     * The Rust-side copy of the recovery key is zeroized after Secret
-     * Storage has been unlocked; the caller keeps responsibility for the
-     * string it passed in.
+     * The Rust-side copy of the recovery key is zeroized after Secret Storage
+     * has been unlocked; the caller keeps responsibility for the string it
+     * passed in.
      */
     func startDehydratedDevices(recoveryKey: String, settings: StartDehydratedDevicesSettings) async throws 
     
     /**
      * Stop the scheduled dehydrated-device rotation.
      *
-     * Has no effect when no rotation is scheduled. Existing dehydrated
-     * devices on the server are left in place; pair with
+     * Has no effect when no rotation is scheduled. Existing dehydrated devices
+     * on the server are left in place; pair with
      * [`Encryption::delete_dehydrated_device`] to remove them.
      */
     func stopDehydratedDevices() 
@@ -5533,19 +5643,18 @@ public protocol EncryptionProtocol: AnyObject, Sendable {
      * Get the E2EE identity of a user.
      *
      * This method always tries to fetch the identity from the store, which we
-     * only have if the user is tracked, meaning that we are both members
-     * of the same encrypted room. If no user is found locally, a request will
-     * be made to the homeserver unless `fallback_to_server` is set to `false`.
+     * only have if the user is tracked, meaning that we are both members of
+     * the same encrypted room. If no user is found locally, a request will be
+     * made to the homeserver unless `fallback_to_server` is set to `false`.
      *
      * # Arguments
      *
-     * * `user_id` - The ID of the user that the identity belongs to.
-     * * `fallback_to_server` - Should we request the user identity from the
+     * - `user_id` - The ID of the user that the identity belongs to.
+     * - `fallback_to_server` - Should we request the user identity from the
      * homeserver if one isn't found locally.
      *
-     * Returns a `UserIdentity` if one is found. Returns an error if there
-     * was an issue with the crypto store or with the request to the
-     * homeserver.
+     * Returns a `UserIdentity` if one is found. Returns an error if there was
+     * an issue with the crypto store or with the request to the homeserver.
      *
      * This will always return `None` if the client hasn't been logged in.
      */
@@ -5621,9 +5730,9 @@ open class Encryption: EncryptionProtocol, @unchecked Sendable {
      * Does a backup exist on the server?
      *
      * Because the homeserver doesn't notify us about changes to the backup
-     * version, the [`BackupState`] and its listener are a bit crippled.
-     * The `BackupState::Unknown` state might mean there is no backup at all or
-     * a backup exists but we don't have access to it.
+     * version, the [`BackupState`] and its listener are a bit crippled. The
+     * `BackupState::Unknown` state might mean there is no backup at all or a
+     * backup exists but we don't have access to it.
      *
      * Therefore it is necessary to poll the server for an answer every time
      * you want to differentiate between those two states.
@@ -5709,9 +5818,9 @@ open func curve25519Key()async  -> String?  {
 }
     
     /**
-     * Subscribe to lifecycle events emitted by the dehydrated-device
-     * manager. The returned [`TaskHandle`] keeps the listener alive; drop
-     * it to unsubscribe.
+     * Subscribe to lifecycle events emitted by the dehydrated-device manager.
+     * The returned [`TaskHandle`] keeps the listener alive; drop it to
+     * unsubscribe.
      */
 open func dehydratedDeviceEventListener(listener: DehydratedDeviceEventListener) -> TaskHandle  {
     return try!  FfiConverterTypeTaskHandle_lift(try! rustCall() {
@@ -5724,8 +5833,8 @@ open func dehydratedDeviceEventListener(listener: DehydratedDeviceEventListener)
 }
     
     /**
-     * Delete the current dehydrated device, if one exists. Silent if no
-     * device is on the server or the server does not implement MSC3814.
+     * Delete the current dehydrated device, if one exists. Silent if no device
+     * is on the server or the server does not implement MSC3814.
      */
 open func deleteDehydratedDevice()async throws   {
     return
@@ -5836,8 +5945,8 @@ open func hasDevicesToVerifyAgainst()async throws  -> Bool  {
 }
     
     /**
-     * This method will import all the private cross-signing keys and
-     * the private part of a backup key and its accompanying version into the
+     * This method will import all the private cross-signing keys and the
+     * private part of a backup key and its accompanying version into the
      * store.
      *
      * Importing all the secrets will mark the device as verified and enable
@@ -5866,8 +5975,8 @@ open func importSecretsBundle(secretsBundle: SecretsBundleWithUserId)async throw
 }
     
     /**
-     * Return whether the homeserver advertises support for MSC3814
-     * dehydrated devices.
+     * Return whether the homeserver advertises support for MSC3814 dehydrated
+     * devices.
      */
 open func isDehydratedDeviceSupported()async throws  -> Bool  {
     return
@@ -5926,9 +6035,9 @@ open func recover(recoveryKey: String)async throws   {
      *
      * This will create a new key backup if:
      *
-     * * Key backup is enabled and the backup decryption key is missing from
+     * - Key backup is enabled and the backup decryption key is missing from
      * Recovery, or
-     * * Key backup is enabled and the backup decryption key does not match the
+     * - Key backup is enabled and the backup decryption key does not match the
      * public key
      */
 open func recoverAndFixBackup(recoveryKey: String)async throws   {
@@ -6041,12 +6150,12 @@ open func resetRecoveryKey()async throws  -> String  {
 }
     
     /**
-     * Start using dehydrated devices for this client, resolving the pickle
-     * key through Secret Storage and scheduling weekly rotation.
+     * Start using dehydrated devices for this client, resolving the pickle key
+     * through Secret Storage and scheduling weekly rotation.
      *
-     * The Rust-side copy of the recovery key is zeroized after Secret
-     * Storage has been unlocked; the caller keeps responsibility for the
-     * string it passed in.
+     * The Rust-side copy of the recovery key is zeroized after Secret Storage
+     * has been unlocked; the caller keeps responsibility for the string it
+     * passed in.
      */
 open func startDehydratedDevices(recoveryKey: String, settings: StartDehydratedDevicesSettings)async throws   {
     return
@@ -6067,8 +6176,8 @@ open func startDehydratedDevices(recoveryKey: String, settings: StartDehydratedD
     /**
      * Stop the scheduled dehydrated-device rotation.
      *
-     * Has no effect when no rotation is scheduled. Existing dehydrated
-     * devices on the server are left in place; pair with
+     * Has no effect when no rotation is scheduled. Existing dehydrated devices
+     * on the server are left in place; pair with
      * [`Encryption::delete_dehydrated_device`] to remove them.
      */
 open func stopDehydratedDevices()  {try! rustCall() {
@@ -6083,19 +6192,18 @@ open func stopDehydratedDevices()  {try! rustCall() {
      * Get the E2EE identity of a user.
      *
      * This method always tries to fetch the identity from the store, which we
-     * only have if the user is tracked, meaning that we are both members
-     * of the same encrypted room. If no user is found locally, a request will
-     * be made to the homeserver unless `fallback_to_server` is set to `false`.
+     * only have if the user is tracked, meaning that we are both members of
+     * the same encrypted room. If no user is found locally, a request will be
+     * made to the homeserver unless `fallback_to_server` is set to `false`.
      *
      * # Arguments
      *
-     * * `user_id` - The ID of the user that the identity belongs to.
-     * * `fallback_to_server` - Should we request the user identity from the
+     * - `user_id` - The ID of the user that the identity belongs to.
+     * - `fallback_to_server` - Should we request the user identity from the
      * homeserver if one isn't found locally.
      *
-     * Returns a `UserIdentity` if one is found. Returns an error if there
-     * was an issue with the crypto store or with the request to the
-     * homeserver.
+     * Returns a `UserIdentity` if one is found. Returns an error if there was
+     * an issue with the crypto store or with the request to the homeserver.
      *
      * This will always return `None` if the client hasn't been logged in.
      */
@@ -6229,46 +6337,55 @@ public protocol GrantLoginWithQrCodeHandlerProtocol: AnyObject, Sendable {
     /**
      * This method allows you to grant login by generating a QR code.
      *
-     * This device needs to call this method and handle its progress updates to
-     * generate a QR code which the new device can scan to log in.
+     * This device needs to call this method and handle the returned
+     * [`GrantLoginWithQrCodeTask`]'s progress updates to generate a QR code
+     * which the new device can scan to log in.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This spawns the login process in the background and returns
+     * immediately with a [`GrantLoginWithQrCodeTask`] that can be used to
+     * wait for the login to finish, or to cancel it.
      *
-     * For the reverse flow where the existing device generates the QR code
-     * for this device to scan, use [`GrantLoginWithQrCodeHandler::scan`].
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
+     *
+     * For the reverse flow where the existing device generates the QR code for
+     * this device to scan, use [`GrantLoginWithQrCodeHandler::scan`].
      *
      * # Arguments
      *
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `progress_listener` - A progress listener that must also be used to
      * obtain the [`QrCodeData`] and collect the [`CheckCode`] from the user.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-    func generate(progressListener: GrantGeneratedQrLoginProgressListener) async throws 
+    func generate(progressListener: GrantGeneratedQrLoginProgressListener) throws  -> GrantLoginWithQrCodeTask
     
     /**
      * This method allows you to grant login with a scanned QR code.
      *
      * The new device needs to display the QR code which this device can
-     * scan, call this method and handle its progress updates to grant the
-     * login.
+     * scan, call this method and handle the returned
+     * [`GrantLoginWithQrCodeTask`]'s progress updates to grant the login.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This spawns the login process in the background and returns
+     * immediately with a [`GrantLoginWithQrCodeTask`] that can be used to
+     * wait for the login to finish, or to cancel it.
+     *
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
      *
      * For the reverse flow where this device generates the QR code for the
      * existing device to scan, use [`GrantLoginWithQrCodeHandler::generate`].
      *
      * # Arguments
      *
-     * * `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
+     * - `progress_listener` - A progress listener that must also be used to
      * transfer the [`CheckCode`] to the new device.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-    func scan(qrCodeData: QrCodeData, progressListener: GrantQrLoginProgressListener) async throws 
+    func scan(qrCodeData: QrCodeData, progressListener: GrantQrLoginProgressListener) throws  -> GrantLoginWithQrCodeTask
     
 }
 /**
@@ -6330,73 +6447,71 @@ open class GrantLoginWithQrCodeHandler: GrantLoginWithQrCodeHandlerProtocol, @un
     /**
      * This method allows you to grant login by generating a QR code.
      *
-     * This device needs to call this method and handle its progress updates to
-     * generate a QR code which the new device can scan to log in.
+     * This device needs to call this method and handle the returned
+     * [`GrantLoginWithQrCodeTask`]'s progress updates to generate a QR code
+     * which the new device can scan to log in.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This spawns the login process in the background and returns
+     * immediately with a [`GrantLoginWithQrCodeTask`] that can be used to
+     * wait for the login to finish, or to cancel it.
      *
-     * For the reverse flow where the existing device generates the QR code
-     * for this device to scan, use [`GrantLoginWithQrCodeHandler::scan`].
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
+     *
+     * For the reverse flow where the existing device generates the QR code for
+     * this device to scan, use [`GrantLoginWithQrCodeHandler::scan`].
      *
      * # Arguments
      *
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `progress_listener` - A progress listener that must also be used to
      * obtain the [`QrCodeData`] and collect the [`CheckCode`] from the user.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-open func generate(progressListener: GrantGeneratedQrLoginProgressListener)async throws   {
-    return
-        try  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_matrix_sdk_ffi_fn_method_grantloginwithqrcodehandler_generate(
-                        self.uniffiCloneHandle(),FfiConverterCallbackInterfaceGrantGeneratedQrLoginProgressListener_lower(progressListener)
-                )
-            },
-            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
-            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
-            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
-            liftFunc: { $0 },
-            errorHandler: FfiConverterTypeHumanQrGrantLoginError_lift
-        )
+open func generate(progressListener: GrantGeneratedQrLoginProgressListener)throws  -> GrantLoginWithQrCodeTask  {
+    return try  FfiConverterTypeGrantLoginWithQrCodeTask_lift(try rustCallWithError(FfiConverterTypeHumanQrGrantLoginError_lift) {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_grantloginwithqrcodehandler_generate(
+            self.uniffiCloneHandle(),
+        FfiConverterCallbackInterfaceGrantGeneratedQrLoginProgressListener_lower(progressListener),uniffiCallStatus
+    )
+})
 }
     
     /**
      * This method allows you to grant login with a scanned QR code.
      *
      * The new device needs to display the QR code which this device can
-     * scan, call this method and handle its progress updates to grant the
-     * login.
+     * scan, call this method and handle the returned
+     * [`GrantLoginWithQrCodeTask`]'s progress updates to grant the login.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This spawns the login process in the background and returns
+     * immediately with a [`GrantLoginWithQrCodeTask`] that can be used to
+     * wait for the login to finish, or to cancel it.
+     *
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
      *
      * For the reverse flow where this device generates the QR code for the
      * existing device to scan, use [`GrantLoginWithQrCodeHandler::generate`].
      *
      * # Arguments
      *
-     * * `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
+     * - `progress_listener` - A progress listener that must also be used to
      * transfer the [`CheckCode`] to the new device.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-open func scan(qrCodeData: QrCodeData, progressListener: GrantQrLoginProgressListener)async throws   {
-    return
-        try  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_matrix_sdk_ffi_fn_method_grantloginwithqrcodehandler_scan(
-                        self.uniffiCloneHandle(),FfiConverterTypeQrCodeData_lower(qrCodeData),FfiConverterCallbackInterfaceGrantQrLoginProgressListener_lower(progressListener)
-                )
-            },
-            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
-            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
-            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
-            liftFunc: { $0 },
-            errorHandler: FfiConverterTypeHumanQrGrantLoginError_lift
-        )
+open func scan(qrCodeData: QrCodeData, progressListener: GrantQrLoginProgressListener)throws  -> GrantLoginWithQrCodeTask  {
+    return try  FfiConverterTypeGrantLoginWithQrCodeTask_lift(try rustCallWithError(FfiConverterTypeHumanQrGrantLoginError_lift) {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_grantloginwithqrcodehandler_scan(
+            self.uniffiCloneHandle(),
+        FfiConverterTypeQrCodeData_lower(qrCodeData),
+        FfiConverterCallbackInterfaceGrantQrLoginProgressListener_lower(progressListener),uniffiCallStatus
+    )
+})
 }
     
 
@@ -6442,6 +6557,190 @@ public func FfiConverterTypeGrantLoginWithQrCodeHandler_lift(_ handle: UInt64) t
 #endif
 public func FfiConverterTypeGrantLoginWithQrCodeHandler_lower(_ value: GrantLoginWithQrCodeHandler) -> UInt64 {
     return FfiConverterTypeGrantLoginWithQrCodeHandler.lower(value)
+}
+
+
+
+
+
+
+/**
+ * A handle to a single login grant attempt started by
+ * [`GrantLoginWithQrCodeHandler::scan`] or
+ * [`GrantLoginWithQrCodeHandler::generate`].
+ *
+ * Use [`Self::wait`] to wait for the attempt to finish and obtain its
+ * result, and [`Self::cancel`] to request that it be aborted cooperatively.
+ */
+public protocol GrantLoginWithQrCodeTaskProtocol: AnyObject, Sendable {
+    
+    /**
+     * Request this login grant attempt to abort cooperatively. This will
+     * make the task tear down its running work and then return the
+     * `Cancelled` error from [`Self::wait`].
+     *
+     * Cancelling is idempotent: if the attempt hasn't started running yet, it
+     * won't be started and [`Self::wait`] returns `Cancelled` right away.
+     * Calling this more than once, or after the attempt has already finished,
+     * has no effect.
+     */
+    func cancel() 
+    
+    /**
+     * Wait for the login grant attempt to finish and return its result.
+     *
+     * If [`Self::cancel`] has been called, this returns
+     * [`HumanQrGrantLoginError::Cancelled`] once the attempt has finished
+     * tearing down its running task.
+     */
+    func wait() async throws 
+    
+}
+/**
+ * A handle to a single login grant attempt started by
+ * [`GrantLoginWithQrCodeHandler::scan`] or
+ * [`GrantLoginWithQrCodeHandler::generate`].
+ *
+ * Use [`Self::wait`] to wait for the attempt to finish and obtain its
+ * result, and [`Self::cancel`] to request that it be aborted cooperatively.
+ */
+open class GrantLoginWithQrCodeTask: GrantLoginWithQrCodeTaskProtocol, @unchecked Sendable {
+    fileprivate let handle: UInt64
+
+    /// Used to instantiate a [FFIObject] without an actual handle, for fakes in tests, mostly.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public struct NoHandle {
+        public init() {}
+    }
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    required public init(unsafeFromHandle handle: UInt64) {
+        self.handle = handle
+    }
+
+    // This constructor can be used to instantiate a fake object.
+    // - Parameter noHandle: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
+    //
+    // - Warning:
+    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing handle the FFI lower functions will crash.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public init(noHandle: NoHandle) {
+        self.handle = 0
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public func uniffiCloneHandle() -> UInt64 {
+        return try! rustCall { uniffi_matrix_sdk_ffi_fn_clone_grantloginwithqrcodetask(self.handle, $0) }
+    }
+    // No primary constructor declared for this class.
+
+    deinit {
+        if handle == 0 {
+            // Mock objects have handle=0 don't try to free them
+            return
+        }
+
+        try! rustCall { uniffi_matrix_sdk_ffi_fn_free_grantloginwithqrcodetask(handle, $0) }
+    }
+
+    
+
+    
+    /**
+     * Request this login grant attempt to abort cooperatively. This will
+     * make the task tear down its running work and then return the
+     * `Cancelled` error from [`Self::wait`].
+     *
+     * Cancelling is idempotent: if the attempt hasn't started running yet, it
+     * won't be started and [`Self::wait`] returns `Cancelled` right away.
+     * Calling this more than once, or after the attempt has already finished,
+     * has no effect.
+     */
+open func cancel()  {try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_grantloginwithqrcodetask_cancel(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+}
+}
+    
+    /**
+     * Wait for the login grant attempt to finish and return its result.
+     *
+     * If [`Self::cancel`] has been called, this returns
+     * [`HumanQrGrantLoginError::Cancelled`] once the attempt has finished
+     * tearing down its running task.
+     */
+open func wait()async throws   {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_grantloginwithqrcodetask_wait(
+                        self.uniffiCloneHandle()
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: FfiConverterTypeHumanQrGrantLoginError_lift
+        )
+}
+    
+
+    
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeGrantLoginWithQrCodeTask: FfiConverter {
+    typealias FfiType = UInt64
+    typealias SwiftType = GrantLoginWithQrCodeTask
+
+    public static func lift(_ handle: UInt64) throws -> GrantLoginWithQrCodeTask {
+        return GrantLoginWithQrCodeTask(unsafeFromHandle: handle)
+    }
+
+    public static func lower(_ value: GrantLoginWithQrCodeTask) -> UInt64 {
+        return value.uniffiCloneHandle()
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> GrantLoginWithQrCodeTask {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+    public static func write(_ value: GrantLoginWithQrCodeTask, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeGrantLoginWithQrCodeTask_lift(_ handle: UInt64) throws -> GrantLoginWithQrCodeTask {
+    return try FfiConverterTypeGrantLoginWithQrCodeTask.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeGrantLoginWithQrCodeTask_lower(_ value: GrantLoginWithQrCodeTask) -> UInt64 {
+    return FfiConverterTypeGrantLoginWithQrCodeTask.lower(value)
 }
 
 
@@ -6920,15 +7219,15 @@ public protocol IdentityResetHandleProtocol: AnyObject, Sendable {
     func cancel() async 
     
     /**
-     * This method starts the identity reset process and
-     * will go through the following steps:
+     * This method starts the identity reset process and will go through the
+     * following steps:
      *
      * 1. Disable backing up room keys and delete the active backup
      * 2. Disable recovery and delete secret storage
      * 3. Go through the cross-signing key reset flow
      * 4. Finally, re-enable key backups only if they were enabled before
      */
-    func reset(auth: AuthData?) async throws 
+    func reset(auth: AuthData) async throws 
     
 }
 open class IdentityResetHandle: IdentityResetHandleProtocol, @unchecked Sendable {
@@ -7015,20 +7314,20 @@ open func cancel()async   {
 }
     
     /**
-     * This method starts the identity reset process and
-     * will go through the following steps:
+     * This method starts the identity reset process and will go through the
+     * following steps:
      *
      * 1. Disable backing up room keys and delete the active backup
      * 2. Disable recovery and delete secret storage
      * 3. Go through the cross-signing key reset flow
      * 4. Finally, re-enable key backups only if they were enabled before
      */
-open func reset(auth: AuthData?)async throws   {
+open func reset(auth: AuthData)async throws   {
     return
         try  await uniffiRustCallAsync(
             rustFutureFunc: {
                 uniffi_matrix_sdk_ffi_fn_method_identityresethandle_reset(
-                        self.uniffiCloneHandle(),FfiConverterOptionTypeAuthData.lower(auth)
+                        self.uniffiCloneHandle(),FfiConverterTypeAuthData_lower(auth)
                 )
             },
             pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
@@ -7814,8 +8113,8 @@ public protocol LiveLocationsObserverProtocol: AnyObject, Sendable {
      * current snapshot (if non-empty), then calls it again for every
      * subsequent change that arrives from sync.
      *
-     * Returns a [`TaskHandle`] that, when dropped, stops the listener.
-     * The event handlers remain registered for as long as this
+     * Returns a [`TaskHandle`] that, when dropped, stops the listener. The
+     * event handlers remain registered for as long as this
      * [`LiveLocationsObserver`] object is alive.
      */
     func subscribe(listener: LiveLocationsListener)  -> TaskHandle
@@ -7888,8 +8187,8 @@ open class LiveLocationsObserver: LiveLocationsObserverProtocol, @unchecked Send
      * current snapshot (if non-empty), then calls it again for every
      * subsequent change that arrives from sync.
      *
-     * Returns a [`TaskHandle`] that, when dropped, stops the listener.
-     * The event handlers remain registered for as long as this
+     * Returns a [`TaskHandle`] that, when dropped, stops the listener. The
+     * event handlers remain registered for as long as this
      * [`LiveLocationsObserver`] object is alive.
      */
 open func subscribe(listener: LiveLocationsListener) -> TaskHandle  {
@@ -7960,50 +8259,59 @@ public protocol LoginWithQrCodeHandlerProtocol: AnyObject, Sendable {
     /**
      * This method allows you to log in by generating a QR code.
      *
-     * This device needs to call this method and handle its progress updates to
-     * generate a QR code which the existing device can scan and grant the
-     * log in.
+     * This device needs to call this method and handle the returned
+     * [`LoginWithQrCodeTask`]'s progress updates to generate a QR code which
+     * the existing device can scan and grant the log in.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This spawns the login process in the background and returns
+     * immediately with a [`LoginWithQrCodeTask`] that can be used to wait
+     * for the login to finish, or to cancel it.
      *
-     * For the reverse flow where the existing device generates the QR code
-     * for this device to scan, use [`LoginWithQrCodeHandler::scan`].
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
+     *
+     * For the reverse flow where the existing device generates the QR code for
+     * this device to scan, use [`LoginWithQrCodeHandler::scan`].
      *
      * # Arguments
      *
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `progress_listener` - A progress listener that must also be used to
      * obtain the [`QrCodeData`] and collect the [`CheckCode`] from the user.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-    func generate(progressListener: GeneratedQrLoginProgressListener) async throws 
+    func generate(progressListener: GeneratedQrLoginProgressListener) throws  -> LoginWithQrCodeTask
     
     /**
      * This method allows you to log in with a scanned QR code.
      *
      * The existing device needs to display the QR code which this device can
-     * scan, call this method and handle its progress updates to log in.
+     * scan, call this method and handle the returned [`LoginWithQrCodeTask`]'s
+     * progress updates to log in.
+     *
+     * This spawns the login process in the background and returns
+     * immediately with a [`LoginWithQrCodeTask`] that can be used to wait
+     * for the login to finish, or to cancel it.
      *
      * For the login to succeed, the [`Client`] associated with the
      * [`LoginWithQrCodeHandler`] must have been built with
      * [`QrCodeData::server_name`] as the server name.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
      *
      * For the reverse flow where this device generates the QR code for the
      * existing device to scan, use [`LoginWithQrCodeHandler::generate`].
      *
      * # Arguments
      *
-     * * `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
+     * - `progress_listener` - A progress listener that must also be used to
      * transfer the [`CheckCode`] to the existing device.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-    func scan(qrCodeData: QrCodeData, progressListener: QrLoginProgressListener) async throws 
+    func scan(qrCodeData: QrCodeData, progressListener: QrLoginProgressListener) throws  -> LoginWithQrCodeTask
     
 }
 /**
@@ -8065,77 +8373,75 @@ open class LoginWithQrCodeHandler: LoginWithQrCodeHandlerProtocol, @unchecked Se
     /**
      * This method allows you to log in by generating a QR code.
      *
-     * This device needs to call this method and handle its progress updates to
-     * generate a QR code which the existing device can scan and grant the
-     * log in.
+     * This device needs to call this method and handle the returned
+     * [`LoginWithQrCodeTask`]'s progress updates to generate a QR code which
+     * the existing device can scan and grant the log in.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This spawns the login process in the background and returns
+     * immediately with a [`LoginWithQrCodeTask`] that can be used to wait
+     * for the login to finish, or to cancel it.
      *
-     * For the reverse flow where the existing device generates the QR code
-     * for this device to scan, use [`LoginWithQrCodeHandler::scan`].
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
+     *
+     * For the reverse flow where the existing device generates the QR code for
+     * this device to scan, use [`LoginWithQrCodeHandler::scan`].
      *
      * # Arguments
      *
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `progress_listener` - A progress listener that must also be used to
      * obtain the [`QrCodeData`] and collect the [`CheckCode`] from the user.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-open func generate(progressListener: GeneratedQrLoginProgressListener)async throws   {
-    return
-        try  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_matrix_sdk_ffi_fn_method_loginwithqrcodehandler_generate(
-                        self.uniffiCloneHandle(),FfiConverterCallbackInterfaceGeneratedQrLoginProgressListener_lower(progressListener)
-                )
-            },
-            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
-            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
-            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
-            liftFunc: { $0 },
-            errorHandler: FfiConverterTypeHumanQrLoginError_lift
-        )
+open func generate(progressListener: GeneratedQrLoginProgressListener)throws  -> LoginWithQrCodeTask  {
+    return try  FfiConverterTypeLoginWithQrCodeTask_lift(try rustCallWithError(FfiConverterTypeHumanQrLoginError_lift) {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_loginwithqrcodehandler_generate(
+            self.uniffiCloneHandle(),
+        FfiConverterCallbackInterfaceGeneratedQrLoginProgressListener_lower(progressListener),uniffiCallStatus
+    )
+})
 }
     
     /**
      * This method allows you to log in with a scanned QR code.
      *
      * The existing device needs to display the QR code which this device can
-     * scan, call this method and handle its progress updates to log in.
+     * scan, call this method and handle the returned [`LoginWithQrCodeTask`]'s
+     * progress updates to log in.
+     *
+     * This spawns the login process in the background and returns
+     * immediately with a [`LoginWithQrCodeTask`] that can be used to wait
+     * for the login to finish, or to cancel it.
      *
      * For the login to succeed, the [`Client`] associated with the
      * [`LoginWithQrCodeHandler`] must have been built with
      * [`QrCodeData::server_name`] as the server name.
      *
-     * This method uses the login mechanism described in [MSC4108]. As such,
-     * it requires OAuth 2.0 support.
+     * This method uses the login mechanism described in [MSC4108]. As such, it
+     * requires OAuth 2.0 support.
      *
      * For the reverse flow where this device generates the QR code for the
      * existing device to scan, use [`LoginWithQrCodeHandler::generate`].
      *
      * # Arguments
      *
-     * * `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
-     * * `progress_listener` - A progress listener that must also be used to
+     * - `qr_code_data` - The [`QrCodeData`] scanned from the QR code.
+     * - `progress_listener` - A progress listener that must also be used to
      * transfer the [`CheckCode`] to the existing device.
      *
      * [MSC4108]: https://github.com/matrix-org/matrix-spec-proposals/pull/4108
      */
-open func scan(qrCodeData: QrCodeData, progressListener: QrLoginProgressListener)async throws   {
-    return
-        try  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_matrix_sdk_ffi_fn_method_loginwithqrcodehandler_scan(
-                        self.uniffiCloneHandle(),FfiConverterTypeQrCodeData_lower(qrCodeData),FfiConverterCallbackInterfaceQrLoginProgressListener_lower(progressListener)
-                )
-            },
-            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
-            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
-            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
-            liftFunc: { $0 },
-            errorHandler: FfiConverterTypeHumanQrLoginError_lift
-        )
+open func scan(qrCodeData: QrCodeData, progressListener: QrLoginProgressListener)throws  -> LoginWithQrCodeTask  {
+    return try  FfiConverterTypeLoginWithQrCodeTask_lift(try rustCallWithError(FfiConverterTypeHumanQrLoginError_lift) {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_loginwithqrcodehandler_scan(
+            self.uniffiCloneHandle(),
+        FfiConverterTypeQrCodeData_lower(qrCodeData),
+        FfiConverterCallbackInterfaceQrLoginProgressListener_lower(progressListener),uniffiCallStatus
+    )
+})
 }
     
 
@@ -8181,6 +8487,188 @@ public func FfiConverterTypeLoginWithQrCodeHandler_lift(_ handle: UInt64) throws
 #endif
 public func FfiConverterTypeLoginWithQrCodeHandler_lower(_ value: LoginWithQrCodeHandler) -> UInt64 {
     return FfiConverterTypeLoginWithQrCodeHandler.lower(value)
+}
+
+
+
+
+
+
+/**
+ * A handle to a single login attempt started by
+ * [`LoginWithQrCodeHandler::scan`] or [`LoginWithQrCodeHandler::generate`].
+ *
+ * Use [`Self::wait`] to wait for the attempt to finish and obtain its
+ * result, and [`Self::cancel`] to request that it be aborted cooperatively.
+ */
+public protocol LoginWithQrCodeTaskProtocol: AnyObject, Sendable {
+    
+    /**
+     * Request this login attempt to abort cooperatively. This will make the
+     * task tear down its running work and then return the `Cancelled` error
+     * from [`Self::wait`].
+     *
+     * Cancelling is idempotent: if the attempt hasn't started running yet, it
+     * won't be started and [`Self::wait`] returns `Cancelled` right away.
+     * Calling this more than once, or after the attempt has already finished,
+     * has no effect.
+     */
+    func cancel() 
+    
+    /**
+     * Wait for the login attempt to finish and return its result.
+     *
+     * If [`Self::cancel`] has been called, this returns
+     * [`HumanQrLoginError::Cancelled`] once the attempt has finished tearing
+     * down its running task.
+     */
+    func wait() async throws 
+    
+}
+/**
+ * A handle to a single login attempt started by
+ * [`LoginWithQrCodeHandler::scan`] or [`LoginWithQrCodeHandler::generate`].
+ *
+ * Use [`Self::wait`] to wait for the attempt to finish and obtain its
+ * result, and [`Self::cancel`] to request that it be aborted cooperatively.
+ */
+open class LoginWithQrCodeTask: LoginWithQrCodeTaskProtocol, @unchecked Sendable {
+    fileprivate let handle: UInt64
+
+    /// Used to instantiate a [FFIObject] without an actual handle, for fakes in tests, mostly.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public struct NoHandle {
+        public init() {}
+    }
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    required public init(unsafeFromHandle handle: UInt64) {
+        self.handle = handle
+    }
+
+    // This constructor can be used to instantiate a fake object.
+    // - Parameter noHandle: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
+    //
+    // - Warning:
+    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing handle the FFI lower functions will crash.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public init(noHandle: NoHandle) {
+        self.handle = 0
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public func uniffiCloneHandle() -> UInt64 {
+        return try! rustCall { uniffi_matrix_sdk_ffi_fn_clone_loginwithqrcodetask(self.handle, $0) }
+    }
+    // No primary constructor declared for this class.
+
+    deinit {
+        if handle == 0 {
+            // Mock objects have handle=0 don't try to free them
+            return
+        }
+
+        try! rustCall { uniffi_matrix_sdk_ffi_fn_free_loginwithqrcodetask(handle, $0) }
+    }
+
+    
+
+    
+    /**
+     * Request this login attempt to abort cooperatively. This will make the
+     * task tear down its running work and then return the `Cancelled` error
+     * from [`Self::wait`].
+     *
+     * Cancelling is idempotent: if the attempt hasn't started running yet, it
+     * won't be started and [`Self::wait`] returns `Cancelled` right away.
+     * Calling this more than once, or after the attempt has already finished,
+     * has no effect.
+     */
+open func cancel()  {try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_loginwithqrcodetask_cancel(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+}
+}
+    
+    /**
+     * Wait for the login attempt to finish and return its result.
+     *
+     * If [`Self::cancel`] has been called, this returns
+     * [`HumanQrLoginError::Cancelled`] once the attempt has finished tearing
+     * down its running task.
+     */
+open func wait()async throws   {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_loginwithqrcodetask_wait(
+                        self.uniffiCloneHandle()
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: FfiConverterTypeHumanQrLoginError_lift
+        )
+}
+    
+
+    
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeLoginWithQrCodeTask: FfiConverter {
+    typealias FfiType = UInt64
+    typealias SwiftType = LoginWithQrCodeTask
+
+    public static func lift(_ handle: UInt64) throws -> LoginWithQrCodeTask {
+        return LoginWithQrCodeTask(unsafeFromHandle: handle)
+    }
+
+    public static func lower(_ value: LoginWithQrCodeTask) -> UInt64 {
+        return value.uniffiCloneHandle()
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> LoginWithQrCodeTask {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+    public static func write(_ value: LoginWithQrCodeTask, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeLoginWithQrCodeTask_lift(_ handle: UInt64) throws -> LoginWithQrCodeTask {
+    return try FfiConverterTypeLoginWithQrCodeTask.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeLoginWithQrCodeTask_lower(_ value: LoginWithQrCodeTask) -> UInt64 {
+    return FfiConverterTypeLoginWithQrCodeTask.lower(value)
 }
 
 
@@ -8727,8 +9215,8 @@ public protocol NotificationSettingsProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `is_encrypted` - whether the room is encrypted
-     * * `is_one_to_one` - whether the room is a direct chats involving two
+     * - `is_encrypted` - whether the room is encrypted
+     * - `is_one_to_one` - whether the room is a direct chats involving two
      * people
      */
     func getDefaultRoomNotificationMode(isEncrypted: Bool, isOneToOne: Bool) async  -> RoomNotificationMode
@@ -8743,9 +9231,9 @@ public protocol NotificationSettingsProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `room_id` - the room ID
-     * * `is_encrypted` - whether the room is encrypted
-     * * `is_one_to_one` - whether the room is a direct chat involving two
+     * - `room_id` - the room ID
+     * - `is_encrypted` - whether the room is encrypted
+     * - `is_one_to_one` - whether the room is a direct chat involving two
      * people
      */
     func getRoomNotificationSettings(roomId: String, isEncrypted: Bool, isOneToOne: Bool) async throws  -> RoomNotificationSettings
@@ -8800,10 +9288,10 @@ public protocol NotificationSettingsProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `is_encrypted` - whether the mode is for encrypted rooms
-     * * `is_one_to_one` - whether the mode is for direct chats involving two
+     * - `is_encrypted` - whether the mode is for encrypted rooms
+     * - `is_one_to_one` - whether the mode is for direct chats involving two
      * people
-     * * `mode` - the new default mode
+     * - `mode` - the new default mode
      */
     func setDefaultRoomNotificationMode(isEncrypted: Bool, isOneToOne: Bool, mode: RoomNotificationMode) async throws 
     
@@ -8834,9 +9322,9 @@ public protocol NotificationSettingsProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `room_id` - the room to unmute
-     * * `is_encrypted` - whether the room is encrypted
-     * * `is_one_to_one` - whether the room is a direct chat involving two
+     * - `room_id` - the room to unmute
+     * - `is_encrypted` - whether the room is encrypted
+     * - `is_one_to_one` - whether the room is a direct chat involving two
      * people
      */
     func unmuteRoom(roomId: String, isEncrypted: Bool, isOneToOne: Bool) async throws 
@@ -8967,8 +9455,8 @@ open func containsKeywordsRules()async  -> Bool  {
      *
      * # Arguments
      *
-     * * `is_encrypted` - whether the room is encrypted
-     * * `is_one_to_one` - whether the room is a direct chats involving two
+     * - `is_encrypted` - whether the room is encrypted
+     * - `is_one_to_one` - whether the room is a direct chats involving two
      * people
      */
 open func getDefaultRoomNotificationMode(isEncrypted: Bool, isOneToOne: Bool)async  -> RoomNotificationMode  {
@@ -9012,9 +9500,9 @@ open func getRawPushRules()async throws  -> String?  {
      *
      * # Arguments
      *
-     * * `room_id` - the room ID
-     * * `is_encrypted` - whether the room is encrypted
-     * * `is_one_to_one` - whether the room is a direct chat involving two
+     * - `room_id` - the room ID
+     * - `is_encrypted` - whether the room is encrypted
+     * - `is_one_to_one` - whether the room is a direct chat involving two
      * people
      */
 open func getRoomNotificationSettings(roomId: String, isEncrypted: Bool, isOneToOne: Bool)async throws  -> RoomNotificationSettings  {
@@ -9210,10 +9698,10 @@ open func setCustomPushRule(ruleId: String, ruleKind: RuleKind, actions: [Action
      *
      * # Arguments
      *
-     * * `is_encrypted` - whether the mode is for encrypted rooms
-     * * `is_one_to_one` - whether the mode is for direct chats involving two
+     * - `is_encrypted` - whether the mode is for encrypted rooms
+     * - `is_one_to_one` - whether the mode is for direct chats involving two
      * people
-     * * `mode` - the new default mode
+     * - `mode` - the new default mode
      */
 open func setDefaultRoomNotificationMode(isEncrypted: Bool, isOneToOne: Bool, mode: RoomNotificationMode)async throws   {
     return
@@ -9321,9 +9809,9 @@ open func setUserMentionEnabled(enabled: Bool)async throws   {
      *
      * # Arguments
      *
-     * * `room_id` - the room to unmute
-     * * `is_encrypted` - whether the room is encrypted
-     * * `is_one_to_one` - whether the room is a direct chat involving two
+     * - `room_id` - the room to unmute
+     * - `is_encrypted` - whether the room is encrypted
+     * - `is_one_to_one` - whether the room is a direct chat involving two
      * people
      */
 open func unmuteRoom(roomId: String, isEncrypted: Bool, isOneToOne: Bool)async throws   {
@@ -9487,7 +9975,8 @@ public convenience init(thresholds: PasswordStrengthThresholds) {
     
     /**
      * Creates an estimator using thresholds tuned for modern hardware (2025).
-     * Values derived from determining entropy from the chart at https://www.hivesystems.com/blog/are-your-passwords-in-the-green
+     * Values derived from determining entropy from the chart at
+     * https://www.hivesystems.com/blog/are-your-passwords-in-the-green
      */
 public static func withModernDefaults2025() -> PasswordStrengthEstimator  {
     return try!  FfiConverterTypePasswordStrengthEstimator_lift(try! rustCall() {
@@ -9623,10 +10112,16 @@ public protocol QrCodeDataProtocol: AnyObject, Sendable {
      * The server name contained within the scanned QR code data.
      *
      * Note: This value is only present when scanning a QR code that belongs to
-     * a logged in client. The mode where the new client shows the QR code
-     * will return `None`.
+     * a logged in client. The mode where the new client shows the QR code will
+     * return `None`.
      */
     func serverName()  -> String?
+    
+    /**
+     * Serialize the [`QrCodeData`] into a base64 encoded string for encoding
+     * as a QR code.
+     */
+    func toBase64()  -> String
     
     /**
      * Serialize the [`QrCodeData`] into a byte vector for encoding as a QR
@@ -9743,13 +10238,26 @@ open func intent() -> QrCodeIntent  {
      * The server name contained within the scanned QR code data.
      *
      * Note: This value is only present when scanning a QR code that belongs to
-     * a logged in client. The mode where the new client shows the QR code
-     * will return `None`.
+     * a logged in client. The mode where the new client shows the QR code will
+     * return `None`.
      */
 open func serverName() -> String?  {
     return try!  FfiConverterOptionString.lift(try! rustCall() {
         uniffiCallStatus in
     uniffi_matrix_sdk_ffi_fn_method_qrcodedata_server_name(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+    /**
+     * Serialize the [`QrCodeData`] into a base64 encoded string for encoding
+     * as a QR code.
+     */
+open func toBase64() -> String  {
+    return try!  FfiConverterString.lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_qrcodedata_to_base64(
             self.uniffiCloneHandle(),uniffiCallStatus
     )
 })
@@ -9867,7 +10375,7 @@ public protocol RoomProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `rtc_notification_event_id` - the event id of the m.rtc.notification
+     * - `rtc_notification_event_id` - the event id of the m.rtc.notification
      * event.
      */
     func declineCall(rtcNotificationEventId: String) async throws 
@@ -9953,15 +10461,16 @@ public protocol RoomProtocol: AnyObject, Sendable {
     func id()  -> String
     
     /**
-     * Set the local trust for the given devices to `LocalTrust::Ignored`
-     * and resend messages that failed to send because said devices are
-     * unverified (in response to
+     * Set the local trust for the given devices to `LocalTrust::Ignored` and
+     * resend messages that failed to send because said devices are unverified
+     * (in response to
      * `SessionRecipientCollectionError::VerifiedUserHasUnsignedDevice`).
+     *
      * # Arguments
      *
-     * * `devices` - The map of users identifiers to device identifiers
+     * - `devices` - The map of users identifiers to device identifiers
      * received in the error
-     * * `transaction_id` - The send queue transaction identifier of the local
+     * - `transaction_id` - The send queue transaction identifier of the local
      * echo the send error applies to
      */
     func ignoreDeviceTrustAndResend(devices: [String: [String]], sendHandle: SendHandle) async throws 
@@ -10068,11 +10577,11 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * optionally scoped to a thread.
      *
      * The receipt is read from the local store, which is fed by sync, so it
-     * also reflects receipts sent by the user's other devices. Returns
-     * `None` if the user has no matching receipt in this room.
+     * also reflects receipts sent by the user's other devices. Returns `None`
+     * if the user has no matching receipt in this room.
      *
-     * Note: [`ReceiptType::FullyRead`] is a marker, not an event receipt,
-     * and is rejected.
+     * Note: [`ReceiptType::FullyRead`] is a marker, not an event receipt, and
+     * is rejected.
      */
     func loadUserReceipt(receiptType: ReceiptType, thread: ReceiptThread, userId: String) async throws  -> UserReceipt?
     
@@ -10083,9 +10592,8 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * **Warning:** using this method is **NOT** recommended, as providing the
      * latest event id can cause incorrect read receipts. This method won't
      * check if sending the read receipt is necessary or valid. It should
-     * *only* be used when some constraint prevents you from instantiating a
-     * [`Timeline`]. For any other case use [`Timeline::mark_as_read`]
-     * instead.
+     * _only_ be used when some constraint prevents you from instantiating a
+     * [`Timeline`]. For any other case use [`Timeline::mark_as_read`] instead.
      */
     func markAsFullyReadUnchecked(eventId: String) async throws 
     
@@ -10156,6 +10664,7 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * Publish a new room alias for this room in the room directory.
      *
      * Returns:
+     *
      * - `true` if the room alias didn't exist and it's now published.
      * - `false` if the room alias was already present so it couldn't be
      * published.
@@ -10172,9 +10681,8 @@ public protocol RoomProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `event_id` - The ID of the event to redact
-     *
-     * * `reason` - The reason for the event being redacted (optional). its
+     * - `event_id` - The ID of the event to redact
+     * - `reason` - The reason for the event being redacted (optional). its
      * transaction ID (optional). If not given one is created.
      */
     func redact(eventId: String, reason: String?) async throws 
@@ -10188,6 +10696,7 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * Remove an existing room alias for this room in the room directory.
      *
      * Returns:
+     *
      * - `true` if the room alias was present and it's now removed from the
      * room directory.
      * - `false` if the room alias didn't exist so it couldn't be removed.
@@ -10199,22 +10708,20 @@ public protocol RoomProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `event_id` - The ID of the event to report
-     *
-     * * `reason` - The reason for the event being reported (optional).
-     *
-     * * `score` - The score to rate this content as where -100 is most
+     * - `event_id` - The ID of the event to report
+     * - `reason` - The reason for the event being reported (optional).
+     * - `score` - The score to rate this content as where -100 is most
      * offensive and 0 is inoffensive (optional).
      */
     func reportContent(eventId: String, reason: String?) async throws 
     
     /**
-     * Reports a room as inappropriate to the server.
-     * The caller is not required to be joined to the room to report it.
+     * Reports a room as inappropriate to the server. The caller is not
+     * required to be joined to the room to report it.
      *
      * # Arguments
      *
-     * * `reason` - The reason the room is being reported.
+     * - `reason` - The reason the room is being reported.
      *
      * # Errors
      *
@@ -10251,19 +10758,20 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * * `event_type` - The type of the event to send.
      *
      * * `content` - The content of the event to send encoded as JSON string.
+     *
+     * Returns the event ID of the newly sent event.
      */
-    func sendRaw(eventType: String, content: String) async throws 
+    func sendRaw(eventType: String, content: String) async throws  -> String
     
     /**
      * Send a single receipt of the given type for the given event, optionally
      * scoped to a thread.
      *
      * This allows sending receipts for events without instantiating the
-     * [`Timeline`] they belong to, e.g. marking a thread as read from its
-     * root and latest event ids. Note that this won't check whether sending
-     * the receipt is necessary or valid (i.e. it can move a receipt
-     * backwards); prefer [`Timeline::send_single_receipt`] when a timeline
-     * is available.
+     * [`Timeline`] they belong to, e.g. marking a thread as read from its root
+     * and latest event ids. Note that this won't check whether sending the
+     * receipt is necessary or valid (i.e. it can move a receipt backwards);
+     * prefer [`Timeline::send_single_receipt`] when a timeline is available.
      */
     func sendSingleReceipt(receiptType: ReceiptType, thread: ReceiptThread, eventId: String) async throws 
     
@@ -10272,13 +10780,13 @@ public protocol RoomProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `event_type` - The type of the state event to send (e.g.
+     * - `event_type` - The type of the state event to send (e.g.
      * `"m.room.name"` or a custom type).
      *
-     * * `state_key` - A unique key which defines the overwriting semantics for
+     * - `state_key` - A unique key which defines the overwriting semantics for
      * this piece of room state. This is often an empty string.
      *
-     * * `content` - The content of the state event encoded as a JSON string.
+     * - `content` - The content of the state event encoded as a JSON string.
      *
      * Returns the event ID of the newly created state event.
      */
@@ -10300,8 +10808,8 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * root event id.
      *
      * If `subscribed` is `true`, it will subscribe to the thread, with a
-     * precision that the subscription was manually requested by the user
-     * (i.e. not automatic).
+     * precision that the subscription was manually requested by the user (i.e.
+     * not automatic).
      *
      * If the thread was already subscribed to (resp. unsubscribed from), while
      * trying to subscribe to it (resp. unsubscribe from it), it will do
@@ -10331,7 +10839,7 @@ public protocol RoomProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `event_type` - The type of the state events to read. For a type that
+     * - `event_type` - The type of the state events to read. For a type that
      * has no variant of its own, build one from its string representation
      * with `stateEventTypeFromString("com.example.custom")`.
      *
@@ -10350,8 +10858,8 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * Subscribes to call decline for a currently ringing call, using a
      * `listener` to be notified when someone declines.
      *
-     * Will error if `rtc_notification_event_id` is not a valid event id.
-     * Use the [`TaskHandle`] to cancel the subscription.
+     * Will error if `rtc_notification_event_id` is not a valid event id. Use
+     * the [`TaskHandle`] to cancel the subscription.
      */
     func subscribeToCallDeclineEvents(rtcNotificationEventId: String, listener: CallDeclineListener) throws  -> TaskHandle
     
@@ -10361,9 +10869,8 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * Subscribes to requests to join this room (knock member events), using a
      * `listener` to be notified of the changes.
      *
-     * The current requests to join the room will be emitted immediately
-     * when subscribing, along with a [`TaskHandle`] to cancel the
-     * subscription.
+     * The current requests to join the room will be emitted immediately when
+     * subscribing, along with a [`TaskHandle`] to cancel the subscription.
      */
     func subscribeToKnockRequests(listener: KnockRequestsListener) async throws  -> TaskHandle
     
@@ -10373,8 +10880,8 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * Subscribe to all send queue updates in this room.
      *
      * The given listener will be immediately called with
-     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in
-     * the queue.
+     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in the
+     * queue.
      */
     func subscribeToSendQueueUpdates(listener: SendQueueListener) async throws  -> TaskHandle
     
@@ -10382,15 +10889,15 @@ public protocol RoomProtocol: AnyObject, Sendable {
      * Subscribe to the room state events of the given type.
      *
      * The listener is called with the full current list of state events of
-     * that type, one per state key, immediately and then after every sync
-     * that changed any of them. All the changes of one sync are reported as a
+     * that type, one per state key, immediately and then after every sync that
+     * changed any of them. All the changes of one sync are reported as a
      * single snapshot.
      *
      * Use the returned [`TaskHandle`] to cancel the subscription.
      *
      * # Arguments
      *
-     * * `event_type` - The type of the state events to listen to. For a type
+     * - `event_type` - The type of the state events to listen to. For a type
      * that has no variant of its own, build one from its string
      * representation with `stateEventTypeFromString("com.example.custom")`.
      */
@@ -10472,27 +10979,85 @@ public protocol RoomProtocol: AnyObject, Sendable {
      *
      * # Arguments
      *
-     * * `mime_type` - The mime description of the avatar, for example
+     * - `mime_type` - The mime description of the avatar, for example
      * image/jpeg
-     * * `data` - The raw data that will be uploaded to the homeserver's
+     * - `data` - The raw data that will be uploaded to the homeserver's
      * content repository
-     * * `media_info` - The media info used as avatar image info.
+     * - `media_info` - The media info used as avatar image info.
      */
     func uploadAvatar(mimeType: String, data: Data, mediaInfo: ImageInfo?) async throws 
     
     /**
-     * Remove verification requirements for the given users and
-     * resend messages that failed to send because their identities were no
-     * longer verified (in response to
+     * Remove verification requirements for the given users and resend messages
+     * that failed to send because their identities were no longer verified (in
+     * response to
      * `SessionRecipientCollectionError::VerifiedUserChangedIdentity`)
      *
      * # Arguments
      *
-     * * `user_ids` - The list of users identifiers received in the error
-     * * `transaction_id` - The send queue transaction identifier of the local
+     * - `user_ids` - The list of users identifiers received in the error
+     * - `transaction_id` - The send queue transaction identifier of the local
      * echo the send error applies to
      */
     func withdrawVerificationAndResend(userIds: [String], sendHandle: SendHandle) async throws 
+    
+    /**
+     * Subscribe to the message-like events of the given type in this room.
+     *
+     * The listener is called with every event of that type that a sync brings
+     * into the room's timeline from now on, decrypted if it was encrypted.
+     *
+     * This is built on the SDK's sync event handlers, so events come from sync
+     * only (not from pagination).
+     * An event that couldn't be decrypted during sync will not be reported
+     * even if it gets decrypted later.
+     *
+     * Use the returned [`TaskHandle`] to cancel the subscription.
+     *
+     * # Arguments
+     *
+     * - `event_type` - The type of the events to listen to. Build one from its
+     * string representation with
+     * `messageLikeEventTypeFromString("org.example.type")`.
+     */
+    func subscribeToMessageLikeEvents(eventType: MessageLikeEventType, listener: RoomMessageLikeEventsListener)  -> TaskHandle
+    
+    /**
+     * Send a sticky event to this room.
+     * Note that if the homeserver doesn't support sticky events, it will
+     * ignore the duration and send the event unsticky. Server support can
+     * be checked with [`Client::is_sticky_events_supported`].
+     *
+     * # Arguments
+     *
+     * - `event_type` - The type of the event to send.
+     * - `content` - The content of the event to send encoded as JSON string.
+     * - `duration_ms` - How long the event stays sticky for, in milliseconds,
+     * clamped to one hour.
+     *
+     * # Returns
+     *
+     * The event ID of the newly sent event.
+     *
+     * [`Client::is_sticky_events_supported`]: crate::client::Client::is_sticky_events_supported
+     */
+    func sendStickyRaw(eventType: String, content: String, durationMs: UInt64) async throws  -> String
+    
+    /**
+     * The sticky events that are currently live in this room.
+     */
+    func stickyEvents()  -> [StickyEvent]
+    
+    /**
+     * Subscribe to the sticky events of this room.
+     *
+     * The listener first receives a [`StickyEventsUpdate::Reset`] with the
+     * sticky events that are currently live, then a
+     * [`StickyEventsUpdate::Changes`] for every change. Should it fall behind
+     * and miss changes, it receives another [`StickyEventsUpdate::Reset`] to
+     * catch up with.
+     */
+    func subscribeToStickyEvents(listener: StickyEventsListener)  -> TaskHandle
     
 }
 open class Room: RoomProtocol, @unchecked Sendable {
@@ -10700,7 +11265,7 @@ open func clearComposerDraft(threadRoot: String?)async throws   {
      *
      * # Arguments
      *
-     * * `rtc_notification_event_id` - the event id of the m.rtc.notification
+     * - `rtc_notification_event_id` - the event id of the m.rtc.notification
      * event.
      */
 open func declineCall(rtcNotificationEventId: String)async throws   {
@@ -10948,15 +11513,16 @@ open func id() -> String  {
 }
     
     /**
-     * Set the local trust for the given devices to `LocalTrust::Ignored`
-     * and resend messages that failed to send because said devices are
-     * unverified (in response to
+     * Set the local trust for the given devices to `LocalTrust::Ignored` and
+     * resend messages that failed to send because said devices are unverified
+     * (in response to
      * `SessionRecipientCollectionError::VerifiedUserHasUnsignedDevice`).
+     *
      * # Arguments
      *
-     * * `devices` - The map of users identifiers to device identifiers
+     * - `devices` - The map of users identifiers to device identifiers
      * received in the error
-     * * `transaction_id` - The send queue transaction identifier of the local
+     * - `transaction_id` - The send queue transaction identifier of the local
      * echo the send error applies to
      */
 open func ignoreDeviceTrustAndResend(devices: [String: [String]], sendHandle: SendHandle)async throws   {
@@ -11312,11 +11878,11 @@ open func loadOrFetchEventWithRelations(eventId: String, relationFilter: [Relati
      * optionally scoped to a thread.
      *
      * The receipt is read from the local store, which is fed by sync, so it
-     * also reflects receipts sent by the user's other devices. Returns
-     * `None` if the user has no matching receipt in this room.
+     * also reflects receipts sent by the user's other devices. Returns `None`
+     * if the user has no matching receipt in this room.
      *
-     * Note: [`ReceiptType::FullyRead`] is a marker, not an event receipt,
-     * and is rejected.
+     * Note: [`ReceiptType::FullyRead`] is a marker, not an event receipt, and
+     * is rejected.
      */
 open func loadUserReceipt(receiptType: ReceiptType, thread: ReceiptThread, userId: String)async throws  -> UserReceipt?  {
     return
@@ -11341,9 +11907,8 @@ open func loadUserReceipt(receiptType: ReceiptType, thread: ReceiptThread, userI
      * **Warning:** using this method is **NOT** recommended, as providing the
      * latest event id can cause incorrect read receipts. This method won't
      * check if sending the read receipt is necessary or valid. It should
-     * *only* be used when some constraint prevents you from instantiating a
-     * [`Timeline`]. For any other case use [`Timeline::mark_as_read`]
-     * instead.
+     * _only_ be used when some constraint prevents you from instantiating a
+     * [`Timeline`]. For any other case use [`Timeline::mark_as_read`] instead.
      */
 open func markAsFullyReadUnchecked(eventId: String)async throws   {
     return
@@ -11589,6 +12154,7 @@ open func previewRoom(via: [String])async throws  -> RoomPreview  {
      * Publish a new room alias for this room in the room directory.
      *
      * Returns:
+     *
      * - `true` if the room alias didn't exist and it's now published.
      * - `false` if the room alias was already present so it couldn't be
      * published.
@@ -11626,9 +12192,8 @@ open func rawName() -> String?  {
      *
      * # Arguments
      *
-     * * `event_id` - The ID of the event to redact
-     *
-     * * `reason` - The reason for the event being redacted (optional). its
+     * - `event_id` - The ID of the event to redact
+     * - `reason` - The reason for the event being redacted (optional). its
      * transaction ID (optional). If not given one is created.
      */
 open func redact(eventId: String, reason: String?)async throws   {
@@ -11670,6 +12235,7 @@ open func removeAvatar()async throws   {
      * Remove an existing room alias for this room in the room directory.
      *
      * Returns:
+     *
      * - `true` if the room alias was present and it's now removed from the
      * room directory.
      * - `false` if the room alias didn't exist so it couldn't be removed.
@@ -11695,11 +12261,9 @@ open func removeRoomAliasFromRoomDirectory(alias: String)async throws  -> Bool  
      *
      * # Arguments
      *
-     * * `event_id` - The ID of the event to report
-     *
-     * * `reason` - The reason for the event being reported (optional).
-     *
-     * * `score` - The score to rate this content as where -100 is most
+     * - `event_id` - The ID of the event to report
+     * - `reason` - The reason for the event being reported (optional).
+     * - `score` - The score to rate this content as where -100 is most
      * offensive and 0 is inoffensive (optional).
      */
 open func reportContent(eventId: String, reason: String?)async throws   {
@@ -11719,12 +12283,12 @@ open func reportContent(eventId: String, reason: String?)async throws   {
 }
     
     /**
-     * Reports a room as inappropriate to the server.
-     * The caller is not required to be joined to the room to report it.
+     * Reports a room as inappropriate to the server. The caller is not
+     * required to be joined to the room to report it.
      *
      * # Arguments
      *
-     * * `reason` - The reason the room is being reported.
+     * - `reason` - The reason the room is being reported.
      *
      * # Errors
      *
@@ -11845,8 +12409,10 @@ open func sendLiveLocation(geoUri: String)async throws   {
      * * `event_type` - The type of the event to send.
      *
      * * `content` - The content of the event to send encoded as JSON string.
+     *
+     * Returns the event ID of the newly sent event.
      */
-open func sendRaw(eventType: String, content: String)async throws   {
+open func sendRaw(eventType: String, content: String)async throws  -> String  {
     return
         try  await uniffiRustCallAsync(
             rustFutureFunc: {
@@ -11854,10 +12420,10 @@ open func sendRaw(eventType: String, content: String)async throws   {
                         self.uniffiCloneHandle(),FfiConverterString.lower(eventType),FfiConverterString.lower(content)
                 )
             },
-            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
-            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
-            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
-            liftFunc: { $0 },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_rust_buffer,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_rust_buffer,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterString.lift,
             errorHandler: FfiConverterTypeClientError_lift
         )
 }
@@ -11867,11 +12433,10 @@ open func sendRaw(eventType: String, content: String)async throws   {
      * scoped to a thread.
      *
      * This allows sending receipts for events without instantiating the
-     * [`Timeline`] they belong to, e.g. marking a thread as read from its
-     * root and latest event ids. Note that this won't check whether sending
-     * the receipt is necessary or valid (i.e. it can move a receipt
-     * backwards); prefer [`Timeline::send_single_receipt`] when a timeline
-     * is available.
+     * [`Timeline`] they belong to, e.g. marking a thread as read from its root
+     * and latest event ids. Note that this won't check whether sending the
+     * receipt is necessary or valid (i.e. it can move a receipt backwards);
+     * prefer [`Timeline::send_single_receipt`] when a timeline is available.
      */
 open func sendSingleReceipt(receiptType: ReceiptType, thread: ReceiptThread, eventId: String)async throws   {
     return
@@ -11894,13 +12459,13 @@ open func sendSingleReceipt(receiptType: ReceiptType, thread: ReceiptThread, eve
      *
      * # Arguments
      *
-     * * `event_type` - The type of the state event to send (e.g.
+     * - `event_type` - The type of the state event to send (e.g.
      * `"m.room.name"` or a custom type).
      *
-     * * `state_key` - A unique key which defines the overwriting semantics for
+     * - `state_key` - A unique key which defines the overwriting semantics for
      * this piece of room state. This is often an empty string.
      *
-     * * `content` - The content of the state event encoded as a JSON string.
+     * - `content` - The content of the state event encoded as a JSON string.
      *
      * Returns the event ID of the newly created state event.
      */
@@ -11992,8 +12557,8 @@ open func setOwnMemberDisplayName(displayName: String?)async throws   {
      * root event id.
      *
      * If `subscribed` is `true`, it will subscribe to the thread, with a
-     * precision that the subscription was manually requested by the user
-     * (i.e. not automatic).
+     * precision that the subscription was manually requested by the user (i.e.
+     * not automatic).
      *
      * If the thread was already subscribed to (resp. unsubscribed from), while
      * trying to subscribe to it (resp. unsubscribe from it), it will do
@@ -12079,7 +12644,7 @@ open func startLiveLocationShare(durationMillis: UInt64)async throws  -> String 
      *
      * # Arguments
      *
-     * * `event_type` - The type of the state events to read. For a type that
+     * - `event_type` - The type of the state events to read. For a type that
      * has no variant of its own, build one from its string representation
      * with `stateEventTypeFromString("com.example.custom")`.
      *
@@ -12126,8 +12691,8 @@ open func stopLiveLocationShare()async throws   {
      * Subscribes to call decline for a currently ringing call, using a
      * `listener` to be notified when someone declines.
      *
-     * Will error if `rtc_notification_event_id` is not a valid event id.
-     * Use the [`TaskHandle`] to cancel the subscription.
+     * Will error if `rtc_notification_event_id` is not a valid event id. Use
+     * the [`TaskHandle`] to cancel the subscription.
      */
 open func subscribeToCallDeclineEvents(rtcNotificationEventId: String, listener: CallDeclineListener)throws  -> TaskHandle  {
     return try  FfiConverterTypeTaskHandle_lift(try rustCallWithError(FfiConverterTypeClientError_lift) {
@@ -12160,9 +12725,8 @@ open func subscribeToIdentityStatusChanges(listener: IdentityStatusChangeListene
      * Subscribes to requests to join this room (knock member events), using a
      * `listener` to be notified of the changes.
      *
-     * The current requests to join the room will be emitted immediately
-     * when subscribing, along with a [`TaskHandle`] to cancel the
-     * subscription.
+     * The current requests to join the room will be emitted immediately when
+     * subscribing, along with a [`TaskHandle`] to cancel the subscription.
      */
 open func subscribeToKnockRequests(listener: KnockRequestsListener)async throws  -> TaskHandle  {
     return
@@ -12194,8 +12758,8 @@ open func subscribeToRoomInfoUpdates(listener: RoomInfoListener) -> TaskHandle  
      * Subscribe to all send queue updates in this room.
      *
      * The given listener will be immediately called with
-     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in
-     * the queue.
+     * `RoomSendQueueUpdate::NewLocalEvent` for each local echo existing in the
+     * queue.
      */
 open func subscribeToSendQueueUpdates(listener: SendQueueListener)async throws  -> TaskHandle  {
     return
@@ -12217,15 +12781,15 @@ open func subscribeToSendQueueUpdates(listener: SendQueueListener)async throws  
      * Subscribe to the room state events of the given type.
      *
      * The listener is called with the full current list of state events of
-     * that type, one per state key, immediately and then after every sync
-     * that changed any of them. All the changes of one sync are reported as a
+     * that type, one per state key, immediately and then after every sync that
+     * changed any of them. All the changes of one sync are reported as a
      * single snapshot.
      *
      * Use the returned [`TaskHandle`] to cancel the subscription.
      *
      * # Arguments
      *
-     * * `event_type` - The type of the state events to listen to. For a type
+     * - `event_type` - The type of the state events to listen to. For a type
      * that has no variant of its own, build one from its string
      * representation with `stateEventTypeFromString("com.example.custom")`.
      */
@@ -12485,11 +13049,11 @@ open func updateRoomVisibility(visibility: RoomVisibility)async throws   {
      *
      * # Arguments
      *
-     * * `mime_type` - The mime description of the avatar, for example
+     * - `mime_type` - The mime description of the avatar, for example
      * image/jpeg
-     * * `data` - The raw data that will be uploaded to the homeserver's
+     * - `data` - The raw data that will be uploaded to the homeserver's
      * content repository
-     * * `media_info` - The media info used as avatar image info.
+     * - `media_info` - The media info used as avatar image info.
      */
 open func uploadAvatar(mimeType: String, data: Data, mediaInfo: ImageInfo?)async throws   {
     return
@@ -12508,15 +13072,15 @@ open func uploadAvatar(mimeType: String, data: Data, mediaInfo: ImageInfo?)async
 }
     
     /**
-     * Remove verification requirements for the given users and
-     * resend messages that failed to send because their identities were no
-     * longer verified (in response to
+     * Remove verification requirements for the given users and resend messages
+     * that failed to send because their identities were no longer verified (in
+     * response to
      * `SessionRecipientCollectionError::VerifiedUserChangedIdentity`)
      *
      * # Arguments
      *
-     * * `user_ids` - The list of users identifiers received in the error
-     * * `transaction_id` - The send queue transaction identifier of the local
+     * - `user_ids` - The list of users identifiers received in the error
+     * - `transaction_id` - The send queue transaction identifier of the local
      * echo the send error applies to
      */
 open func withdrawVerificationAndResend(userIds: [String], sendHandle: SendHandle)async throws   {
@@ -12533,6 +13097,102 @@ open func withdrawVerificationAndResend(userIds: [String], sendHandle: SendHandl
             liftFunc: { $0 },
             errorHandler: FfiConverterTypeClientError_lift
         )
+}
+    
+    /**
+     * Subscribe to the message-like events of the given type in this room.
+     *
+     * The listener is called with every event of that type that a sync brings
+     * into the room's timeline from now on, decrypted if it was encrypted.
+     *
+     * This is built on the SDK's sync event handlers, so events come from sync
+     * only (not from pagination).
+     * An event that couldn't be decrypted during sync will not be reported
+     * even if it gets decrypted later.
+     *
+     * Use the returned [`TaskHandle`] to cancel the subscription.
+     *
+     * # Arguments
+     *
+     * - `event_type` - The type of the events to listen to. Build one from its
+     * string representation with
+     * `messageLikeEventTypeFromString("org.example.type")`.
+     */
+open func subscribeToMessageLikeEvents(eventType: MessageLikeEventType, listener: RoomMessageLikeEventsListener) -> TaskHandle  {
+    return try!  FfiConverterTypeTaskHandle_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_room_subscribe_to_message_like_events(
+            self.uniffiCloneHandle(),
+        FfiConverterTypeMessageLikeEventType_lower(eventType),
+        FfiConverterCallbackInterfaceRoomMessageLikeEventsListener_lower(listener),uniffiCallStatus
+    )
+})
+}
+    
+    /**
+     * Send a sticky event to this room.
+     * Note that if the homeserver doesn't support sticky events, it will
+     * ignore the duration and send the event unsticky. Server support can
+     * be checked with [`Client::is_sticky_events_supported`].
+     *
+     * # Arguments
+     *
+     * - `event_type` - The type of the event to send.
+     * - `content` - The content of the event to send encoded as JSON string.
+     * - `duration_ms` - How long the event stays sticky for, in milliseconds,
+     * clamped to one hour.
+     *
+     * # Returns
+     *
+     * The event ID of the newly sent event.
+     *
+     * [`Client::is_sticky_events_supported`]: crate::client::Client::is_sticky_events_supported
+     */
+open func sendStickyRaw(eventType: String, content: String, durationMs: UInt64)async throws  -> String  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_room_send_sticky_raw(
+                        self.uniffiCloneHandle(),FfiConverterString.lower(eventType),FfiConverterString.lower(content),FfiConverterUInt64.lower(durationMs)
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_rust_buffer,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_rust_buffer,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_rust_buffer,
+            liftFunc: FfiConverterString.lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
+}
+    
+    /**
+     * The sticky events that are currently live in this room.
+     */
+open func stickyEvents() -> [StickyEvent]  {
+    return try!  FfiConverterSequenceTypeStickyEvent.lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_room_sticky_events(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+    /**
+     * Subscribe to the sticky events of this room.
+     *
+     * The listener first receives a [`StickyEventsUpdate::Reset`] with the
+     * sticky events that are currently live, then a
+     * [`StickyEventsUpdate::Changes`] for every change. Should it fall behind
+     * and miss changes, it receives another [`StickyEventsUpdate::Reset`] to
+     * catch up with.
+     */
+open func subscribeToStickyEvents(listener: StickyEventsListener) -> TaskHandle  {
+    return try!  FfiConverterTypeTaskHandle_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_room_subscribe_to_sticky_events(
+            self.uniffiCloneHandle(),
+        FfiConverterCallbackInterfaceStickyEventsListener_lower(listener),uniffiCallStatus
+    )
+})
 }
     
 
@@ -12586,8 +13246,8 @@ public func FfiConverterTypeRoom_lower(_ value: Room) -> UInt64 {
 
 
 /**
- * A helper for performing room searches in the room directory.
- * The way this is intended to be used is:
+ * A helper for performing room searches in the room directory. The way this is
+ * intended to be used is:
  *
  * 1. Register a callback using [`RoomDirectorySearch::results`].
  * 2. Start the room search with [`RoomDirectorySearch::search`].
@@ -12619,9 +13279,9 @@ public protocol RoomDirectorySearchProtocol: AnyObject, Sendable {
     /**
      * Starts a filtered search for the server.
      *
-     * If the `filter` is not provided it will search for all the rooms.
-     * You can specify a `batch_size` to control the number of rooms to fetch
-     * per request.
+     * If the `filter` is not provided it will search for all the rooms. You
+     * can specify a `batch_size` to control the number of rooms to fetch per
+     * request.
      *
      * If the `via_server` is not provided it will search in the current
      * homeserver by default.
@@ -12632,8 +13292,8 @@ public protocol RoomDirectorySearchProtocol: AnyObject, Sendable {
     
 }
 /**
- * A helper for performing room searches in the room directory.
- * The way this is intended to be used is:
+ * A helper for performing room searches in the room directory. The way this is
+ * intended to be used is:
  *
  * 1. Register a callback using [`RoomDirectorySearch::results`].
  * 2. Start the room search with [`RoomDirectorySearch::search`].
@@ -12773,9 +13433,9 @@ open func results(listener: RoomDirectorySearchEntriesListener)async  -> TaskHan
     /**
      * Starts a filtered search for the server.
      *
-     * If the `filter` is not provided it will search for all the rooms.
-     * You can specify a `batch_size` to control the number of rooms to fetch
-     * per request.
+     * If the `filter` is not provided it will search for all the rooms. You
+     * can specify a `batch_size` to control the number of rooms to fetch per
+     * request.
      *
      * If the `via_server` is not provided it will search in the current
      * homeserver by default.
@@ -13807,8 +14467,8 @@ public protocol RoomPowerLevelsProtocol: AnyObject, Sendable {
     func canUserRedactOther(userId: String) throws  -> Bool
     
     /**
-     * Returns true if the user with the given user_id is able to redact
-     * their own messages in the room.
+     * Returns true if the user with the given user_id is able to redact their
+     * own messages in the room.
      *
      * The call may fail if there is an error in getting the power levels.
      */
@@ -14099,8 +14759,8 @@ open func canUserRedactOther(userId: String)throws  -> Bool  {
 }
     
     /**
-     * Returns true if the user with the given user_id is able to redact
-     * their own messages in the room.
+     * Returns true if the user with the given user_id is able to redact their
+     * own messages in the room.
      *
      * The call may fail if there is an error in getting the power levels.
      */
@@ -14503,9 +15163,9 @@ public protocol SearchServiceProtocol: AnyObject, Sendable {
     func paginationState()  -> SearchServicePaginationState
     
     /**
-     * Set (or update) the search query.
-     * Clears the current results, restarts pagination from scratch and loads
-     * the first page. Call [`Self::paginate`] to load any further pages.
+     * Set (or update) the search query. Clears the current results, restarts
+     * pagination from scratch and loads the first page. Call
+     * [`Self::paginate`] to load any further pages.
      */
     func setQuery(query: String) async throws 
     
@@ -14609,9 +15269,9 @@ open func paginationState() -> SearchServicePaginationState  {
 }
     
     /**
-     * Set (or update) the search query.
-     * Clears the current results, restarts pagination from scratch and loads
-     * the first page. Call [`Self::paginate`] to load any further pages.
+     * Set (or update) the search query. Clears the current results, restarts
+     * pagination from scratch and loads the first page. Call
+     * [`Self::paginate`] to load any further pages.
      */
 open func setQuery(query: String)async throws   {
     return
@@ -14722,8 +15382,8 @@ public protocol SecretsBundleWithUserIdProtocol: AnyObject, Sendable {
      * Does the bundle contain a backup key.
      *
      * Since enabling a backup is optional, the backup key might be missing
-     * from the bundle. Returns `false` if the backup key is missing,
-     * otherwise `true`.
+     * from the bundle. Returns `false` if the backup key is missing, otherwise
+     * `true`.
      */
     func containsBackupKey()  -> Bool
     
@@ -14829,8 +15489,8 @@ public static func fromStr(userId: String, bundle: String, backupInfo: String)th
      * Does the bundle contain a backup key.
      *
      * Since enabling a backup is optional, the backup key might be missing
-     * from the bundle. Returns `false` if the backup key is missing,
-     * otherwise `true`.
+     * from the bundle. Returns `false` if the backup key is missing, otherwise
+     * `true`.
      */
 open func containsBackupKey() -> Bool  {
     return try!  FfiConverterBool.lift(try! rustCall() {
@@ -15205,8 +15865,8 @@ public func FfiConverterTypeSendGalleryJoinHandle_lower(_ value: SendGalleryJoin
 public protocol SendHandleProtocol: AnyObject, Sendable {
     
     /**
-     * Try to abort the sending of the current event, with an optional
-     * `reason` applied to the redaction when the event went out anyway.
+     * Try to abort the sending of the current event, with an optional `reason`
+     * applied to the redaction when the event went out anyway.
      *
      * If this returns `true`, then the sending could be aborted, because the
      * event hasn't been sent yet. Otherwise, if this returns `false`, the
@@ -15223,12 +15883,12 @@ public protocol SendHandleProtocol: AnyObject, Sendable {
      *
      * This is useful for example, when there's a
      * `SessionRecipientCollectionError::VerifiedUserChangedIdentity` error;
-     * the user may have re-verified on a different device and would now
-     * like to send the failed message that's waiting on this device.
+     * the user may have re-verified on a different device and would now like
+     * to send the failed message that's waiting on this device.
      *
      * # Arguments
      *
-     * * `transaction_id` - The send queue transaction identifier of the local
+     * - `transaction_id` - The send queue transaction identifier of the local
      * echo that should be unwedged.
      */
     func tryResend() async throws 
@@ -15291,8 +15951,8 @@ open class SendHandle: SendHandleProtocol, @unchecked Sendable {
 
     
     /**
-     * Try to abort the sending of the current event, with an optional
-     * `reason` applied to the redaction when the event went out anyway.
+     * Try to abort the sending of the current event, with an optional `reason`
+     * applied to the redaction when the event went out anyway.
      *
      * If this returns `true`, then the sending could be aborted, because the
      * event hasn't been sent yet. Otherwise, if this returns `false`, the
@@ -15323,12 +15983,12 @@ open func abort(reason: String? = nil)async throws  -> Bool  {
      *
      * This is useful for example, when there's a
      * `SessionRecipientCollectionError::VerifiedUserChangedIdentity` error;
-     * the user may have re-verified on a different device and would now
-     * like to send the failed message that's waiting on this device.
+     * the user may have re-verified on a different device and would now like
+     * to send the failed message that's waiting on this device.
      *
      * # Arguments
      *
-     * * `transaction_id` - The send queue transaction identifier of the local
+     * - `transaction_id` - The send queue transaction identifier of the local
      * echo that should be unwedged.
      */
 open func tryResend()async throws   {
@@ -15407,8 +16067,9 @@ public protocol SessionVerificationControllerProtocol: AnyObject, Sendable {
     /**
      * Set this particular request as the currently active one and register for
      * events pertaining it.
-     * * `sender_id` - The user requesting verification.
-     * * `flow_id` - - The ID that uniquely identifies the verification flow.
+     *
+     * - `sender_id` - The user requesting verification.
+     * - `flow_id` - - The ID that uniquely identifies the verification flow.
      */
     func acknowledgeVerificationRequest(senderId: String, flowId: String) async throws 
     
@@ -15428,6 +16089,11 @@ public protocol SessionVerificationControllerProtocol: AnyObject, Sendable {
     func declineVerification() async throws 
     
     /**
+     * Get the cancel info for the verification request, if it was cancelled
+     */
+    func requestCancelInfo()  -> SessionVerificationCancelInfo?
+    
+    /**
      * Request verification for the current device
      */
     func requestDeviceVerification() async throws 
@@ -15436,6 +16102,11 @@ public protocol SessionVerificationControllerProtocol: AnyObject, Sendable {
      * Request verification for the given user
      */
     func requestUserVerification(userId: String) async throws 
+    
+    /**
+     * Get the cancel info for the SAS verification, if it was cancelled
+     */
+    func sasCancelInfo()  -> SessionVerificationCancelInfo?
     
     func setDelegate(delegate: SessionVerificationControllerDelegate?) 
     
@@ -15521,8 +16192,9 @@ open func acceptVerificationRequest()async throws   {
     /**
      * Set this particular request as the currently active one and register for
      * events pertaining it.
-     * * `sender_id` - The user requesting verification.
-     * * `flow_id` - - The ID that uniquely identifies the verification flow.
+     *
+     * - `sender_id` - The user requesting verification.
+     * - `flow_id` - - The ID that uniquely identifies the verification flow.
      */
 open func acknowledgeVerificationRequest(senderId: String, flowId: String)async throws   {
     return
@@ -15598,6 +16270,18 @@ open func declineVerification()async throws   {
 }
     
     /**
+     * Get the cancel info for the verification request, if it was cancelled
+     */
+open func requestCancelInfo() -> SessionVerificationCancelInfo?  {
+    return try!  FfiConverterOptionTypeSessionVerificationCancelInfo.lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_sessionverificationcontroller_request_cancel_info(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+    /**
      * Request verification for the current device
      */
 open func requestDeviceVerification()async throws   {
@@ -15633,6 +16317,18 @@ open func requestUserVerification(userId: String)async throws   {
             liftFunc: { $0 },
             errorHandler: FfiConverterTypeClientError_lift
         )
+}
+    
+    /**
+     * Get the cancel info for the SAS verification, if it was cancelled
+     */
+open func sasCancelInfo() -> SessionVerificationCancelInfo?  {
+    return try!  FfiConverterOptionTypeSessionVerificationCancelInfo.lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_sessionverificationcontroller_sas_cancel_info(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
 }
     
 open func setDelegate(delegate: SessionVerificationControllerDelegate?)  {try! rustCall() {
@@ -15843,15 +16539,15 @@ public func FfiConverterTypeSessionVerificationEmoji_lower(_ value: SessionVerif
 
 
 /**
- * The `SpaceRoomList` represents a paginated list of direct rooms
- * that belong to a particular space.
+ * The `SpaceRoomList` represents a paginated list of direct rooms that belong
+ * to a particular space.
  *
  * It can be used to paginate through the list (and have live updates on the
  * pagination state) as well as subscribe to changes as rooms are joined or
  * left.
  *
- * The `SpaceRoomList` also automatically subscribes to client room changes
- * and updates the list accordingly as rooms are joined or left.
+ * The `SpaceRoomList` also automatically subscribes to client room changes and
+ * updates the list accordingly as rooms are joined or left.
  */
 public protocol SpaceRoomListProtocol: AnyObject, Sendable {
     
@@ -15872,9 +16568,9 @@ public protocol SpaceRoomListProtocol: AnyObject, Sendable {
      * called.
      *
      * This is useful when you've added or removed children from the space as
-     * the list is based on a cached state that lives server-side, meaning
-     * the /hierarchy request needs to be restarted from scratch to pick up
-     * the changes.
+     * the list is based on a cached state that lives server-side, meaning the
+     * /hierarchy request needs to be restarted from scratch to pick up the
+     * changes.
      */
     func reset() async 
     
@@ -15905,15 +16601,15 @@ public protocol SpaceRoomListProtocol: AnyObject, Sendable {
     
 }
 /**
- * The `SpaceRoomList` represents a paginated list of direct rooms
- * that belong to a particular space.
+ * The `SpaceRoomList` represents a paginated list of direct rooms that belong
+ * to a particular space.
  *
  * It can be used to paginate through the list (and have live updates on the
  * pagination state) as well as subscribe to changes as rooms are joined or
  * left.
  *
- * The `SpaceRoomList` also automatically subscribes to client room changes
- * and updates the list accordingly as rooms are joined or left.
+ * The `SpaceRoomList` also automatically subscribes to client room changes and
+ * updates the list accordingly as rooms are joined or left.
  */
 open class SpaceRoomList: SpaceRoomListProtocol, @unchecked Sendable {
     fileprivate let handle: UInt64
@@ -16006,9 +16702,9 @@ open func paginationState() -> SpaceRoomListPaginationState  {
      * called.
      *
      * This is useful when you've added or removed children from the space as
-     * the list is based on a cached state that lives server-side, meaning
-     * the /hierarchy request needs to be restarted from scratch to pick up
-     * the changes.
+     * the list is based on a cached state that lives server-side, meaning the
+     * /hierarchy request needs to be restarted from scratch to pick up the
+     * changes.
      */
 open func reset()async   {
     return
@@ -16186,15 +16882,14 @@ public protocol SpaceServiceProtocol: AnyObject, Sendable {
      * space or room.
      *
      * This is a much cheaper version of [`Self::joined_parents_of_child()`]
-     * that doesn't build any `SpaceRoom` instances, it only reads the
-     * existing space graph.
+     * that doesn't build any `SpaceRoom` instances, it only reads the existing
+     * space graph.
      *
      * The returned IDs are always joined spaces, as that's all the space graph
      * includes. Note that an empty result either means that the child is a
      * top-level space (which has no direct parents) or the child isn't part of
-     * the space graph at all.
-     * See [`Self::top_level_ancestors_of()`] if you need that particular level
-     * of detail.
+     * the space graph at all. See [`Self::top_level_ancestors_of()`] if you
+     * need that particular level of detail.
      *
      * Note: Unlike [`Self::top_level_joined_spaces()`], this method does not
      * recompute the space graph nor notify subscribers about changes.
@@ -16221,8 +16916,8 @@ public protocol SpaceServiceProtocol: AnyObject, Sendable {
     
     /**
      * Space filters provide access to a custom subset of the space graph that
-     * can be used in tandem with the [`crate::RoomListService`] to narrow
-     * down the presented rooms.
+     * can be used in tandem with the [`crate::RoomListService`] to narrow down
+     * the presented rooms.
      *
      * They are limited to the first 2 levels of the graph, with the first
      * level only containing direct descendants while the second holds the rest
@@ -16267,8 +16962,8 @@ public protocol SpaceServiceProtocol: AnyObject, Sendable {
     
     /**
      * Returns a list of all the top-level joined spaces. It will eagerly
-     * compute the latest version and also notify subscribers if there were
-     * any changes.
+     * compute the latest version and also notify subscribers if there were any
+     * changes.
      */
     func topLevelJoinedSpaces() async  -> [SpaceRoom]
     
@@ -16398,15 +17093,14 @@ open func getSpaceRoom(roomId: String)async throws  -> SpaceRoom?  {
      * space or room.
      *
      * This is a much cheaper version of [`Self::joined_parents_of_child()`]
-     * that doesn't build any `SpaceRoom` instances, it only reads the
-     * existing space graph.
+     * that doesn't build any `SpaceRoom` instances, it only reads the existing
+     * space graph.
      *
      * The returned IDs are always joined spaces, as that's all the space graph
      * includes. Note that an empty result either means that the child is a
      * top-level space (which has no direct parents) or the child isn't part of
-     * the space graph at all.
-     * See [`Self::top_level_ancestors_of()`] if you need that particular level
-     * of detail.
+     * the space graph at all. See [`Self::top_level_ancestors_of()`] if you
+     * need that particular level of detail.
      *
      * Note: Unlike [`Self::top_level_joined_spaces()`], this method does not
      * recompute the space graph nor notify subscribers about changes.
@@ -16489,8 +17183,8 @@ open func removeChildFromSpace(childId: String, spaceId: String)async throws   {
     
     /**
      * Space filters provide access to a custom subset of the space graph that
-     * can be used in tandem with the [`crate::RoomListService`] to narrow
-     * down the presented rooms.
+     * can be used in tandem with the [`crate::RoomListService`] to narrow down
+     * the presented rooms.
      *
      * They are limited to the first 2 levels of the graph, with the first
      * level only containing direct descendants while the second holds the rest
@@ -16608,8 +17302,8 @@ open func topLevelAncestorsOf(childId: String)async throws  -> [String]  {
     
     /**
      * Returns a list of all the top-level joined spaces. It will eagerly
-     * compute the latest version and also notify subscribers if there were
-     * any changes.
+     * compute the latest version and also notify subscribers if there were any
+     * changes.
      */
 open func topLevelJoinedSpaces()async  -> [SpaceRoom]  {
     return
@@ -16730,11 +17424,11 @@ open class Span: SpanProtocol, @unchecked Sendable {
      * Create a span originating at the given callsite (file, line and column).
      *
      * The target should be something like a module path, and can be referenced
-     * in the filter string given to `setup_tracing`. `level` and `target`
-     * for a callsite are fixed at the first creation of a span for that
-     * callsite and can not be changed afterwards, i.e. the level and
-     * target passed for second and following creation of a span with the same
-     * callsite will be ignored.
+     * in the filter string given to `setup_tracing`. `level` and `target` for
+     * a callsite are fixed at the first creation of a span for that callsite
+     * and can not be changed afterwards, i.e. the level and target passed for
+     * second and following creation of a span with the same callsite will be
+     * ignored.
      *
      * This function leaks a little bit of memory for each unique (file +
      * line + level + target + name) it is called with. Please make sure that
@@ -16749,7 +17443,7 @@ open class Span: SpanProtocol, @unchecked Sendable {
      * work, exiting a span must be done on the same thread where it was
      * entered. It is possible to enter a span on multiple threads, in which
      * case it should also be exited on all of them individually; that is,
-     * unless you *want* the span to be attached to all further events created
+     * unless you _want_ the span to be attached to all further events created
      * on that thread.
      */
 public convenience init(file: String, line: UInt32?, level: LogLevel, target: String, name: String, bridgeTraceId: String?) {
@@ -16788,9 +17482,9 @@ public static func current() -> Span  {
     
     /**
      * Creates a [`Span`] that acts as a bridge between the client spans and
-     * the SDK ones, allowing them to be joined in Sentry. This function
-     * will only return a valid span if the `sentry` feature is enabled,
-     * otherwise it will return a noop span.
+     * the SDK ones, allowing them to be joined in Sentry. This function will
+     * only return a valid span if the `sentry` feature is enabled, otherwise
+     * it will return a noop span.
      */
 public static func newBridgeSpan(target: String, parentTraceId: String?) -> Span  {
     return try!  FfiConverterTypeSpan_lift(try! rustCall() {
@@ -16907,12 +17601,11 @@ public protocol SqliteStoreBuilderProtocol: AnyObject, Sendable {
      * remove their brute-force protection.
      *
      * This migrates a passphrase-based store whose passphrase was created
-     * by base64-encoding a randomly generated key to a key-based
-     * setup.
+     * by base64-encoding a randomly generated key to a key-based setup.
      *
      * Once this function has been called,
-     * [`SqliteStoreBuilder::passphrase`] can no longer be used with
-     * the passphrase.
+     * [`SqliteStoreBuilder::passphrase`] can no longer be used with the
+     * passphrase.
      *
      * [`SqliteStoreBuilder::key`] can be used with the original key,
      * before it was base64-encoded.
@@ -16957,8 +17650,8 @@ public protocol SqliteStoreBuilderProtocol: AnyObject, Sendable {
      * Tell the client that the system is memory constrained, like in a
      * push notification process for example.
      *
-     * So far, at the time of writing (2025-04-07), it changes
-     * the defaults of [`SqliteStoreConfig`]. Please check
+     * So far, at the time of writing (2025-04-07), it changes the defaults
+     * of [`SqliteStoreConfig`]. Please check
      * [`SqliteStoreConfig::with_low_memory_config`].
      */
     func systemIsMemoryConstrained()  -> SqliteStoreBuilder
@@ -17069,12 +17762,11 @@ open func cacheSize(cacheSize: UInt32?) -> SqliteStoreBuilder  {
      * remove their brute-force protection.
      *
      * This migrates a passphrase-based store whose passphrase was created
-     * by base64-encoding a randomly generated key to a key-based
-     * setup.
+     * by base64-encoding a randomly generated key to a key-based setup.
      *
      * Once this function has been called,
-     * [`SqliteStoreBuilder::passphrase`] can no longer be used with
-     * the passphrase.
+     * [`SqliteStoreBuilder::passphrase`] can no longer be used with the
+     * passphrase.
      *
      * [`SqliteStoreBuilder::key`] can be used with the original key,
      * before it was base64-encoded.
@@ -17160,8 +17852,8 @@ open func poolMaxSize(poolMaxSize: UInt32?) -> SqliteStoreBuilder  {
      * Tell the client that the system is memory constrained, like in a
      * push notification process for example.
      *
-     * So far, at the time of writing (2025-04-07), it changes
-     * the defaults of [`SqliteStoreConfig`]. Please check
+     * So far, at the time of writing (2025-04-07), it changes the defaults
+     * of [`SqliteStoreConfig`]. Please check
      * [`SqliteStoreConfig::with_low_memory_config`].
      */
 open func systemIsMemoryConstrained() -> SqliteStoreBuilder  {
@@ -17235,8 +17927,8 @@ public protocol SsoHandlerProtocol: AnyObject, Sendable {
     
     /**
      * Returns the URL for starting SSO authentication. The URL should be
-     * opened in a web view. Once the web view succeeds, call `finish` with
-     * the callback URL.
+     * opened in a web view. Once the web view succeeds, call `finish` with the
+     * callback URL.
      */
     func url()  -> String
     
@@ -17318,8 +18010,8 @@ open func finish(callbackUrl: String)async throws   {
     
     /**
      * Returns the URL for starting SSO authentication. The URL should be
-     * opened in a web view. Once the web view succeeds, call `finish` with
-     * the callback URL.
+     * opened in a web view. Once the web view succeeds, call `finish` with the
+     * callback URL.
      */
 open func url() -> String  {
     return try!  FfiConverterString.lift(try! rustCall() {
@@ -17386,8 +18078,8 @@ public protocol SyncServiceProtocol: AnyObject, Sendable {
      * Force expiring both sliding sync sessions.
      *
      * This ensures that the sync service is stopped before expiring both
-     * sessions. It should be used sparingly, as it will cause a restart of
-     * the sessions on the server as well.
+     * sessions. It should be used sparingly, as it will cause a restart of the
+     * sessions on the server as well.
      */
     func expireSessions() async 
     
@@ -17457,8 +18149,8 @@ open class SyncService: SyncServiceProtocol, @unchecked Sendable {
      * Force expiring both sliding sync sessions.
      *
      * This ensures that the sync service is stopped before expiring both
-     * sessions. It should be used sparingly, as it will cause a restart of
-     * the sessions on the server as well.
+     * sessions. It should be used sparingly, as it will cause a restart of the
+     * sessions on the server as well.
      */
 open func expireSessions()async   {
     return
@@ -17598,9 +18290,8 @@ public protocol SyncServiceBuilderProtocol: AnyObject, Sendable {
      * Set a custom Sliding Sync connection ID for the room list service.
      *
      * By default [`matrix_sdk_ui::room_list_service::DEFAULT_CONNECTION_ID`]
-     * is used. Set a different value for secondary processes such as iOS
-     * Share Extensions that are not meant to reuse the main app's
-     * connection.
+     * is used. Set a different value for secondary processes such as iOS Share
+     * Extensions that are not meant to reuse the main app's connection.
      */
     func withRoomListConnectionId(connectionId: String)  -> SyncServiceBuilder
     
@@ -17713,9 +18404,8 @@ open func withParentSpan(span: Span) -> SyncServiceBuilder  {
      * Set a custom Sliding Sync connection ID for the room list service.
      *
      * By default [`matrix_sdk_ui::room_list_service::DEFAULT_CONNECTION_ID`]
-     * is used. Set a different value for secondary processes such as iOS
-     * Share Extensions that are not meant to reuse the main app's
-     * connection.
+     * is used. Set a different value for secondary processes such as iOS Share
+     * Extensions that are not meant to reuse the main app's connection.
      */
 open func withRoomListConnectionId(connectionId: String) -> SyncServiceBuilder  {
     return try!  FfiConverterTypeSyncServiceBuilder_lift(try! rustCall() {
@@ -17953,9 +18643,9 @@ public func FfiConverterTypeTaskHandle_lower(_ value: TaskHandle) -> UInt64 {
  *
  * `ThreadListService` is the FFI-facing wrapper around
  * [`matrix_sdk_ui::timeline::thread_list_service::ThreadListService`]. It
- * maintains an observable list of [`ThreadListItem`]s and exposes a
- * pagination state publisher, making it straightforward to build reactive UIs
- * on top of the thread list.
+ * maintains an observable list of [`ThreadListItem`]s and exposes a pagination
+ * state publisher, making it straightforward to build reactive UIs on top of
+ * the thread list.
  *
  * Obtain an instance via [`Room::thread_list_service`].
  */
@@ -18011,9 +18701,9 @@ public protocol ThreadListServiceProtocol: AnyObject, Sendable {
  *
  * `ThreadListService` is the FFI-facing wrapper around
  * [`matrix_sdk_ui::timeline::thread_list_service::ThreadListService`]. It
- * maintains an observable list of [`ThreadListItem`]s and exposes a
- * pagination state publisher, making it straightforward to build reactive UIs
- * on top of the thread list.
+ * maintains an observable list of [`ThreadListItem`]s and exposes a pagination
+ * state publisher, making it straightforward to build reactive UIs on top of
+ * the thread list.
  *
  * Obtain an instance via [`Room::thread_list_service`].
  */
@@ -18353,6 +19043,15 @@ public func FfiConverterTypeThreadSummary_lower(_ value: ThreadSummary) -> UInt6
 
 public protocol TimelineProtocol: AnyObject, Sendable {
     
+    /**
+     * Abort sending something on this item that hasn't gone out yet, see
+     * [`SendTarget`].
+     *
+     * Returns `false` if there was nothing of that kind left to abort, e.g.
+     * because it went out in the meantime.
+     */
+    func abortSend(itemId: EventOrTransactionId, target: SendTarget) async throws  -> Bool
+    
     func addListener(listener: TimelineListener) async  -> TaskHandle
     
     func createMessageContent(msgType: MessageType)  -> RoomMessageEventContentWithoutRelation?
@@ -18362,23 +19061,31 @@ public protocol TimelineProtocol: AnyObject, Sendable {
     /**
      * Edits an event from the timeline.
      *
-     * If it was a local event, this will *try* to edit it, if it was not
-     * being sent already. If the event was a remote event, then it will be
-     * redacted by sending an edit request to the server.
+     * If it was a local event, this will _try_ to edit it, if it was not being
+     * sent already. If the event was a remote event, then it will be redacted
+     * by sending an edit request to the server.
      *
-     * Returns whether the edit did happen. It can only return false for
-     * local events that are being processed.
+     * Returns whether the edit did happen. It can only return false for local
+     * events that are being processed.
      */
     func edit(eventOrTransactionId: EventOrTransactionId, newContent: EditedContent) async throws 
     
     /**
      * Get the edit history for the given event.
      *
-     * Returns all revisions of the event, in chronological order.
-     * The first entry is the original event content, followed by each
-     * edit in the order they were applied.
+     * Returns all revisions of the event, in chronological order. The first
+     * entry is the original event content, followed by each edit in the order
+     * they were applied.
      */
     func editRevisions(eventId: String) async throws  -> [EditRevisionRecord]
+    
+    /**
+     * Edits a message the current user sent into one with the given
+     * attachment, replacing its attachment if it had one. The caption in
+     * `params` is the whole new text: nothing of the original content is
+     * kept, and `in_reply_to` is ignored.
+     */
+    func editWithAttachment(eventId: String, params: UploadParameters, attachment: AttachmentKind) async throws 
     
     func endPoll(pollStartEventId: String, text: String) async throws 
     
@@ -18389,7 +19096,7 @@ public protocol TimelineProtocol: AnyObject, Sendable {
     /**
      * Get the current timeline item for the given event ID, if any.
      *
-     * Will return a remote event, *or* a local echo that has been sent but not
+     * Will return a remote event, _or_ a local echo that has been sent but not
      * yet replaced by a remote echo.
      *
      * It's preferable to store the timeline items in the model for your UI, if
@@ -18416,13 +19123,13 @@ public protocol TimelineProtocol: AnyObject, Sendable {
      * latest visible event.
      *
      * The latest visible event is determined from the timeline's focus kind
-     * and whether or not it hides threaded events. If no latest event can
-     * be determined and the timeline is live, the room's unread marker is
-     * unset instead.
+     * and whether or not it hides threaded events. If no latest event can be
+     * determined and the timeline is live, the room's unread marker is unset
+     * instead.
      *
      * # Arguments
      *
-     * * `receipt_type` - The type of receipt to send. When using
+     * - `receipt_type` - The type of receipt to send. When using
      * [`ReceiptType::FullyRead`], an unthreaded receipt will be sent. This
      * works even if the latest event belongs to a thread, as a threaded
      * reply also belongs to the unthreaded timeline. Otherwise the receipt
@@ -18458,7 +19165,7 @@ public protocol TimelineProtocol: AnyObject, Sendable {
      *
      * Only works for events that exist as timeline items.
      *
-     * If it was a local event, this will *try* to cancel it, if it was not
+     * If it was a local event, this will _try_ to cancel it, if it was not
      * being sent already. If the event was a remote event, then it will be
      * redacted by sending a redaction request to the server.
      *
@@ -18469,18 +19176,44 @@ public protocol TimelineProtocol: AnyObject, Sendable {
     func retryDecryption(sessionIds: [String]) 
     
     /**
-     * Queues an event in the room's send queue so it's processed for
-     * sending later.
+     * Retry sending something on this item that failed, see [`SendTarget`].
+     *
+     * Only needed after an unrecoverable failure, which parks the request
+     * until it's retried or aborted; a recoverable one goes out again when the
+     * room's send queue is re-enabled.
+     *
+     * Returns `false` if there was nothing of that kind left to retry, e.g.
+     * because it went out in the meantime.
+     */
+    func retrySend(itemId: EventOrTransactionId, target: SendTarget) async throws  -> Bool
+    
+    /**
+     * Queues an event in the room's send queue so it's processed for sending
+     * later.
      *
      * Returns an abort handle that allows to abort sending, if it hasn't
      * happened yet.
      */
     func send(msg: RoomMessageEventContentWithoutRelation) async throws  -> SendHandle
     
+    /**
+     * Sends an attachment, uploaded through the send queue.
+     */
+    func sendAttachment(params: UploadParameters, attachment: AttachmentKind) throws  -> SendAttachmentJoinHandle
+    
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Audio`.
+     */
     func sendAudio(params: UploadParameters, audioInfo: AudioInfo) throws  -> SendAttachmentJoinHandle
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::File`.
+     */
     func sendFile(params: UploadParameters, fileInfo: FileInfo) throws  -> SendAttachmentJoinHandle
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Image`.
+     */
     func sendImage(params: UploadParameters, thumbnailSource: UploadSource?, imageInfo: ImageInfo) throws  -> SendAttachmentJoinHandle
     
     func sendLocation(body: String, geoUri: String, description: String?, zoomLevel: UInt8?, assetType: AssetType?, repliedToEventId: String?) async throws 
@@ -18493,18 +19226,24 @@ public protocol TimelineProtocol: AnyObject, Sendable {
      * Send a reply.
      *
      * If the replied to event has a thread relation, it is forwarded on the
-     * reply so that clients that support threads can render the reply
-     * inside the thread. Returns a handle to abort the pending send.
+     * reply so that clients that support threads can render the reply inside
+     * the thread. Returns a handle to abort the pending send.
      */
     func sendReply(msg: RoomMessageEventContentWithoutRelation, eventId: String) async throws  -> SendHandle
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Video`.
+     */
     func sendVideo(params: UploadParameters, thumbnailSource: UploadSource?, videoInfo: VideoInfo) throws  -> SendAttachmentJoinHandle
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Voice`.
+     */
     func sendVoiceMessage(params: UploadParameters, audioInfo: AudioInfo, waveform: [Float]) throws  -> SendAttachmentJoinHandle
     
     /**
-     * Like [`Self::send`], but merges the given additional top-level fields
-     * (a JSON object, encoded as a string) into the outgoing event's content.
+     * Like [`Self::send`], but merges the given additional top-level fields (a
+     * JSON object, encoded as a string) into the outgoing event's content.
      */
     func sendWithExtraContent(msg: RoomMessageEventContentWithoutRelation, extraContentJson: String?) async throws  -> SendHandle
     
@@ -18602,6 +19341,29 @@ open class Timeline: TimelineProtocol, @unchecked Sendable {
     
 
     
+    /**
+     * Abort sending something on this item that hasn't gone out yet, see
+     * [`SendTarget`].
+     *
+     * Returns `false` if there was nothing of that kind left to abort, e.g.
+     * because it went out in the meantime.
+     */
+open func abortSend(itemId: EventOrTransactionId, target: SendTarget)async throws  -> Bool  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_timeline_abort_send(
+                        self.uniffiCloneHandle(),FfiConverterTypeEventOrTransactionId_lower(itemId),FfiConverterTypeSendTarget_lower(target)
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_i8,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_i8,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_i8,
+            liftFunc: FfiConverterBool.lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
+}
+    
 open func addListener(listener: TimelineListener)async  -> TaskHandle  {
     return
         try!  await uniffiRustCallAsync(
@@ -18648,12 +19410,12 @@ open func createPoll(question: String, answers: [String], maxSelections: UInt8, 
     /**
      * Edits an event from the timeline.
      *
-     * If it was a local event, this will *try* to edit it, if it was not
-     * being sent already. If the event was a remote event, then it will be
-     * redacted by sending an edit request to the server.
+     * If it was a local event, this will _try_ to edit it, if it was not being
+     * sent already. If the event was a remote event, then it will be redacted
+     * by sending an edit request to the server.
      *
-     * Returns whether the edit did happen. It can only return false for
-     * local events that are being processed.
+     * Returns whether the edit did happen. It can only return false for local
+     * events that are being processed.
      */
 open func edit(eventOrTransactionId: EventOrTransactionId, newContent: EditedContent)async throws   {
     return
@@ -18674,9 +19436,9 @@ open func edit(eventOrTransactionId: EventOrTransactionId, newContent: EditedCon
     /**
      * Get the edit history for the given event.
      *
-     * Returns all revisions of the event, in chronological order.
-     * The first entry is the original event content, followed by each
-     * edit in the order they were applied.
+     * Returns all revisions of the event, in chronological order. The first
+     * entry is the original event content, followed by each edit in the order
+     * they were applied.
      */
 open func editRevisions(eventId: String)async throws  -> [EditRevisionRecord]  {
     return
@@ -18690,6 +19452,28 @@ open func editRevisions(eventId: String)async throws  -> [EditRevisionRecord]  {
             completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_rust_buffer,
             freeFunc: ffi_matrix_sdk_ffi_rust_future_free_rust_buffer,
             liftFunc: FfiConverterSequenceTypeEditRevisionRecord.lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
+}
+    
+    /**
+     * Edits a message the current user sent into one with the given
+     * attachment, replacing its attachment if it had one. The caption in
+     * `params` is the whole new text: nothing of the original content is
+     * kept, and `in_reply_to` is ignored.
+     */
+open func editWithAttachment(eventId: String, params: UploadParameters, attachment: AttachmentKind)async throws   {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_timeline_edit_with_attachment(
+                        self.uniffiCloneHandle(),FfiConverterString.lower(eventId),FfiConverterTypeUploadParameters_lower(params),FfiConverterTypeAttachmentKind_lower(attachment)
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_void,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_void,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_void,
+            liftFunc: { $0 },
             errorHandler: FfiConverterTypeClientError_lift
         )
 }
@@ -18746,7 +19530,7 @@ open func fetchMembers()async   {
     /**
      * Get the current timeline item for the given event ID, if any.
      *
-     * Will return a remote event, *or* a local echo that has been sent but not
+     * Will return a remote event, _or_ a local echo that has been sent but not
      * yet replaced by a remote echo.
      *
      * It's preferable to store the timeline items in the model for your UI, if
@@ -18816,13 +19600,13 @@ open func loadReplyDetails(eventIdStr: String)async throws  -> InReplyToDetails 
      * latest visible event.
      *
      * The latest visible event is determined from the timeline's focus kind
-     * and whether or not it hides threaded events. If no latest event can
-     * be determined and the timeline is live, the room's unread marker is
-     * unset instead.
+     * and whether or not it hides threaded events. If no latest event can be
+     * determined and the timeline is live, the room's unread marker is unset
+     * instead.
      *
      * # Arguments
      *
-     * * `receipt_type` - The type of receipt to send. When using
+     * - `receipt_type` - The type of receipt to send. When using
      * [`ReceiptType::FullyRead`], an unthreaded receipt will be sent. This
      * works even if the latest event belongs to a thread, as a threaded
      * reply also belongs to the unthreaded timeline. Otherwise the receipt
@@ -18914,7 +19698,7 @@ open func pinEvent(eventId: String)async throws  -> Bool  {
      *
      * Only works for events that exist as timeline items.
      *
-     * If it was a local event, this will *try* to cancel it, if it was not
+     * If it was a local event, this will _try_ to cancel it, if it was not
      * being sent already. If the event was a remote event, then it will be
      * redacted by sending a redaction request to the server.
      *
@@ -18946,8 +19730,34 @@ open func retryDecryption(sessionIds: [String])  {try! rustCall() {
 }
     
     /**
-     * Queues an event in the room's send queue so it's processed for
-     * sending later.
+     * Retry sending something on this item that failed, see [`SendTarget`].
+     *
+     * Only needed after an unrecoverable failure, which parks the request
+     * until it's retried or aborted; a recoverable one goes out again when the
+     * room's send queue is re-enabled.
+     *
+     * Returns `false` if there was nothing of that kind left to retry, e.g.
+     * because it went out in the meantime.
+     */
+open func retrySend(itemId: EventOrTransactionId, target: SendTarget)async throws  -> Bool  {
+    return
+        try  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_matrix_sdk_ffi_fn_method_timeline_retry_send(
+                        self.uniffiCloneHandle(),FfiConverterTypeEventOrTransactionId_lower(itemId),FfiConverterTypeSendTarget_lower(target)
+                )
+            },
+            pollFunc: ffi_matrix_sdk_ffi_rust_future_poll_i8,
+            completeFunc: ffi_matrix_sdk_ffi_rust_future_complete_i8,
+            freeFunc: ffi_matrix_sdk_ffi_rust_future_free_i8,
+            liftFunc: FfiConverterBool.lift,
+            errorHandler: FfiConverterTypeClientError_lift
+        )
+}
+    
+    /**
+     * Queues an event in the room's send queue so it's processed for sending
+     * later.
      *
      * Returns an abort handle that allows to abort sending, if it hasn't
      * happened yet.
@@ -18968,6 +19778,23 @@ open func send(msg: RoomMessageEventContentWithoutRelation)async throws  -> Send
         )
 }
     
+    /**
+     * Sends an attachment, uploaded through the send queue.
+     */
+open func sendAttachment(params: UploadParameters, attachment: AttachmentKind)throws  -> SendAttachmentJoinHandle  {
+    return try  FfiConverterTypeSendAttachmentJoinHandle_lift(try rustCallWithError(FfiConverterTypeRoomError_lift) {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_timeline_send_attachment(
+            self.uniffiCloneHandle(),
+        FfiConverterTypeUploadParameters_lower(params),
+        FfiConverterTypeAttachmentKind_lower(attachment),uniffiCallStatus
+    )
+})
+}
+    
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Audio`.
+     */
 open func sendAudio(params: UploadParameters, audioInfo: AudioInfo)throws  -> SendAttachmentJoinHandle  {
     return try  FfiConverterTypeSendAttachmentJoinHandle_lift(try rustCallWithError(FfiConverterTypeRoomError_lift) {
         uniffiCallStatus in
@@ -18979,6 +19806,9 @@ open func sendAudio(params: UploadParameters, audioInfo: AudioInfo)throws  -> Se
 })
 }
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::File`.
+     */
 open func sendFile(params: UploadParameters, fileInfo: FileInfo)throws  -> SendAttachmentJoinHandle  {
     return try  FfiConverterTypeSendAttachmentJoinHandle_lift(try rustCallWithError(FfiConverterTypeRoomError_lift) {
         uniffiCallStatus in
@@ -18990,6 +19820,9 @@ open func sendFile(params: UploadParameters, fileInfo: FileInfo)throws  -> SendA
 })
 }
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Image`.
+     */
 open func sendImage(params: UploadParameters, thumbnailSource: UploadSource?, imageInfo: ImageInfo)throws  -> SendAttachmentJoinHandle  {
     return try  FfiConverterTypeSendAttachmentJoinHandle_lift(try rustCallWithError(FfiConverterTypeRoomError_lift) {
         uniffiCallStatus in
@@ -19054,8 +19887,8 @@ open func sendReadReceipt(receiptType: ReceiptType, eventId: String)async throws
      * Send a reply.
      *
      * If the replied to event has a thread relation, it is forwarded on the
-     * reply so that clients that support threads can render the reply
-     * inside the thread. Returns a handle to abort the pending send.
+     * reply so that clients that support threads can render the reply inside
+     * the thread. Returns a handle to abort the pending send.
      */
 open func sendReply(msg: RoomMessageEventContentWithoutRelation, eventId: String)async throws  -> SendHandle  {
     return
@@ -19073,6 +19906,9 @@ open func sendReply(msg: RoomMessageEventContentWithoutRelation, eventId: String
         )
 }
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Video`.
+     */
 open func sendVideo(params: UploadParameters, thumbnailSource: UploadSource?, videoInfo: VideoInfo)throws  -> SendAttachmentJoinHandle  {
     return try  FfiConverterTypeSendAttachmentJoinHandle_lift(try rustCallWithError(FfiConverterTypeRoomError_lift) {
         uniffiCallStatus in
@@ -19085,6 +19921,9 @@ open func sendVideo(params: UploadParameters, thumbnailSource: UploadSource?, vi
 })
 }
     
+    /**
+     * Deprecated: use [`Self::send_attachment`] with `AttachmentKind::Voice`.
+     */
 open func sendVoiceMessage(params: UploadParameters, audioInfo: AudioInfo, waveform: [Float])throws  -> SendAttachmentJoinHandle  {
     return try  FfiConverterTypeSendAttachmentJoinHandle_lift(try rustCallWithError(FfiConverterTypeRoomError_lift) {
         uniffiCallStatus in
@@ -19098,8 +19937,8 @@ open func sendVoiceMessage(params: UploadParameters, audioInfo: AudioInfo, wavef
 }
     
     /**
-     * Like [`Self::send`], but merges the given additional top-level fields
-     * (a JSON object, encoded as a string) into the outgoing event's content.
+     * Like [`Self::send`], but merges the given additional top-level fields (a
+     * JSON object, encoded as a string) into the outgoing event's content.
      */
 open func sendWithExtraContent(msg: RoomMessageEventContentWithoutRelation, extraContentJson: String?)async throws  -> SendHandle  {
     return
@@ -19773,9 +20612,9 @@ public protocol UserIdentityProtocol: AnyObject, Sendable {
      * action "pinning".
      *
      * If the identity presented for the user changes later on, the newly
-     * presented identity is considered to be in "pin violation". This
-     * method explicitly accepts the new identity, allowing it to replace
-     * the previously pinned one and bringing it out of pin violation.
+     * presented identity is considered to be in "pin violation". This method
+     * explicitly accepts the new identity, allowing it to replace the
+     * previously pinned one and bringing it out of pin violation.
      *
      * UIs should display a warning to the user when encountering an identity
      * which is not verified and is in pin violation.
@@ -19909,9 +20748,9 @@ open func masterKey() -> String?  {
      * action "pinning".
      *
      * If the identity presented for the user changes later on, the newly
-     * presented identity is considered to be in "pin violation". This
-     * method explicitly accepts the new identity, allowing it to replace
-     * the previously pinned one and bringing it out of pin violation.
+     * presented identity is considered to be in "pin violation". This method
+     * explicitly accepts the new identity, allowing it to replace the
+     * previously pinned one and bringing it out of pin violation.
      *
      * UIs should display a warning to the user when encountering an identity
      * which is not verified and is in pin violation.
@@ -20323,8 +21162,8 @@ public func FfiConverterTypeWidgetDriverHandle_lower(_ value: WidgetDriverHandle
 /**
  * Progress of an operation in abstract units.
  *
- * Contrary to [`TransmissionProgress`], this allows tracking the progress
- * of sending or receiving a payload in estimated pseudo units representing a
+ * Contrary to [`TransmissionProgress`], this allows tracking the progress of
+ * sending or receiving a payload in estimated pseudo units representing a
  * percentage. This is helpful in cases where the exact progress in bytes isn't
  * known, for instance, because encryption (which changes the size) happens on
  * the fly.
@@ -20542,6 +21381,10 @@ public struct AuthDataPasswordDetails: Equatable, Hashable {
      * The plaintext password.
      */
     public var password: String
+    /**
+     * The UIAA session token.
+     */
+    public var session: String
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
@@ -20551,9 +21394,13 @@ public struct AuthDataPasswordDetails: Equatable, Hashable {
          */identifier: String, 
         /**
          * The plaintext password.
-         */password: String) {
+         */password: String, 
+        /**
+         * The UIAA session token.
+         */session: String) {
         self.identifier = identifier
         self.password = password
+        self.session = session
     }
 
     
@@ -20573,13 +21420,15 @@ public struct FfiConverterTypeAuthDataPasswordDetails: FfiConverterRustBuffer {
         return
             try AuthDataPasswordDetails(
                 identifier: FfiConverterString.read(from: &buf), 
-                password: FfiConverterString.read(from: &buf)
+                password: FfiConverterString.read(from: &buf), 
+                session: FfiConverterString.read(from: &buf)
         )
     }
 
     public static func write(_ value: AuthDataPasswordDetails, into buf: inout [UInt8]) {
         FfiConverterString.write(value.identifier, into: &buf)
         FfiConverterString.write(value.password, into: &buf)
+        FfiConverterString.write(value.session, into: &buf)
     }
 }
 
@@ -20604,8 +21453,8 @@ public func FfiConverterTypeAuthDataPasswordDetails_lower(_ value: AuthDataPassw
  */
 public struct BeaconInfo: Equatable, Hashable {
     /**
-     * The geo URI carrying the user's coordinates
-     * (e.g. `"geo:51.5008,0.1247;u=35"`).
+     * The geo URI carrying the user's coordinates (e.g.
+     * `"geo:51.5008,0.1247;u=35"`).
      */
     public var geoUri: String
     /**
@@ -20621,8 +21470,8 @@ public struct BeaconInfo: Equatable, Hashable {
     // declare one manually.
     public init(
         /**
-         * The geo URI carrying the user's coordinates
-         * (e.g. `"geo:51.5008,0.1247;u=35"`).
+         * The geo URI carrying the user's coordinates (e.g.
+         * `"geo:51.5008,0.1247;u=35"`).
          */geoUri: String, 
         /**
          * Timestamp (ms since Unix Epoch) of this location update.
@@ -21452,6 +22301,14 @@ public struct EventTimelineItem {
     public var eventTypeRaw: String?
     public var timestamp: Timestamp
     public var localSendState: EventSendState?
+    /**
+     * Send state of our pending edit of this event, if any.
+     */
+    public var editSendState: EventSendState?
+    /**
+     * Send state of our pending redaction of this event, if any.
+     */
+    public var redactionSendState: EventSendState?
     public var localCreatedAt: UInt64?
     public var readReceipts: [String: Receipt]
     public var origin: EventItemOrigin?
@@ -21467,7 +22324,13 @@ public struct EventTimelineItem {
         /**
          * The raw Matrix event type string (e.g. `"m.room.message"`), or `None`
          * when the original type is not available (e.g. redacted events).
-         */eventTypeRaw: String?, timestamp: Timestamp, localSendState: EventSendState?, localCreatedAt: UInt64?, readReceipts: [String: Receipt], origin: EventItemOrigin?, canBeRepliedTo: Bool, lazyProvider: LazyTimelineItemProvider) {
+         */eventTypeRaw: String?, timestamp: Timestamp, localSendState: EventSendState?, 
+        /**
+         * Send state of our pending edit of this event, if any.
+         */editSendState: EventSendState?, 
+        /**
+         * Send state of our pending redaction of this event, if any.
+         */redactionSendState: EventSendState?, localCreatedAt: UInt64?, readReceipts: [String: Receipt], origin: EventItemOrigin?, canBeRepliedTo: Bool, lazyProvider: LazyTimelineItemProvider) {
         self.isRemote = isRemote
         self.eventOrTransactionId = eventOrTransactionId
         self.sender = sender
@@ -21481,6 +22344,8 @@ public struct EventTimelineItem {
         self.eventTypeRaw = eventTypeRaw
         self.timestamp = timestamp
         self.localSendState = localSendState
+        self.editSendState = editSendState
+        self.redactionSendState = redactionSendState
         self.localCreatedAt = localCreatedAt
         self.readReceipts = readReceipts
         self.origin = origin
@@ -21517,6 +22382,8 @@ public struct FfiConverterTypeEventTimelineItem: FfiConverterRustBuffer {
                 eventTypeRaw: FfiConverterOptionString.read(from: &buf), 
                 timestamp: FfiConverterTypeTimestamp.read(from: &buf), 
                 localSendState: FfiConverterOptionTypeEventSendState.read(from: &buf), 
+                editSendState: FfiConverterOptionTypeEventSendState.read(from: &buf), 
+                redactionSendState: FfiConverterOptionTypeEventSendState.read(from: &buf), 
                 localCreatedAt: FfiConverterOptionUInt64.read(from: &buf), 
                 readReceipts: FfiConverterDictionaryStringTypeReceipt.read(from: &buf), 
                 origin: FfiConverterOptionTypeEventItemOrigin.read(from: &buf), 
@@ -21539,6 +22406,8 @@ public struct FfiConverterTypeEventTimelineItem: FfiConverterRustBuffer {
         FfiConverterOptionString.write(value.eventTypeRaw, into: &buf)
         FfiConverterTypeTimestamp.write(value.timestamp, into: &buf)
         FfiConverterOptionTypeEventSendState.write(value.localSendState, into: &buf)
+        FfiConverterOptionTypeEventSendState.write(value.editSendState, into: &buf)
+        FfiConverterOptionTypeEventSendState.write(value.redactionSendState, into: &buf)
         FfiConverterOptionUInt64.write(value.localCreatedAt, into: &buf)
         FfiConverterDictionaryStringTypeReceipt.write(value.readReceipts, into: &buf)
         FfiConverterOptionTypeEventItemOrigin.write(value.origin, into: &buf)
@@ -22014,6 +22883,11 @@ public struct GalleryUploadParameters: Equatable, Hashable {
      * Optional Event ID to reply to.
      */
     public var inReplyTo: String?
+    /**
+     * Additional top-level fields for the gallery, as a JSON object.
+     * The gallery's own fields take precedence on conflicts.
+     */
+    public var extraContentJson: String?
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
@@ -22029,11 +22903,16 @@ public struct GalleryUploadParameters: Equatable, Hashable {
          */mentions: Mentions?, 
         /**
          * Optional Event ID to reply to.
-         */inReplyTo: String?) {
+         */inReplyTo: String?, 
+        /**
+         * Additional top-level fields for the gallery, as a JSON object.
+         * The gallery's own fields take precedence on conflicts.
+         */extraContentJson: String? = nil) {
         self.caption = caption
         self.formattedCaption = formattedCaption
         self.mentions = mentions
         self.inReplyTo = inReplyTo
+        self.extraContentJson = extraContentJson
     }
 
     
@@ -22055,7 +22934,8 @@ public struct FfiConverterTypeGalleryUploadParameters: FfiConverterRustBuffer {
                 caption: FfiConverterOptionString.read(from: &buf), 
                 formattedCaption: FfiConverterOptionTypeFormattedBody.read(from: &buf), 
                 mentions: FfiConverterOptionTypeMentions.read(from: &buf), 
-                inReplyTo: FfiConverterOptionString.read(from: &buf)
+                inReplyTo: FfiConverterOptionString.read(from: &buf), 
+                extraContentJson: FfiConverterOptionString.read(from: &buf)
         )
     }
 
@@ -22064,6 +22944,7 @@ public struct FfiConverterTypeGalleryUploadParameters: FfiConverterRustBuffer {
         FfiConverterOptionTypeFormattedBody.write(value.formattedCaption, into: &buf)
         FfiConverterOptionTypeMentions.write(value.mentions, into: &buf)
         FfiConverterOptionString.write(value.inReplyTo, into: &buf)
+        FfiConverterOptionString.write(value.extraContentJson, into: &buf)
     }
 }
 
@@ -22806,11 +23687,11 @@ public struct LiveLocationContent: Equatable, Hashable {
      */
     public var isLive: Bool
     /**
-     * The timestamp when this live location sharing session started
-     * (from the `org.matrix.msc3488.ts` field of the originating
-     * `beacon_info` state event).
+     * The timestamp when this live location sharing session started (from the
+     * `org.matrix.msc3488.ts` field of the originating `beacon_info` state
+     * event).
      *
-     * This marks the *beginning* of the session. The session expires at
+     * This marks the _beginning_ of the session. The session expires at
      * `ts + timeout_ms`.
      */
     public var ts: Timestamp
@@ -22823,8 +23704,8 @@ public struct LiveLocationContent: Equatable, Hashable {
      */
     public var timeoutMs: UInt64
     /**
-     * The asset type of the beacon (e.g. `Sender` for the user's own
-     * location, `Pin` for a fixed point of interest).
+     * The asset type of the beacon (e.g. `Sender` for the user's own location,
+     * `Pin` for a fixed point of interest).
      */
     public var assetType: AssetType
     /**
@@ -22839,11 +23720,11 @@ public struct LiveLocationContent: Equatable, Hashable {
          * Whether this sharing session is currently active.
          */isLive: Bool, 
         /**
-         * The timestamp when this live location sharing session started
-         * (from the `org.matrix.msc3488.ts` field of the originating
-         * `beacon_info` state event).
+         * The timestamp when this live location sharing session started (from the
+         * `org.matrix.msc3488.ts` field of the originating `beacon_info` state
+         * event).
          *
-         * This marks the *beginning* of the session. The session expires at
+         * This marks the _beginning_ of the session. The session expires at
          * `ts + timeout_ms`.
          */ts: Timestamp, 
         /**
@@ -22853,8 +23734,8 @@ public struct LiveLocationContent: Equatable, Hashable {
          * Duration of the session in milliseconds.
          */timeoutMs: UInt64, 
         /**
-         * The asset type of the beacon (e.g. `Sender` for the user's own
-         * location, `Pin` for a fixed point of interest).
+         * The asset type of the beacon (e.g. `Sender` for the user's own location,
+         * `Pin` for a fixed point of interest).
          */assetType: AssetType, 
         /**
          * All location updates received so far, sorted oldest-first.
@@ -22935,8 +23816,8 @@ public struct LiveLocationShare: Equatable, Hashable {
      */
     public var startTs: UInt64
     /**
-     * The duration that the location sharing will be live.
-     * Meaning that the location will stop being shared at ts + timeout.
+     * The duration that the location sharing will be live. Meaning that the
+     * location will stop being shared at ts + timeout.
      */
     public var timeout: UInt64
     /**
@@ -22957,8 +23838,8 @@ public struct LiveLocationShare: Equatable, Hashable {
          * The time when location sharing started.
          */startTs: UInt64, 
         /**
-         * The duration that the location sharing will be live.
-         * Meaning that the location will stop being shared at ts + timeout.
+         * The duration that the location sharing will be live. Meaning that the
+         * location will stop being shared at ts + timeout.
          */timeout: UInt64, 
         /**
          * The event ID of the beacon_info state event for this share.
@@ -23221,14 +24102,13 @@ public func FfiConverterTypeMediaPreviewConfig_lower(_ value: MediaPreviewConfig
  */
 public struct MediaUploadProgress: Equatable, Hashable {
     /**
-     * The index of the media within the transaction. A file and its
-     * thumbnail share the same index. Will always be 0 for non-gallery
-     * media uploads.
+     * The index of the media within the transaction. A file and its thumbnail
+     * share the same index. Will always be 0 for non-gallery media uploads.
      */
     public var index: UInt64
     /**
-     * The current combined upload progress for both the file and,
-     * if it exists, its thumbnail.
+     * The current combined upload progress for both the file and, if it
+     * exists, its thumbnail.
      */
     public var progress: AbstractProgress
 
@@ -23236,13 +24116,12 @@ public struct MediaUploadProgress: Equatable, Hashable {
     // declare one manually.
     public init(
         /**
-         * The index of the media within the transaction. A file and its
-         * thumbnail share the same index. Will always be 0 for non-gallery
-         * media uploads.
+         * The index of the media within the transaction. A file and its thumbnail
+         * share the same index. Will always be 0 for non-gallery media uploads.
          */index: UInt64, 
         /**
-         * The current combined upload progress for both the file and,
-         * if it exists, its thumbnail.
+         * The current combined upload progress for both the file and, if it
+         * exists, its thumbnail.
          */progress: AbstractProgress) {
         self.index = index
         self.progress = progress
@@ -23647,8 +24526,8 @@ public struct NotificationClientTimeouts: Equatable, Hashable {
      * missing room key, i.e. how long the homeserver waits for a to-device
      * message to arrive before answering.
      *
-     * Together with `decryption_deadline`, this determines how many
-     * iterations are run when the homeserver has nothing to return.
+     * Together with `decryption_deadline`, this determines how many iterations
+     * are run when the homeserver has nothing to return.
      */
     public var encryptionSyncPollTimeout: TimeInterval
     /**
@@ -23686,8 +24565,8 @@ public struct NotificationClientTimeouts: Equatable, Hashable {
          * missing room key, i.e. how long the homeserver waits for a to-device
          * message to arrive before answering.
          *
-         * Together with `decryption_deadline`, this determines how many
-         * iterations are run when the homeserver has nothing to return.
+         * Together with `decryption_deadline`, this determines how many iterations
+         * are run when the homeserver has nothing to return.
          */encryptionSyncPollTimeout: TimeInterval, 
         /**
          * Extra time allowed for the network round trip of each request of the
@@ -23759,9 +24638,9 @@ public struct NotificationItem {
     public var senderInfo: NotificationSenderInfo
     public var roomInfo: NotificationRoomInfo
     /**
-     * Is the notification supposed to be at the "noisy" level?
-     * Can be `None` if we couldn't determine this, because we lacked
-     * information to create a push context.
+     * Is the notification supposed to be at the "noisy" level? Can be `None`
+     * if we couldn't determine this, because we lacked information to create a
+     * push context.
      */
     public var isNoisy: Bool?
     public var hasMention: Bool?
@@ -23778,9 +24657,9 @@ public struct NotificationItem {
          * The raw JSON of the underlying event.
          */rawEvent: String, senderInfo: NotificationSenderInfo, roomInfo: NotificationRoomInfo, 
         /**
-         * Is the notification supposed to be at the "noisy" level?
-         * Can be `None` if we couldn't determine this, because we lacked
-         * information to create a push context.
+         * Is the notification supposed to be at the "noisy" level? Can be `None`
+         * if we couldn't determine this, because we lacked information to create a
+         * push context.
          */isNoisy: Bool?, hasMention: Bool?, threadId: String?, 
         /**
          * The push actions for this notification (notify, sound, highlight, etc.).
@@ -24243,16 +25122,36 @@ public struct OAuthCrossSigningResetInfo: Equatable, Hashable {
      * The URL where the user can approve the reset of the cross-signing keys.
      */
     public var approvalUrl: String
+    /**
+     * The UIAA session token.
+     */
+    public var session: String
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
     public init(
         /**
          * The URL where the user can approve the reset of the cross-signing keys.
-         */approvalUrl: String) {
+         */approvalUrl: String, 
+        /**
+         * The UIAA session token.
+         */session: String) {
         self.approvalUrl = approvalUrl
+        self.session = session
     }
 
+    
+    /**
+     * Create UIAA [`AuthData`] to continue this reset session.
+     */
+public func asAuthData() -> AuthData  {
+    return try!  FfiConverterTypeAuthData_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_matrix_sdk_ffi_fn_method_oauthcrosssigningresetinfo_as_auth_data(
+            FfiConverterTypeOAuthCrossSigningResetInfo_lower(self),uniffiCallStatus
+    )
+})
+}
     
 
     
@@ -24269,12 +25168,14 @@ public struct FfiConverterTypeOAuthCrossSigningResetInfo: FfiConverterRustBuffer
     public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> OAuthCrossSigningResetInfo {
         return
             try OAuthCrossSigningResetInfo(
-                approvalUrl: FfiConverterString.read(from: &buf)
+                approvalUrl: FfiConverterString.read(from: &buf), 
+                session: FfiConverterString.read(from: &buf)
         )
     }
 
     public static func write(_ value: OAuthCrossSigningResetInfo, into buf: inout [UInt8]) {
         FfiConverterString.write(value.approvalUrl, into: &buf)
+        FfiConverterString.write(value.session, into: &buf)
     }
 }
 
@@ -24466,14 +25367,14 @@ public struct PasswordStrengthEstimate: Equatable, Hashable {
      */
     public var guesses: UInt64
     /**
-     * A numeric score derived from the order of magnitude of `guesses`
-     * (i.e. log base 10).
+     * A numeric score derived from the order of magnitude of `guesses` (i.e.
+     * log base 10).
      */
     public var score: Double
     /**
      * A normalized score from 0 to 1.0 derived from `score` and the
-     * estimator's `very_strong` threshold (`score / very_strong`).
-     * Scores above the `VeryStrong` threshold *can* exceed 1.0.
+     * estimator's `very_strong` threshold (`score / very_strong`). Scores
+     * above the `VeryStrong` threshold _can_ exceed 1.0.
      */
     public var normalScore: Double
     /**
@@ -24492,13 +25393,13 @@ public struct PasswordStrengthEstimate: Equatable, Hashable {
          * Estimated number of guesses needed to crack the password.
          */guesses: UInt64, 
         /**
-         * A numeric score derived from the order of magnitude of `guesses`
-         * (i.e. log base 10).
+         * A numeric score derived from the order of magnitude of `guesses` (i.e.
+         * log base 10).
          */score: Double, 
         /**
          * A normalized score from 0 to 1.0 derived from `score` and the
-         * estimator's `very_strong` threshold (`score / very_strong`).
-         * Scores above the `VeryStrong` threshold *can* exceed 1.0.
+         * estimator's `very_strong` threshold (`score / very_strong`). Scores
+         * above the `VeryStrong` threshold _can_ exceed 1.0.
          */normalScore: Double, 
         /**
          * Verbal feedback to help choose a better password. Only set when the
@@ -25280,12 +26181,20 @@ public func FfiConverterTypeReaction_lower(_ value: Reaction) -> RustBuffer {
 public struct ReactionSenderData: Equatable, Hashable {
     public var senderId: String
     public var timestamp: Timestamp
+    /**
+     * Send state of the reaction when it's ours and pending, `None` otherwise.
+     */
+    public var sendState: EventSendState?
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(senderId: String, timestamp: Timestamp) {
+    public init(senderId: String, timestamp: Timestamp, 
+        /**
+         * Send state of the reaction when it's ours and pending, `None` otherwise.
+         */sendState: EventSendState?) {
         self.senderId = senderId
         self.timestamp = timestamp
+        self.sendState = sendState
     }
 
     
@@ -25305,13 +26214,15 @@ public struct FfiConverterTypeReactionSenderData: FfiConverterRustBuffer {
         return
             try ReactionSenderData(
                 senderId: FfiConverterString.read(from: &buf), 
-                timestamp: FfiConverterTypeTimestamp.read(from: &buf)
+                timestamp: FfiConverterTypeTimestamp.read(from: &buf), 
+                sendState: FfiConverterOptionTypeEventSendState.read(from: &buf)
         )
     }
 
     public static func write(_ value: ReactionSenderData, into buf: inout [UInt8]) {
         FfiConverterString.write(value.senderId, into: &buf)
         FfiConverterTypeTimestamp.write(value.timestamp, into: &buf)
+        FfiConverterOptionTypeEventSendState.write(value.sendState, into: &buf)
     }
 }
 
@@ -25849,8 +26760,8 @@ public struct RoomInfo {
      */
     public var numUnreadMessages: UInt64
     /**
-     * Events that will notify the user, according to their
-     * notification settings.
+     * Events that will notify the user, according to their notification
+     * settings.
      */
     public var numUnreadNotifications: UInt64
     /**
@@ -25924,8 +26835,8 @@ public struct RoomInfo {
          * notification settings.
          */numUnreadMessages: UInt64, 
         /**
-         * Events that will notify the user, according to their
-         * notification settings.
+         * Events that will notify the user, according to their notification
+         * settings.
          */numUnreadNotifications: UInt64, 
         /**
          * Events causing mentions/highlights for the user, according to their
@@ -26336,6 +27247,117 @@ public func FfiConverterTypeRoomMemberWithSenderInfo_lift(_ buf: RustBuffer) thr
 #endif
 public func FfiConverterTypeRoomMemberWithSenderInfo_lower(_ value: RoomMemberWithSenderInfo) -> RustBuffer {
     return FfiConverterTypeRoomMemberWithSenderInfo.lower(value)
+}
+
+
+/**
+ * A message-like room event, as exposed over FFI.
+ */
+public struct RoomMessageLikeEvent: Equatable, Hashable {
+    /**
+     * The event type, e.g. `m.reaction`.
+     */
+    public var eventType: MessageLikeEventType
+    /**
+     * The event id.
+     */
+    public var eventId: String
+    /**
+     * The event sender.
+     */
+    public var sender: String
+    /**
+     * When the event was sent, in milliseconds since the Unix epoch.
+     */
+    public var timestamp: UInt64
+    /**
+     * The `content` of the event, as a JSON string, decrypted if the event was
+     * encrypted.
+     */
+    public var contentJson: String
+    /**
+     * The encryption info of the event, if it was encrypted.
+     */
+    public var encryptionInfo: EventEncryptionInfo?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(
+        /**
+         * The event type, e.g. `m.reaction`.
+         */eventType: MessageLikeEventType, 
+        /**
+         * The event id.
+         */eventId: String, 
+        /**
+         * The event sender.
+         */sender: String, 
+        /**
+         * When the event was sent, in milliseconds since the Unix epoch.
+         */timestamp: UInt64, 
+        /**
+         * The `content` of the event, as a JSON string, decrypted if the event was
+         * encrypted.
+         */contentJson: String, 
+        /**
+         * The encryption info of the event, if it was encrypted.
+         */encryptionInfo: EventEncryptionInfo?) {
+        self.eventType = eventType
+        self.eventId = eventId
+        self.sender = sender
+        self.timestamp = timestamp
+        self.contentJson = contentJson
+        self.encryptionInfo = encryptionInfo
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension RoomMessageLikeEvent: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeRoomMessageLikeEvent: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RoomMessageLikeEvent {
+        return
+            try RoomMessageLikeEvent(
+                eventType: FfiConverterTypeMessageLikeEventType.read(from: &buf), 
+                eventId: FfiConverterString.read(from: &buf), 
+                sender: FfiConverterString.read(from: &buf), 
+                timestamp: FfiConverterUInt64.read(from: &buf), 
+                contentJson: FfiConverterString.read(from: &buf), 
+                encryptionInfo: FfiConverterOptionTypeEventEncryptionInfo.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: RoomMessageLikeEvent, into buf: inout [UInt8]) {
+        FfiConverterTypeMessageLikeEventType.write(value.eventType, into: &buf)
+        FfiConverterString.write(value.eventId, into: &buf)
+        FfiConverterString.write(value.sender, into: &buf)
+        FfiConverterUInt64.write(value.timestamp, into: &buf)
+        FfiConverterString.write(value.contentJson, into: &buf)
+        FfiConverterOptionTypeEventEncryptionInfo.write(value.encryptionInfo, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRoomMessageLikeEvent_lift(_ buf: RustBuffer) throws -> RoomMessageLikeEvent {
+    return try FfiConverterTypeRoomMessageLikeEvent.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRoomMessageLikeEvent_lower(_ value: RoomMessageLikeEvent) -> RustBuffer {
+    return FfiConverterTypeRoomMessageLikeEvent.lower(value)
 }
 
 
@@ -27119,12 +28141,12 @@ public func FfiConverterTypeSecretStorageV1AesHmacSha2Properties_lower(_ value: 
  */
 public struct SendToDeviceOutcome: Equatable, Hashable {
     /**
-     * The devices that did not receive the message, as a `user id -> device
-     * ids` map.
+     * The devices that did not receive the message, as a
+     * `user id -> device ids` map.
      *
      * A device can end up in here because it is unknown to us, or because
-     * encrypting the message for it failed. An empty map means every
-     * recipient was served.
+     * encrypting the message for it failed. An empty map means every recipient
+     * was served.
      */
     public var failures: [String: [String]]
 
@@ -27132,12 +28154,12 @@ public struct SendToDeviceOutcome: Equatable, Hashable {
     // declare one manually.
     public init(
         /**
-         * The devices that did not receive the message, as a `user id -> device
-         * ids` map.
+         * The devices that did not receive the message, as a
+         * `user id -> device ids` map.
          *
          * A device can end up in here because it is unknown to us, or because
-         * encrypting the message for it failed. An empty map means every
-         * recipient was served.
+         * encrypting the message for it failed. An empty map means every recipient
+         * was served.
          */failures: [String: [String]]) {
         self.failures = failures
     }
@@ -27364,6 +28386,67 @@ public func FfiConverterTypeSession_lower(_ value: Session) -> RustBuffer {
 
 
 /**
+ * Information about why a verification was cancelled
+ */
+public struct SessionVerificationCancelInfo: Equatable, Hashable {
+    public var reason: String
+    public var cancelCode: String
+    public var cancelledByUs: Bool
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(reason: String, cancelCode: String, cancelledByUs: Bool) {
+        self.reason = reason
+        self.cancelCode = cancelCode
+        self.cancelledByUs = cancelledByUs
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension SessionVerificationCancelInfo: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeSessionVerificationCancelInfo: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SessionVerificationCancelInfo {
+        return
+            try SessionVerificationCancelInfo(
+                reason: FfiConverterString.read(from: &buf), 
+                cancelCode: FfiConverterString.read(from: &buf), 
+                cancelledByUs: FfiConverterBool.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: SessionVerificationCancelInfo, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.reason, into: &buf)
+        FfiConverterString.write(value.cancelCode, into: &buf)
+        FfiConverterBool.write(value.cancelledByUs, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSessionVerificationCancelInfo_lift(_ buf: RustBuffer) throws -> SessionVerificationCancelInfo {
+    return try FfiConverterTypeSessionVerificationCancelInfo.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSessionVerificationCancelInfo_lower(_ value: SessionVerificationCancelInfo) -> RustBuffer {
+    return FfiConverterTypeSessionVerificationCancelInfo.lower(value)
+}
+
+
+/**
  * Details about the incoming verification request
  */
 public struct SessionVerificationRequestDetails: Equatable, Hashable {
@@ -27541,14 +28624,14 @@ public struct SpaceFilter: Equatable, Hashable {
      */
     public var spaceRoom: SpaceRoom
     /**
-     * The level of the space filter in the tree/hierarchy.
-     * At this point in time the filters are limited to the first 2 levels.
+     * The level of the space filter in the tree/hierarchy. At this point in
+     * time the filters are limited to the first 2 levels.
      */
     public var level: UInt8
     /**
-     * The room identifiers of the descendants of this space.
-     * For top level spaces (level 0) these will be direct descendants while
-     * for first level spaces they will be all other descendants, recursively.
+     * The room identifiers of the descendants of this space. For top level
+     * spaces (level 0) these will be direct descendants while for first level
+     * spaces they will be all other descendants, recursively.
      */
     public var descendants: [String]
 
@@ -27559,13 +28642,13 @@ public struct SpaceFilter: Equatable, Hashable {
          * The underlying [`SpaceRoom`]
          */spaceRoom: SpaceRoom, 
         /**
-         * The level of the space filter in the tree/hierarchy.
-         * At this point in time the filters are limited to the first 2 levels.
+         * The level of the space filter in the tree/hierarchy. At this point in
+         * time the filters are limited to the first 2 levels.
          */level: UInt8, 
         /**
-         * The room identifiers of the descendants of this space.
-         * For top level spaces (level 0) these will be direct descendants while
-         * for first level spaces they will be all other descendants, recursively.
+         * The room identifiers of the descendants of this space. For top level
+         * spaces (level 0) these will be direct descendants while for first level
+         * spaces they will be all other descendants, recursively.
          */descendants: [String]) {
         self.spaceRoom = spaceRoom
         self.level = level
@@ -27618,8 +28701,8 @@ public func FfiConverterTypeSpaceFilter_lower(_ value: SpaceFilter) -> RustBuffe
 
 
 /**
- * Structure representing a room in a space and aggregated information
- * relevant to the UI layer.
+ * Structure representing a room in a space and aggregated information relevant
+ * to the UI layer.
  */
 public struct SpaceRoom: Equatable, Hashable {
     /**
@@ -27670,8 +28753,8 @@ public struct SpaceRoom: Equatable, Hashable {
     /**
      * Whether this room is a direct room.
      *
-     * Only set if the room is known to the client otherwise we
-     * assume DMs shouldn't be exposed publicly in spaces.
+     * Only set if the room is known to the client otherwise we assume DMs
+     * shouldn't be exposed publicly in spaces.
      */
     public var isDirect: Bool?
     /**
@@ -27691,9 +28774,8 @@ public struct SpaceRoom: Equatable, Hashable {
      */
     public var via: [String]
     /**
-     * Whether this room is a DM, if known.
-     * Note this value can be calculated following some assumptions and is not
-     * guaranteed to be accurate.
+     * Whether this room is a DM, if known. Note this value can be calculated
+     * following some assumptions and is not guaranteed to be accurate.
      */
     public var isDm: Bool?
 
@@ -27737,8 +28819,8 @@ public struct SpaceRoom: Equatable, Hashable {
         /**
          * Whether this room is a direct room.
          *
-         * Only set if the room is known to the client otherwise we
-         * assume DMs shouldn't be exposed publicly in spaces.
+         * Only set if the room is known to the client otherwise we assume DMs
+         * shouldn't be exposed publicly in spaces.
          */isDirect: Bool?, 
         /**
          * The number of children room this has, if a space.
@@ -27753,9 +28835,8 @@ public struct SpaceRoom: Equatable, Hashable {
          * The via parameters of the room.
          */via: [String], 
         /**
-         * Whether this room is a DM, if known.
-         * Note this value can be calculated following some assumptions and is not
-         * guaranteed to be accurate.
+         * Whether this room is a DM, if known. Note this value can be calculated
+         * following some assumptions and is not guaranteed to be accurate.
          */isDm: Bool?) {
         self.roomId = roomId
         self.canonicalAlias = canonicalAlias
@@ -27854,13 +28935,13 @@ public func FfiConverterTypeSpaceRoom_lower(_ value: SpaceRoom) -> RustBuffer {
  */
 public struct StartDehydratedDevicesSettings: Equatable, Hashable {
     /**
-     * Force generation of a fresh random pickle key on start, replacing
-     * any existing entry in Secret Storage and the local cache.
+     * Force generation of a fresh random pickle key on start, replacing any
+     * existing entry in Secret Storage and the local cache.
      */
     public var createNewKey: Bool
     /**
-     * Whether to attempt to rehydrate the existing dehydrated device, if
-     * any, before creating the next one.
+     * Whether to attempt to rehydrate the existing dehydrated device, if any,
+     * before creating the next one.
      */
     public var rehydrate: Bool
     /**
@@ -27873,12 +28954,12 @@ public struct StartDehydratedDevicesSettings: Equatable, Hashable {
     // declare one manually.
     public init(
         /**
-         * Force generation of a fresh random pickle key on start, replacing
-         * any existing entry in Secret Storage and the local cache.
+         * Force generation of a fresh random pickle key on start, replacing any
+         * existing entry in Secret Storage and the local cache.
          */createNewKey: Bool = false, 
         /**
-         * Whether to attempt to rehydrate the existing dehydrated device, if
-         * any, before creating the next one.
+         * Whether to attempt to rehydrate the existing dehydrated device, if any,
+         * before creating the next one.
          */rehydrate: Bool = true, 
         /**
          * If `true`, the call becomes a no-op when no pickle key is cached
@@ -27931,6 +29012,255 @@ public func FfiConverterTypeStartDehydratedDevicesSettings_lift(_ buf: RustBuffe
 #endif
 public func FfiConverterTypeStartDehydratedDevicesSettings_lower(_ value: StartDehydratedDevicesSettings) -> RustBuffer {
     return FfiConverterTypeStartDehydratedDevicesSettings.lower(value)
+}
+
+
+/**
+ * A sticky event that is currently live in a room.
+ */
+public struct StickyEvent: Equatable, Hashable {
+    /**
+     * The key under which the event is tracked.
+     */
+    public var key: StickyKey
+    /**
+     * The event ID.
+     */
+    public var eventId: String
+    /**
+     * When the event stops being sticky, in milliseconds since the Unix epoch.
+     */
+    public var expiresAtMs: UInt64
+    /**
+     * The event as a JSON string, decrypted if it was encrypted.
+     */
+    public var eventJson: String
+    /**
+     * The encryption info of the event, if it was encrypted.
+     */
+    public var encryptionInfo: EventEncryptionInfo?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(
+        /**
+         * The key under which the event is tracked.
+         */key: StickyKey, 
+        /**
+         * The event ID.
+         */eventId: String, 
+        /**
+         * When the event stops being sticky, in milliseconds since the Unix epoch.
+         */expiresAtMs: UInt64, 
+        /**
+         * The event as a JSON string, decrypted if it was encrypted.
+         */eventJson: String, 
+        /**
+         * The encryption info of the event, if it was encrypted.
+         */encryptionInfo: EventEncryptionInfo?) {
+        self.key = key
+        self.eventId = eventId
+        self.expiresAtMs = expiresAtMs
+        self.eventJson = eventJson
+        self.encryptionInfo = encryptionInfo
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension StickyEvent: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeStickyEvent: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> StickyEvent {
+        return
+            try StickyEvent(
+                key: FfiConverterTypeStickyKey.read(from: &buf), 
+                eventId: FfiConverterString.read(from: &buf), 
+                expiresAtMs: FfiConverterUInt64.read(from: &buf), 
+                eventJson: FfiConverterString.read(from: &buf), 
+                encryptionInfo: FfiConverterOptionTypeEventEncryptionInfo.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: StickyEvent, into buf: inout [UInt8]) {
+        FfiConverterTypeStickyKey.write(value.key, into: &buf)
+        FfiConverterString.write(value.eventId, into: &buf)
+        FfiConverterUInt64.write(value.expiresAtMs, into: &buf)
+        FfiConverterString.write(value.eventJson, into: &buf)
+        FfiConverterOptionTypeEventEncryptionInfo.write(value.encryptionInfo, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyEvent_lift(_ buf: RustBuffer) throws -> StickyEvent {
+    return try FfiConverterTypeStickyEvent.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyEvent_lower(_ value: StickyEvent) -> RustBuffer {
+    return FfiConverterTypeStickyEvent.lower(value)
+}
+
+
+/**
+ * A sticky event that is no longer live in a room.
+ */
+public struct StickyEventRemoval: Equatable, Hashable {
+    /**
+     * The key the event was tracked under.
+     */
+    public var key: StickyKey
+    /**
+     * Why it is no longer live.
+     */
+    public var reason: RemovalReason
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(
+        /**
+         * The key the event was tracked under.
+         */key: StickyKey, 
+        /**
+         * Why it is no longer live.
+         */reason: RemovalReason) {
+        self.key = key
+        self.reason = reason
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension StickyEventRemoval: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeStickyEventRemoval: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> StickyEventRemoval {
+        return
+            try StickyEventRemoval(
+                key: FfiConverterTypeStickyKey.read(from: &buf), 
+                reason: FfiConverterTypeRemovalReason.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: StickyEventRemoval, into buf: inout [UInt8]) {
+        FfiConverterTypeStickyKey.write(value.key, into: &buf)
+        FfiConverterTypeRemovalReason.write(value.reason, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyEventRemoval_lift(_ buf: RustBuffer) throws -> StickyEventRemoval {
+    return try FfiConverterTypeStickyEventRemoval.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyEventRemoval_lower(_ value: StickyEventRemoval) -> RustBuffer {
+    return FfiConverterTypeStickyEventRemoval.lower(value)
+}
+
+
+/**
+ * The key under which a sticky event is tracked in a room.
+ *
+ * A room holds at most one live sticky event per key.
+ */
+public struct StickyKey: Equatable, Hashable {
+    /**
+     * The sender of the event.
+     */
+    public var sender: String
+    /**
+     * The type of the event, e.g. `m.rtc.member`.
+     */
+    public var eventType: String
+    /**
+     * The `content.sticky_key` of the event.
+     */
+    public var stickyKey: String
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(
+        /**
+         * The sender of the event.
+         */sender: String, 
+        /**
+         * The type of the event, e.g. `m.rtc.member`.
+         */eventType: String, 
+        /**
+         * The `content.sticky_key` of the event.
+         */stickyKey: String) {
+        self.sender = sender
+        self.eventType = eventType
+        self.stickyKey = stickyKey
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension StickyKey: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeStickyKey: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> StickyKey {
+        return
+            try StickyKey(
+                sender: FfiConverterString.read(from: &buf), 
+                eventType: FfiConverterString.read(from: &buf), 
+                stickyKey: FfiConverterString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: StickyKey, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.sender, into: &buf)
+        FfiConverterString.write(value.eventType, into: &buf)
+        FfiConverterString.write(value.stickyKey, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyKey_lift(_ buf: RustBuffer) throws -> StickyKey {
+    return try FfiConverterTypeStickyKey.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyKey_lower(_ value: StickyKey) -> RustBuffer {
+    return FfiConverterTypeStickyKey.lower(value)
 }
 
 
@@ -28264,8 +29594,8 @@ public func FfiConverterTypeSyncResponseV2_lower(_ value: SyncResponseV2) -> Rus
  */
 public struct SyncSettingsV2: Equatable, Hashable {
     /**
-     * Timeout in milliseconds for the server long-poll.
-     * If not set, defaults to 30 seconds.
+     * Timeout in milliseconds for the server long-poll. If not set, defaults
+     * to 30 seconds.
      */
     public var timeoutMs: UInt64?
     /**
@@ -28277,8 +29607,8 @@ public struct SyncSettingsV2: Equatable, Hashable {
     // declare one manually.
     public init(
         /**
-         * Timeout in milliseconds for the server long-poll.
-         * If not set, defaults to 30 seconds.
+         * Timeout in milliseconds for the server long-poll. If not set, defaults
+         * to 30 seconds.
          */timeoutMs: UInt64? = nil, 
         /**
          * Whether to request full state on the first sync.
@@ -28467,15 +29797,15 @@ public struct ThreadListItem {
      * The latest event in the thread (i.e. the most recent reply), if
      * available.
      *
-     * Initially populated from the server's bundled thread summary and
-     * updated in real time as new events arrive via sync or back-pagination.
+     * Initially populated from the server's bundled thread summary and updated
+     * in real time as new events arrive via sync or back-pagination.
      */
     public var latestEvent: ThreadListItemEvent?
     /**
      * The number of replies in this thread (excluding the root event).
      *
-     * Initially populated from the server's bundled thread summary and
-     * updated in real time as new events arrive via sync.
+     * Initially populated from the server's bundled thread summary and updated
+     * in real time as new events arrive via sync.
      */
     public var numReplies: UInt32
 
@@ -28493,14 +29823,14 @@ public struct ThreadListItem {
          * The latest event in the thread (i.e. the most recent reply), if
          * available.
          *
-         * Initially populated from the server's bundled thread summary and
-         * updated in real time as new events arrive via sync or back-pagination.
+         * Initially populated from the server's bundled thread summary and updated
+         * in real time as new events arrive via sync or back-pagination.
          */latestEvent: ThreadListItemEvent?, 
         /**
          * The number of replies in this thread (excluding the root event).
          *
-         * Initially populated from the server's bundled thread summary and
-         * updated in real time as new events arrive via sync.
+         * Initially populated from the server's bundled thread summary and updated
+         * in real time as new events arrive via sync.
          */numReplies: UInt32) {
         self.rootEvent = rootEvent
         self.latestEvent = latestEvent
@@ -28798,9 +30128,9 @@ public struct TimelineConfiguration: Equatable, Hashable {
      */
     public var filter: TimelineFilter
     /**
-     * An optional String that will be prepended to
-     * all the timeline item's internal IDs, making it possible to
-     * distinguish different timeline instances from each other.
+     * An optional String that will be prepended to all the timeline item's
+     * internal IDs, making it possible to distinguish different timeline
+     * instances from each other.
      */
     public var internalIdPrefix: String?
     /**
@@ -28831,9 +30161,9 @@ public struct TimelineConfiguration: Equatable, Hashable {
          * How should we filter out events from the timeline?
          */filter: TimelineFilter, 
         /**
-         * An optional String that will be prepended to
-         * all the timeline item's internal IDs, making it possible to
-         * distinguish different timeline instances from each other.
+         * An optional String that will be prepended to all the timeline item's
+         * internal IDs, making it possible to distinguish different timeline
+         * instances from each other.
          */internalIdPrefix: String?, 
         /**
          * How often to insert date dividers
@@ -28967,7 +30297,7 @@ public struct ToDeviceMessage: Equatable, Hashable {
      */
     public var eventType: String
     /**
-     * The user id that *claims* to have sent this message.
+     * The user id that _claims_ to have sent this message.
      *
      * This is unauthenticated. For an encrypted message, trust
      * `encryption_info.sender_id` instead, which is cryptographically
@@ -28991,7 +30321,7 @@ public struct ToDeviceMessage: Equatable, Hashable {
          * The type of the message.
          */eventType: String, 
         /**
-         * The user id that *claims* to have sent this message.
+         * The user id that _claims_ to have sent this message.
          *
          * This is unauthenticated. For an encrypted message, trust
          * `encryption_info.sender_id` instead, which is cryptographically
@@ -29193,8 +30523,8 @@ public struct TracingFileConfiguration: Equatable, Hashable {
      * Maximum total size of all log files combined in bytes.
      *
      * When the total size of all log files with the configured prefix and
-     * suffix exceeds this limit, the oldest files will be removed until
-     * the total is below the limit.
+     * suffix exceeds this limit, the oldest files will be removed until the
+     * total is below the limit.
      *
      * This is useful to prevent log files from consuming too much disk space
      * over time, even with multiple rotated files.
@@ -29206,8 +30536,8 @@ public struct TracingFileConfiguration: Equatable, Hashable {
      * Maximum age of log files in seconds.
      *
      * Log files older than this age will be automatically removed during
-     * cleanup. This is checked when the writer is created and during
-     * rotation operations.
+     * cleanup. This is checked when the writer is created and during rotation
+     * operations.
      *
      * Default: 1 week (7 * 24 * 60 * 60 seconds) if not specified.
      */
@@ -29231,8 +30561,8 @@ public struct TracingFileConfiguration: Equatable, Hashable {
          * Maximum total size of all log files combined in bytes.
          *
          * When the total size of all log files with the configured prefix and
-         * suffix exceeds this limit, the oldest files will be removed until
-         * the total is below the limit.
+         * suffix exceeds this limit, the oldest files will be removed until the
+         * total is below the limit.
          *
          * This is useful to prevent log files from consuming too much disk space
          * over time, even with multiple rotated files.
@@ -29243,8 +30573,8 @@ public struct TracingFileConfiguration: Equatable, Hashable {
          * Maximum age of log files in seconds.
          *
          * Log files older than this age will be automatically removed during
-         * cleanup. This is checked when the writer is created and during
-         * rotation operations.
+         * cleanup. This is checked when the writer is created and during rotation
+         * operations.
          *
          * Default: 1 week (7 * 24 * 60 * 60 seconds) if not specified.
          */maxAgeSeconds: UInt64?) {
@@ -29365,9 +30695,9 @@ public struct UnableToDecryptInfo: Equatable, Hashable {
     public var eventId: String
     /**
      * If the event could be decrypted late (that is, the event was encrypted
-     * at first, but could be decrypted later on), then this indicates the
-     * time it took to decrypt the event. If it is not set, this is
-     * considered a definite UTD.
+     * at first, but could be decrypted later on), then this indicates the time
+     * it took to decrypt the event. If it is not set, this is considered a
+     * definite UTD.
      *
      * If set, this is in milliseconds.
      */
@@ -29380,7 +30710,7 @@ public struct UnableToDecryptInfo: Equatable, Hashable {
     /**
      * The difference between the event creation time (`origin_server_ts`) and
      * the time our device was created. If negative, this event was sent
-     * *before* our device was created.
+     * _before_ our device was created.
      */
     public var eventLocalAgeMillis: Int64
     /**
@@ -29406,9 +30736,9 @@ public struct UnableToDecryptInfo: Equatable, Hashable {
          */eventId: String, 
         /**
          * If the event could be decrypted late (that is, the event was encrypted
-         * at first, but could be decrypted later on), then this indicates the
-         * time it took to decrypt the event. If it is not set, this is
-         * considered a definite UTD.
+         * at first, but could be decrypted later on), then this indicates the time
+         * it took to decrypt the event. If it is not set, this is considered a
+         * definite UTD.
          *
          * If set, this is in milliseconds.
          */timeToDecryptMs: UInt64?, 
@@ -29419,7 +30749,7 @@ public struct UnableToDecryptInfo: Equatable, Hashable {
         /**
          * The difference between the event creation time (`origin_server_ts`) and
          * the time our device was created. If negative, this event was sent
-         * *before* our device was created.
+         * _before_ our device was created.
          */eventLocalAgeMillis: Int64, 
         /**
          * Whether the user had verified their own identity at the point they
@@ -29615,8 +30945,8 @@ public struct UploadParameters: Equatable, Hashable {
      */
     public var inReplyTo: String?
     /**
-     * Optional additional top-level fields for the media event's content,
-     * as a serialized JSON object.
+     * Optional additional top-level fields for the media event's content, as a
+     * serialized JSON object.
      */
     public var extraContentJson: String?
 
@@ -29639,8 +30969,8 @@ public struct UploadParameters: Equatable, Hashable {
          * Optional Event ID to reply to.
          */inReplyTo: String?, 
         /**
-         * Optional additional top-level fields for the media event's content,
-         * as a serialized JSON object.
+         * Optional additional top-level fields for the media event's content, as a
+         * serialized JSON object.
          */extraContentJson: String? = nil) {
         self.source = source
         self.caption = caption
@@ -29903,8 +31233,9 @@ public struct UserProfile: Equatable, Hashable {
     /**
      * Set when the user is in a call (MSC4426 `m.call` profile field).
      *
-     * `None` means the user is not in a call. `Some(UserCall { call_joined_ts:
-     * None })` means the user is in a call but the join time wasn't recorded.
+     * `None` means the user is not in a call.
+     * `Some(UserCall { call_joined_ts: None })` means the user is in a call
+     * but the join time wasn't recorded.
      */
     public var call: UserCall?
 
@@ -29917,8 +31248,9 @@ public struct UserProfile: Equatable, Hashable {
         /**
          * Set when the user is in a call (MSC4426 `m.call` profile field).
          *
-         * `None` means the user is not in a call. `Some(UserCall { call_joined_ts:
-         * None })` means the user is in a call but the join time wasn't recorded.
+         * `None` means the user is not in a call.
+         * `Some(UserCall { call_joined_ts: None })` means the user is in a call
+         * but the join time wasn't recorded.
          */call: UserCall?) {
         self.userId = userId
         self.displayName = displayName
@@ -30498,20 +31830,20 @@ public struct WidgetSettings: Equatable, Hashable {
     public var widgetId: String
     /**
      * Whether or not the widget should be initialized on load message
-     * (`ContentLoad` message), or upon creation/attaching of the widget to
-     * the SDK's state machine that drives the API.
+     * (`ContentLoad` message), or upon creation/attaching of the widget to the
+     * SDK's state machine that drives the API.
      */
     public var initAfterContentLoad: Bool
     /**
-     * This contains the url from the widget state event.
-     * In this url placeholders can be used to pass information from the client
-     * to the widget. Possible values are: `$widgetId`, `$parentUrl`,
-     * `$userId`, `$lang`, `$fontScale`, `$analyticsID`.
+     * This contains the url from the widget state event. In this url
+     * placeholders can be used to pass information from the client to the
+     * widget. Possible values are: `$widgetId`, `$parentUrl`, `$userId`,
+     * `$lang`, `$fontScale`, `$analyticsID`.
      *
      * # Examples
      *
-     * e.g `http://widget.domain?username=$userId`
-     * will become: `http://widget.domain?username=@user_matrix_id:server.domain`.
+     * e.g `http://widget.domain?username=$userId` will become:
+     * `http://widget.domain?username=@user_matrix_id:server.domain`.
      */
     public var rawUrl: String
 
@@ -30523,19 +31855,19 @@ public struct WidgetSettings: Equatable, Hashable {
          */widgetId: String, 
         /**
          * Whether or not the widget should be initialized on load message
-         * (`ContentLoad` message), or upon creation/attaching of the widget to
-         * the SDK's state machine that drives the API.
+         * (`ContentLoad` message), or upon creation/attaching of the widget to the
+         * SDK's state machine that drives the API.
          */initAfterContentLoad: Bool, 
         /**
-         * This contains the url from the widget state event.
-         * In this url placeholders can be used to pass information from the client
-         * to the widget. Possible values are: `$widgetId`, `$parentUrl`,
-         * `$userId`, `$lang`, `$fontScale`, `$analyticsID`.
+         * This contains the url from the widget state event. In this url
+         * placeholders can be used to pass information from the client to the
+         * widget. Possible values are: `$widgetId`, `$parentUrl`, `$userId`,
+         * `$lang`, `$fontScale`, `$analyticsID`.
          *
          * # Examples
          *
-         * e.g `http://widget.domain?username=$userId`
-         * will become: `http://widget.domain?username=@user_matrix_id:server.domain`.
+         * e.g `http://widget.domain?username=$userId` will become:
+         * `http://widget.domain?username=@user_matrix_id:server.domain`.
          */rawUrl: String) {
         self.widgetId = widgetId
         self.initAfterContentLoad = initAfterContentLoad
@@ -31206,6 +32538,115 @@ public func FfiConverterTypeAssetType_lower(_ value: AssetType) -> RustBuffer {
 
 
 
+/**
+ * What kind of attachment is being sent or edited in, with the metadata that
+ * kind needs.
+ */
+
+public enum AttachmentKind {
+    
+    case image(imageInfo: ImageInfo, thumbnailSource: UploadSource?
+    )
+    case video(videoInfo: VideoInfo, thumbnailSource: UploadSource?
+    )
+    case audio(audioInfo: AudioInfo
+    )
+    case voice(audioInfo: AudioInfo, waveform: [Float]
+    )
+    case file(fileInfo: FileInfo
+    )
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension AttachmentKind: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAttachmentKind: FfiConverterRustBuffer {
+    typealias SwiftType = AttachmentKind
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AttachmentKind {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .image(imageInfo: try FfiConverterTypeImageInfo.read(from: &buf), thumbnailSource: try FfiConverterOptionTypeUploadSource.read(from: &buf)
+        )
+        
+        case 2: return .video(videoInfo: try FfiConverterTypeVideoInfo.read(from: &buf), thumbnailSource: try FfiConverterOptionTypeUploadSource.read(from: &buf)
+        )
+        
+        case 3: return .audio(audioInfo: try FfiConverterTypeAudioInfo.read(from: &buf)
+        )
+        
+        case 4: return .voice(audioInfo: try FfiConverterTypeAudioInfo.read(from: &buf), waveform: try FfiConverterSequenceFloat.read(from: &buf)
+        )
+        
+        case 5: return .file(fileInfo: try FfiConverterTypeFileInfo.read(from: &buf)
+        )
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: AttachmentKind, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case let .image(imageInfo,thumbnailSource):
+            writeInt(&buf, Int32(1))
+            FfiConverterTypeImageInfo.write(imageInfo, into: &buf)
+            FfiConverterOptionTypeUploadSource.write(thumbnailSource, into: &buf)
+            
+        
+        case let .video(videoInfo,thumbnailSource):
+            writeInt(&buf, Int32(2))
+            FfiConverterTypeVideoInfo.write(videoInfo, into: &buf)
+            FfiConverterOptionTypeUploadSource.write(thumbnailSource, into: &buf)
+            
+        
+        case let .audio(audioInfo):
+            writeInt(&buf, Int32(3))
+            FfiConverterTypeAudioInfo.write(audioInfo, into: &buf)
+            
+        
+        case let .voice(audioInfo,waveform):
+            writeInt(&buf, Int32(4))
+            FfiConverterTypeAudioInfo.write(audioInfo, into: &buf)
+            FfiConverterSequenceFloat.write(waveform, into: &buf)
+            
+        
+        case let .file(fileInfo):
+            writeInt(&buf, Int32(5))
+            FfiConverterTypeFileInfo.write(fileInfo, into: &buf)
+            
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAttachmentKind_lift(_ buf: RustBuffer) throws -> AttachmentKind {
+    return try FfiConverterTypeAttachmentKind.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAttachmentKind_lower(_ value: AttachmentKind) -> RustBuffer {
+    return FfiConverterTypeAttachmentKind.lower(value)
+}
+
+
+
 
 public enum AuthData: Equatable, Hashable {
     
@@ -31213,6 +32654,11 @@ public enum AuthData: Equatable, Hashable {
      * Password-based authentication (`m.login.password`).
      */
     case password(passwordDetails: AuthDataPasswordDetails
+    )
+    /**
+     * OAuth authentication (`m.oauth`).
+     */
+    case oAuth(session: String
     )
 
 
@@ -31238,6 +32684,9 @@ public struct FfiConverterTypeAuthData: FfiConverterRustBuffer {
         case 1: return .password(passwordDetails: try FfiConverterTypeAuthDataPasswordDetails.read(from: &buf)
         )
         
+        case 2: return .oAuth(session: try FfiConverterString.read(from: &buf)
+        )
+        
         default: throw UniffiInternalError.unexpectedEnumCase
         }
     }
@@ -31249,6 +32698,11 @@ public struct FfiConverterTypeAuthData: FfiConverterRustBuffer {
         case let .password(passwordDetails):
             writeInt(&buf, Int32(1))
             FfiConverterTypeAuthDataPasswordDetails.write(passwordDetails, into: &buf)
+            
+        
+        case let .oAuth(session):
+            writeInt(&buf, Int32(2))
+            FfiConverterString.write(session, into: &buf)
             
         }
     }
@@ -32219,7 +33673,8 @@ public enum CrossSigningResetAuthType: Equatable, Hashable {
     /**
      * The homeserver requires user-interactive authentication.
      */
-    case uiaa
+    case uiaa(session: String?
+    )
     /**
      * OAuth is used for authentication and the user needs to open a URL to
      * approve the upload of cross-signing keys.
@@ -32247,7 +33702,8 @@ public struct FfiConverterTypeCrossSigningResetAuthType: FfiConverterRustBuffer 
         let variant: Int32 = try readInt(&buf)
         switch variant {
         
-        case 1: return .uiaa
+        case 1: return .uiaa(session: try FfiConverterOptionString.read(from: &buf)
+        )
         
         case 2: return .oAuth(info: try FfiConverterTypeOAuthCrossSigningResetInfo.read(from: &buf)
         )
@@ -32260,9 +33716,10 @@ public struct FfiConverterTypeCrossSigningResetAuthType: FfiConverterRustBuffer 
         switch value {
         
         
-        case .uiaa:
+        case let .uiaa(session):
             writeInt(&buf, Int32(1))
-        
+            FfiConverterOptionString.write(session, into: &buf)
+            
         
         case let .oAuth(info):
             writeInt(&buf, Int32(2))
@@ -33301,8 +34758,7 @@ public enum ErrorKind: Equatable, Hashable {
      * `M_EXCLUSIVE`
      *
      * The resource being requested is reserved by an application service, or
-     * the application service making the request has not created the
-     * resource.
+     * the application service making the request has not created the resource.
      */
     case exclusive
     /**
@@ -33405,9 +34861,9 @@ public enum ErrorKind: Equatable, Hashable {
      * `M_RESOURCE_LIMIT_EXCEEDED`
      *
      * The request cannot be completed because the homeserver has reached a
-     * resource limit imposed on it. For example, a homeserver held in a
-     * shared hosting environment may reach a resource limit if it starts
-     * using too much memory or disk space.
+     * resource limit imposed on it. For example, a homeserver held in a shared
+     * hosting environment may reach a resource limit if it starts using too
+     * much memory or disk space.
      */
     case resourceLimitExceeded(
         /**
@@ -33443,8 +34899,8 @@ public enum ErrorKind: Equatable, Hashable {
      * `M_THREEPID_DENIED`
      *
      * The server does not permit this [third-party identifier]. This may
-     * happen if the server only permits, for example, email addresses from
-     * a particular domain.
+     * happen if the server only permits, for example, email addresses from a
+     * particular domain.
      *
      * [third-party identifier]: https://spec.matrix.org/latest/client-server-api/#adding-account-administrative-contact-information
      */
@@ -33484,8 +34940,8 @@ public enum ErrorKind: Equatable, Hashable {
      * `M_UNABLE_TO_AUTHORISE_JOIN`
      *
      * The room is [restricted] and none of the conditions can be validated by
-     * the homeserver. This can happen if the homeserver does not know
-     * about any of the rooms listed as conditions, for example.
+     * the homeserver. This can happen if the homeserver does not know about
+     * any of the rooms listed as conditions, for example.
      *
      * [restricted]: https://spec.matrix.org/latest/client-server-api/#restricted-rooms
      */
@@ -33494,10 +34950,9 @@ public enum ErrorKind: Equatable, Hashable {
      * `M_UNABLE_TO_GRANT_JOIN`
      *
      * A different server should be attempted for the join. This is typically
-     * because the resident server can see that the joining user satisfies
-     * one or more conditions, such as in the case of [restricted rooms],
-     * but the resident server would be unable to meet the authorization
-     * rules.
+     * because the resident server can see that the joining user satisfies one
+     * or more conditions, such as in the case of [restricted rooms], but the
+     * resident server would be unable to meet the authorization rules.
      *
      * [restricted rooms]: https://spec.matrix.org/latest/client-server-api/#restricted-rooms
      */
@@ -33525,8 +34980,8 @@ public enum ErrorKind: Equatable, Hashable {
         /**
          * If this is `true`, the client is in a "[soft logout]" state, i.e.
          * the server requires re-authentication but the session is not
-         * invalidated. The client can acquire a new access token by
-         * specifying the device ID it is already using to the login API.
+         * invalidated. The client can acquire a new access token by specifying
+         * the device ID it is already using to the login API.
          *
          * [soft logout]: https://spec.matrix.org/latest/client-server-api/#soft-logout
          */softLogout: Bool
@@ -33537,8 +34992,8 @@ public enum ErrorKind: Equatable, Hashable {
      * The server did not understand the request.
      *
      * This is expected to be returned with a 404 HTTP status code if the
-     * endpoint is not implemented or a 405 HTTP status code if the
-     * endpoint is implemented, but the incorrect HTTP method is used.
+     * endpoint is not implemented or a 405 HTTP status code if the endpoint is
+     * implemented, but the incorrect HTTP method is used.
      */
     case unrecognized
     /**
@@ -34066,8 +35521,8 @@ public enum EventSendState: Equatable, Hashable {
          * Whether the error is considered recoverable or not.
          *
          * An error that's recoverable will disable the room's send queue,
-         * while an unrecoverable error will be parked, until the user
-         * decides to cancel sending it.
+         * while an unrecoverable error will be parked, until it's retried or
+         * aborted.
          */isRecoverable: Bool
     )
     /**
@@ -34355,13 +35810,13 @@ public func FfiConverterTypeFocusEventError_lower(_ value: FocusEventError) -> R
 
 public enum GalleryItemInfo {
     
-    case audio(audioInfo: AudioInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?
+    case audio(audioInfo: AudioInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?, extraContentJson: String? = nil
     )
-    case file(fileInfo: FileInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?
+    case file(fileInfo: FileInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?, extraContentJson: String? = nil
     )
-    case image(imageInfo: ImageInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?, thumbnailSource: UploadSource?
+    case image(imageInfo: ImageInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?, extraContentJson: String? = nil, thumbnailSource: UploadSource?
     )
-    case video(videoInfo: VideoInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?, thumbnailSource: UploadSource?
+    case video(videoInfo: VideoInfo, source: UploadSource, caption: String?, formattedCaption: FormattedBody?, extraContentJson: String? = nil, thumbnailSource: UploadSource?
     )
 
 
@@ -34384,16 +35839,16 @@ public struct FfiConverterTypeGalleryItemInfo: FfiConverterRustBuffer {
         let variant: Int32 = try readInt(&buf)
         switch variant {
         
-        case 1: return .audio(audioInfo: try FfiConverterTypeAudioInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf)
+        case 1: return .audio(audioInfo: try FfiConverterTypeAudioInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf), extraContentJson: try FfiConverterOptionString.read(from: &buf)
         )
         
-        case 2: return .file(fileInfo: try FfiConverterTypeFileInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf)
+        case 2: return .file(fileInfo: try FfiConverterTypeFileInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf), extraContentJson: try FfiConverterOptionString.read(from: &buf)
         )
         
-        case 3: return .image(imageInfo: try FfiConverterTypeImageInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf), thumbnailSource: try FfiConverterOptionTypeUploadSource.read(from: &buf)
+        case 3: return .image(imageInfo: try FfiConverterTypeImageInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf), extraContentJson: try FfiConverterOptionString.read(from: &buf), thumbnailSource: try FfiConverterOptionTypeUploadSource.read(from: &buf)
         )
         
-        case 4: return .video(videoInfo: try FfiConverterTypeVideoInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf), thumbnailSource: try FfiConverterOptionTypeUploadSource.read(from: &buf)
+        case 4: return .video(videoInfo: try FfiConverterTypeVideoInfo.read(from: &buf), source: try FfiConverterTypeUploadSource.read(from: &buf), caption: try FfiConverterOptionString.read(from: &buf), formattedCaption: try FfiConverterOptionTypeFormattedBody.read(from: &buf), extraContentJson: try FfiConverterOptionString.read(from: &buf), thumbnailSource: try FfiConverterOptionTypeUploadSource.read(from: &buf)
         )
         
         default: throw UniffiInternalError.unexpectedEnumCase
@@ -34404,37 +35859,41 @@ public struct FfiConverterTypeGalleryItemInfo: FfiConverterRustBuffer {
         switch value {
         
         
-        case let .audio(audioInfo,source,caption,formattedCaption):
+        case let .audio(audioInfo,source,caption,formattedCaption,extraContentJson):
             writeInt(&buf, Int32(1))
             FfiConverterTypeAudioInfo.write(audioInfo, into: &buf)
             FfiConverterTypeUploadSource.write(source, into: &buf)
             FfiConverterOptionString.write(caption, into: &buf)
             FfiConverterOptionTypeFormattedBody.write(formattedCaption, into: &buf)
+            FfiConverterOptionString.write(extraContentJson, into: &buf)
             
         
-        case let .file(fileInfo,source,caption,formattedCaption):
+        case let .file(fileInfo,source,caption,formattedCaption,extraContentJson):
             writeInt(&buf, Int32(2))
             FfiConverterTypeFileInfo.write(fileInfo, into: &buf)
             FfiConverterTypeUploadSource.write(source, into: &buf)
             FfiConverterOptionString.write(caption, into: &buf)
             FfiConverterOptionTypeFormattedBody.write(formattedCaption, into: &buf)
+            FfiConverterOptionString.write(extraContentJson, into: &buf)
             
         
-        case let .image(imageInfo,source,caption,formattedCaption,thumbnailSource):
+        case let .image(imageInfo,source,caption,formattedCaption,extraContentJson,thumbnailSource):
             writeInt(&buf, Int32(3))
             FfiConverterTypeImageInfo.write(imageInfo, into: &buf)
             FfiConverterTypeUploadSource.write(source, into: &buf)
             FfiConverterOptionString.write(caption, into: &buf)
             FfiConverterOptionTypeFormattedBody.write(formattedCaption, into: &buf)
+            FfiConverterOptionString.write(extraContentJson, into: &buf)
             FfiConverterOptionTypeUploadSource.write(thumbnailSource, into: &buf)
             
         
-        case let .video(videoInfo,source,caption,formattedCaption,thumbnailSource):
+        case let .video(videoInfo,source,caption,formattedCaption,extraContentJson,thumbnailSource):
             writeInt(&buf, Int32(4))
             FfiConverterTypeVideoInfo.write(videoInfo, into: &buf)
             FfiConverterTypeUploadSource.write(source, into: &buf)
             FfiConverterOptionString.write(caption, into: &buf)
             FfiConverterOptionTypeFormattedBody.write(formattedCaption, into: &buf)
+            FfiConverterOptionString.write(extraContentJson, into: &buf)
             FfiConverterOptionTypeUploadSource.write(thumbnailSource, into: &buf)
             
         }
@@ -34573,15 +36032,15 @@ public enum GeneratedQrLoginProgress {
      */
     case starting
     /**
-     * We have established the secure channel and now need to display the
-     * QR code so that the existing device can scan it.
+     * We have established the secure channel and now need to display the QR
+     * code so that the existing device can scan it.
      */
     case qrReady(qrCode: QrCodeData
     )
     /**
      * The existing device has scanned the QR code and is displaying the
-     * checkcode. We now need to ask the user to enter the checkcode so that
-     * we can verify that the channel is indeed secure.
+     * checkcode. We now need to ask the user to enter the checkcode so that we
+     * can verify that the channel is indeed secure.
      */
     case qrScanned(checkCodeSender: CheckCodeSender
     )
@@ -34691,8 +36150,8 @@ public func FfiConverterTypeGeneratedQrLoginProgress_lower(_ value: GeneratedQrL
 
 
 /**
- * Enum describing the progress of granting login by generating a QR code to
- * be scanned on the new device.
+ * Enum describing the progress of granting login by generating a QR code to be
+ * scanned on the new device.
  */
 
 public enum GrantGeneratedQrLoginProgress {
@@ -34702,15 +36161,15 @@ public enum GrantGeneratedQrLoginProgress {
      */
     case starting
     /**
-     * We have established the secure channel and now need to display the
-     * QR code so that the existing device can scan it.
+     * We have established the secure channel and now need to display the QR
+     * code so that the existing device can scan it.
      */
     case qrReady(qrCode: QrCodeData
     )
     /**
      * The existing device has scanned the QR code and is displaying the
-     * checkcode. We now need to ask the user to enter the checkcode so that
-     * we can verify that the channel is indeed secure.
+     * checkcode. We now need to ask the user to enter the checkcode so that we
+     * can verify that the channel is indeed secure.
      */
     case qrScanned(checkCodeSender: CheckCodeSender
     )
@@ -34851,8 +36310,8 @@ public enum GrantQrLoginProgress {
          */checkCode: UInt8, 
         /**
          * The string representation of the check code, will be guaranteed to
-         * be 2 characters long, preserving the leading zero if the
-         * first digit is a zero.
+         * be 2 characters long, preserving the leading zero if the first digit
+         * is a zero.
          */checkCodeString: String
     )
     /**
@@ -34971,15 +36430,14 @@ public enum HistoryVisibility: Equatable, Hashable {
      * Previous events are accessible to newly joined members from the point
      * they were invited onwards.
      *
-     * Events stop being accessible when the member' state changes to
-     * something other than *invite* or *join*.
+     * Events stop being accessible when the member' state changes to something
+     * other than _invite_ or _join_.
      */
     case invited
     /**
      * Previous events are accessible to newly joined members from the point
-     * they joined the room onwards.
-     * Events stop being accessible when the member' state changes to
-     * something other than *join*.
+     * they joined the room onwards. Events stop being accessible when the
+     * member' state changes to something other than _join_.
      */
     case joined
     /**
@@ -35632,8 +37090,8 @@ public enum JoinRule: Equatable, Hashable {
     )
     /**
      * Users can join the room if they are invited, or if they meet any of the
-     * conditions described in a set of [`AllowRule`]s, or they can request
-     * an invite to the room.
+     * conditions described in a set of [`AllowRule`]s, or they can request an
+     * invite to the room.
      */
     case knockRestricted(rules: [AllowRule]
     )
@@ -37918,8 +39376,8 @@ public enum NotificationStatus {
     case eventNotFound
     /**
      * The event has been filtered out, either because of the user's push
-     * rules, or because the user which triggered it is ignored by the
-     * current user.
+     * rules, or because the user which triggered it is ignored by the current
+     * user.
      */
     case eventFilteredOut
     /**
@@ -38115,7 +39573,8 @@ public enum OAuthPrompt: Equatable, Hashable {
      * The Authorization Server should prompt the End-User to create a user
      * account.
      *
-     * Defined in [Initiating User Registration via OpenID Connect](https://openid.net/specs/openid-connect-prompt-create-1_0.html).
+     * Defined in
+     * [Initiating User Registration via OpenID Connect](https://openid.net/specs/openid-connect-prompt-create-1_0.html).
      */
     case create
     /**
@@ -39404,8 +40863,7 @@ public enum PushCondition: Equatable, Hashable {
     )
     /**
      * Takes into account the current power levels in the room, ensuring the
-     * sender of the event has high enough power to trigger the
-     * notification.
+     * sender of the event has high enough power to trigger the notification.
      */
     case senderNotificationPermission(
         /**
@@ -39768,8 +41226,8 @@ public enum QrLoginProgress: Equatable, Hashable {
          */checkCode: UInt8, 
         /**
          * The string representation of the check code, will be guaranteed to
-         * be 2 characters long, preserving the leading zero if the
-         * first digit is a zero.
+         * be 2 characters long, preserving the leading zero if the first digit
+         * is a zero.
          */checkCodeString: String
     )
     /**
@@ -39907,6 +41365,11 @@ public enum QueueWedgeError: Equatable, Hashable {
      */
     case crossVerificationRequired
     /**
+     * The access token was rejected, and the request is waiting for the
+     * session to have a working one again.
+     */
+    case expiredAccessToken
+    /**
      * Some media content to be sent has disappeared from the cache.
      */
     case missingMediaContent
@@ -39949,12 +41412,14 @@ public struct FfiConverterTypeQueueWedgeError: FfiConverterRustBuffer {
         
         case 3: return .crossVerificationRequired
         
-        case 4: return .missingMediaContent
+        case 4: return .expiredAccessToken
         
-        case 5: return .invalidMimeType(mimeType: try FfiConverterString.read(from: &buf)
+        case 5: return .missingMediaContent
+        
+        case 6: return .invalidMimeType(mimeType: try FfiConverterString.read(from: &buf)
         )
         
-        case 6: return .genericApiError(msg: try FfiConverterString.read(from: &buf)
+        case 7: return .genericApiError(msg: try FfiConverterString.read(from: &buf)
         )
         
         default: throw UniffiInternalError.unexpectedEnumCase
@@ -39979,17 +41444,21 @@ public struct FfiConverterTypeQueueWedgeError: FfiConverterRustBuffer {
             writeInt(&buf, Int32(3))
         
         
-        case .missingMediaContent:
+        case .expiredAccessToken:
             writeInt(&buf, Int32(4))
         
         
-        case let .invalidMimeType(mimeType):
+        case .missingMediaContent:
             writeInt(&buf, Int32(5))
+        
+        
+        case let .invalidMimeType(mimeType):
+            writeInt(&buf, Int32(6))
             FfiConverterString.write(mimeType, into: &buf)
             
         
         case let .genericApiError(msg):
-            writeInt(&buf, Int32(6))
+            writeInt(&buf, Int32(7))
             FfiConverterString.write(msg, into: &buf)
             
         }
@@ -40873,14 +42342,13 @@ public enum RoomHistoryVisibility: Equatable, Hashable {
      * they were invited onwards.
      *
      * Events stop being accessible when the member's state changes to
-     * something other than *invite* or *join*.
+     * something other than _invite_ or _join_.
      */
     case invited
     /**
      * Previous events are accessible to newly joined members from the point
-     * they joined the room onwards.
-     * Events stop being accessible when the member's state changes to
-     * something other than *join*.
+     * they joined the room onwards. Events stop being accessible when the
+     * member's state changes to something other than _join_.
      */
     case joined
     /**
@@ -41714,8 +43182,8 @@ public enum RoomLoadSettings: Equatable, Hashable {
      */
     case all
     /**
-     * Load a single room from the `StateStore` into the in-memory state
-     * store `BaseStateStore`.
+     * Load a single room from the `StateStore` into the in-memory state store
+     * `BaseStateStore`.
      *
      * Please, be careful with this option. Read the documentation of
      * [`RoomLoadSettings`].
@@ -42125,8 +43593,8 @@ public enum RoomSendQueueUpdate {
     /**
      * An error happened when an event was being sent.
      *
-     * The event has not been removed from the queue. All the send queues
-     * will be disabled after this happens, and must be manually re-enabled.
+     * The event has not been removed from the queue. All the send queues will
+     * be disabled after this happens, and must be manually re-enabled.
      */
     case sendError(
         /**
@@ -42139,8 +43607,8 @@ public enum RoomSendQueueUpdate {
          * Whether the error is considered recoverable or not.
          *
          * An error that's recoverable will disable the room's send queue,
-         * while an unrecoverable error will be parked, until the user
-         * decides to cancel sending it.
+         * while an unrecoverable error will be parked, until the user decides
+         * to cancel sending it.
          */isRecoverable: Bool
     )
     /**
@@ -42682,6 +44150,99 @@ public func FfiConverterTypeRtcNotificationType_lower(_ value: RtcNotificationTy
 
 
 
+/**
+ * Information about a MatrixRTC transport advertised by the homeserver.
+ */
+
+public enum RtcTransport: Equatable, Hashable {
+    
+    /**
+     * A LiveKit RTC transport.
+     */
+    case liveKit(
+        /**
+         * The URL of the LiveKit service.
+         */serviceUrl: String
+    )
+    /**
+     * A transport type the SDK doesn't know about, up for interpretation by
+     * the consumer.
+     */
+    case custom(
+        /**
+         * The value of the `type` field of the transport.
+         */transportType: String, 
+        /**
+         * The remaining transport data, as a serialized JSON object. It
+         * doesn't contain the `type` field.
+         */data: String
+    )
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension RtcTransport: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeRtcTransport: FfiConverterRustBuffer {
+    typealias SwiftType = RtcTransport
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RtcTransport {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .liveKit(serviceUrl: try FfiConverterString.read(from: &buf)
+        )
+        
+        case 2: return .custom(transportType: try FfiConverterString.read(from: &buf), data: try FfiConverterString.read(from: &buf)
+        )
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: RtcTransport, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case let .liveKit(serviceUrl):
+            writeInt(&buf, Int32(1))
+            FfiConverterString.write(serviceUrl, into: &buf)
+            
+        
+        case let .custom(transportType,data):
+            writeInt(&buf, Int32(2))
+            FfiConverterString.write(transportType, into: &buf)
+            FfiConverterString.write(data, into: &buf)
+            
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRtcTransport_lift(_ buf: RustBuffer) throws -> RtcTransport {
+    return try FfiConverterTypeRtcTransport.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRtcTransport_lower(_ value: RtcTransport) -> RustBuffer {
+    return FfiConverterTypeRtcTransport.lower(value)
+}
+
+
+
 
 public enum RuleKind: Equatable, Hashable {
     
@@ -43085,6 +44646,108 @@ public func FfiConverterTypeSecretStorageEncryptionAlgorithm_lift(_ buf: RustBuf
 #endif
 public func FfiConverterTypeSecretStorageEncryptionAlgorithm_lower(_ value: SecretStorageEncryptionAlgorithm) -> RustBuffer {
     return FfiConverterTypeSecretStorageEncryptionAlgorithm.lower(value)
+}
+
+
+
+/**
+ * Which pending send on an item [`Timeline::retry_send`] and
+ * [`Timeline::abort_send`] act on.
+ */
+
+public enum SendTarget: Equatable, Hashable {
+    
+    /**
+     * The item itself, while it's a local echo.
+     *
+     * Note that aborting one that's already in flight queues a redaction for
+     * it, without a reason; use `SendHandle::abort` if one is needed.
+     */
+    case event
+    /**
+     * Our pending edit of the item.
+     */
+    case edit
+    /**
+     * Our pending redaction of the item.
+     */
+    case redaction
+    /**
+     * Our pending reaction to the item with this key.
+     */
+    case reaction(key: String
+    )
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension SendTarget: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeSendTarget: FfiConverterRustBuffer {
+    typealias SwiftType = SendTarget
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SendTarget {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .event
+        
+        case 2: return .edit
+        
+        case 3: return .redaction
+        
+        case 4: return .reaction(key: try FfiConverterString.read(from: &buf)
+        )
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: SendTarget, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .event:
+            writeInt(&buf, Int32(1))
+        
+        
+        case .edit:
+            writeInt(&buf, Int32(2))
+        
+        
+        case .redaction:
+            writeInt(&buf, Int32(3))
+        
+        
+        case let .reaction(key):
+            writeInt(&buf, Int32(4))
+            FfiConverterString.write(key, into: &buf)
+            
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSendTarget_lift(_ buf: RustBuffer) throws -> SendTarget {
+    return try FfiConverterTypeSendTarget.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSendTarget_lower(_ value: SendTarget) -> RustBuffer {
+    return FfiConverterTypeSendTarget.lower(value)
 }
 
 
@@ -44093,6 +45756,105 @@ public func FfiConverterTypeSteadyStateError_lower(_ value: SteadyStateError) ->
 }
 
 
+/**
+ * A change to the sticky events of a room, as delivered to a
+ * [`StickyEventsListener`].
+ *
+ * Consumers can use these updates to maintain a map of the live sticky events
+ * keyed by [`StickyKey`].
+ */
+
+public enum StickyEventsUpdate: Equatable, Hashable {
+    
+    /**
+     * A full replacement of the map.
+     */
+    case reset(
+        /**
+         * Every sticky event that is currently live.
+         */events: [StickyEvent]
+    )
+    /**
+     * An incremental change.
+     */
+    case changes(
+        /**
+         * Events that appeared under a key that had no live event.
+         */added: [StickyEvent], 
+        /**
+         * Events that replaced the live event of their key.
+         */updated: [StickyEvent], 
+        /**
+         * Keys whose live event disappeared.
+         */removed: [StickyEventRemoval]
+    )
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension StickyEventsUpdate: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeStickyEventsUpdate: FfiConverterRustBuffer {
+    typealias SwiftType = StickyEventsUpdate
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> StickyEventsUpdate {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .reset(events: try FfiConverterSequenceTypeStickyEvent.read(from: &buf)
+        )
+        
+        case 2: return .changes(added: try FfiConverterSequenceTypeStickyEvent.read(from: &buf), updated: try FfiConverterSequenceTypeStickyEvent.read(from: &buf), removed: try FfiConverterSequenceTypeStickyEventRemoval.read(from: &buf)
+        )
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: StickyEventsUpdate, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case let .reset(events):
+            writeInt(&buf, Int32(1))
+            FfiConverterSequenceTypeStickyEvent.write(events, into: &buf)
+            
+        
+        case let .changes(added,updated,removed):
+            writeInt(&buf, Int32(2))
+            FfiConverterSequenceTypeStickyEvent.write(added, into: &buf)
+            FfiConverterSequenceTypeStickyEvent.write(updated, into: &buf)
+            FfiConverterSequenceTypeStickyEventRemoval.write(removed, into: &buf)
+            
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyEventsUpdate_lift(_ buf: RustBuffer) throws -> StickyEventsUpdate {
+    return try FfiConverterTypeStickyEventsUpdate.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeStickyEventsUpdate_lower(_ value: StickyEventsUpdate) -> RustBuffer {
+    return FfiConverterTypeStickyEventsUpdate.lower(value)
+}
+
+
+
 
 public enum SyncServiceState: Equatable, Hashable {
     
@@ -45077,6 +46839,10 @@ public enum TraceLogPacks: Equatable, Hashable {
      */
     case eventCache
     /**
+     * Enables all the logs relevant to the back-pagination queue.
+     */
+    case backPagination
+    /**
      * Enables all the logs relevant to the send queue.
      */
     case sendQueue
@@ -45123,17 +46889,19 @@ public struct FfiConverterTypeTraceLogPacks: FfiConverterRustBuffer {
         
         case 1: return .eventCache
         
-        case 2: return .sendQueue
+        case 2: return .backPagination
         
-        case 3: return .timeline
+        case 3: return .sendQueue
         
-        case 4: return .notificationClient
+        case 4: return .timeline
         
-        case 5: return .syncProfiling
+        case 5: return .notificationClient
         
-        case 6: return .latestEvents
+        case 6: return .syncProfiling
         
-        case 7: return .search
+        case 7: return .latestEvents
+        
+        case 8: return .search
         
         default: throw UniffiInternalError.unexpectedEnumCase
         }
@@ -45147,28 +46915,32 @@ public struct FfiConverterTypeTraceLogPacks: FfiConverterRustBuffer {
             writeInt(&buf, Int32(1))
         
         
-        case .sendQueue:
+        case .backPagination:
             writeInt(&buf, Int32(2))
         
         
-        case .timeline:
+        case .sendQueue:
             writeInt(&buf, Int32(3))
         
         
-        case .notificationClient:
+        case .timeline:
             writeInt(&buf, Int32(4))
         
         
-        case .syncProfiling:
+        case .notificationClient:
             writeInt(&buf, Int32(5))
         
         
-        case .latestEvents:
+        case .syncProfiling:
             writeInt(&buf, Int32(6))
         
         
-        case .search:
+        case .latestEvents:
             writeInt(&buf, Int32(7))
+        
+        
+        case .search:
+            writeInt(&buf, Int32(8))
         
         }
     }
@@ -47933,8 +49705,8 @@ public func FfiConverterCallbackInterfaceKnockRequestsListener_lower(_ v: KnockR
 public protocol LiveLocationsListener: AnyObject, Sendable {
     
     /**
-     * Called with a batch of [`LiveLocationShareUpdate`]s whenever the list
-     * of active shares changes.
+     * Called with a batch of [`LiveLocationShareUpdate`]s whenever the list of
+     * active shares changes.
      */
     func onUpdate(updates: [LiveLocationShareUpdate]) 
     
@@ -50110,6 +51882,145 @@ public func FfiConverterCallbackInterfaceRoomListServiceSyncIndicatorListener_lo
 
 
 /**
+ * A listener for the message-like events of a single type, registered with
+ * [`Room::subscribe_to_message_like_events`].
+ */
+public protocol RoomMessageLikeEventsListener: AnyObject, Sendable {
+    
+    func onEvent(event: RoomMessageLikeEvent) 
+    
+}
+
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+fileprivate struct UniffiCallbackInterfaceRoomMessageLikeEventsListener {
+
+    // Create the VTable using a series of closures.
+    // Swift automatically converts these into C callback functions.
+    //
+    // Store the vtable directly.
+    static let vtable: UniffiVTableCallbackInterfaceRoomMessageLikeEventsListener = UniffiVTableCallbackInterfaceRoomMessageLikeEventsListener(
+        uniffiFree: { (uniffiHandle: UInt64) -> () in
+            do {
+                try FfiConverterCallbackInterfaceRoomMessageLikeEventsListener.handleMap.remove(handle: uniffiHandle)
+            } catch {
+                print("Uniffi callback interface RoomMessageLikeEventsListener: handle missing in uniffiFree")
+            }
+        },
+        uniffiClone: { (uniffiHandle: UInt64) -> UInt64 in
+            do {
+                return try FfiConverterCallbackInterfaceRoomMessageLikeEventsListener.handleMap.clone(handle: uniffiHandle)
+            } catch {
+                fatalError("Uniffi callback interface RoomMessageLikeEventsListener: handle missing in uniffiClone")
+            }
+        },
+        onEvent: { (
+            uniffiHandle: UInt64,
+            event: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterCallbackInterfaceRoomMessageLikeEventsListener.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.onEvent(
+                     event: try FfiConverterTypeRoomMessageLikeEvent_lift(event)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        }
+    )
+
+    // Rust stores this pointer for future callback invocations, so it must live
+    // for the process lifetime (not just for the init function call).
+    //
+    // `nonisolated(unsafe)` is needed under Swift 6 strict concurrency.
+    // This is safe because the pointee is initialized once during static init
+    // and never mutated by either side of the FFI.  Its fields are C function pointers.
+    nonisolated(unsafe) static let vtablePtr: UnsafePointer<UniffiVTableCallbackInterfaceRoomMessageLikeEventsListener> = {
+        let ptr = UnsafeMutablePointer<UniffiVTableCallbackInterfaceRoomMessageLikeEventsListener>.allocate(capacity: 1)
+        ptr.initialize(to: vtable)
+        return UnsafePointer(ptr)
+    }()
+}
+
+private func uniffiCallbackInitRoomMessageLikeEventsListener() {
+    uniffi_matrix_sdk_ffi_fn_init_callback_vtable_roommessagelikeeventslistener(UniffiCallbackInterfaceRoomMessageLikeEventsListener.vtablePtr)
+}
+
+// FfiConverter protocol for callback interfaces
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterCallbackInterfaceRoomMessageLikeEventsListener {
+    fileprivate static let handleMap = UniffiHandleMap<RoomMessageLikeEventsListener>()
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+extension FfiConverterCallbackInterfaceRoomMessageLikeEventsListener : FfiConverter {
+    typealias SwiftType = RoomMessageLikeEventsListener
+    typealias FfiType = UInt64
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lift(_ handle: UInt64) throws -> SwiftType {
+        try handleMap.get(handle: handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lower(_ v: SwiftType) -> UInt64 {
+        return handleMap.insert(obj: v)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func write(_ v: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(v))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceRoomMessageLikeEventsListener_lift(_ handle: UInt64) throws -> RoomMessageLikeEventsListener {
+    return try FfiConverterCallbackInterfaceRoomMessageLikeEventsListener.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceRoomMessageLikeEventsListener_lower(_ v: RoomMessageLikeEventsListener) -> UInt64 {
+    return FfiConverterCallbackInterfaceRoomMessageLikeEventsListener.lower(v)
+}
+
+
+
+
+/**
  * A listener for the room state events of a single type, registered with
  * [`Room::subscribe_to_state_events`].
  */
@@ -51904,6 +53815,144 @@ public func FfiConverterCallbackInterfaceSpaceServiceSpaceFiltersListener_lower(
 
 
 /**
+ * A listener for the sticky events of a room.
+ */
+public protocol StickyEventsListener: AnyObject, Sendable {
+    
+    func onUpdate(update: StickyEventsUpdate) 
+    
+}
+
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+fileprivate struct UniffiCallbackInterfaceStickyEventsListener {
+
+    // Create the VTable using a series of closures.
+    // Swift automatically converts these into C callback functions.
+    //
+    // Store the vtable directly.
+    static let vtable: UniffiVTableCallbackInterfaceStickyEventsListener = UniffiVTableCallbackInterfaceStickyEventsListener(
+        uniffiFree: { (uniffiHandle: UInt64) -> () in
+            do {
+                try FfiConverterCallbackInterfaceStickyEventsListener.handleMap.remove(handle: uniffiHandle)
+            } catch {
+                print("Uniffi callback interface StickyEventsListener: handle missing in uniffiFree")
+            }
+        },
+        uniffiClone: { (uniffiHandle: UInt64) -> UInt64 in
+            do {
+                return try FfiConverterCallbackInterfaceStickyEventsListener.handleMap.clone(handle: uniffiHandle)
+            } catch {
+                fatalError("Uniffi callback interface StickyEventsListener: handle missing in uniffiClone")
+            }
+        },
+        onUpdate: { (
+            uniffiHandle: UInt64,
+            update: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterCallbackInterfaceStickyEventsListener.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.onUpdate(
+                     update: try FfiConverterTypeStickyEventsUpdate_lift(update)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        }
+    )
+
+    // Rust stores this pointer for future callback invocations, so it must live
+    // for the process lifetime (not just for the init function call).
+    //
+    // `nonisolated(unsafe)` is needed under Swift 6 strict concurrency.
+    // This is safe because the pointee is initialized once during static init
+    // and never mutated by either side of the FFI.  Its fields are C function pointers.
+    nonisolated(unsafe) static let vtablePtr: UnsafePointer<UniffiVTableCallbackInterfaceStickyEventsListener> = {
+        let ptr = UnsafeMutablePointer<UniffiVTableCallbackInterfaceStickyEventsListener>.allocate(capacity: 1)
+        ptr.initialize(to: vtable)
+        return UnsafePointer(ptr)
+    }()
+}
+
+private func uniffiCallbackInitStickyEventsListener() {
+    uniffi_matrix_sdk_ffi_fn_init_callback_vtable_stickyeventslistener(UniffiCallbackInterfaceStickyEventsListener.vtablePtr)
+}
+
+// FfiConverter protocol for callback interfaces
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterCallbackInterfaceStickyEventsListener {
+    fileprivate static let handleMap = UniffiHandleMap<StickyEventsListener>()
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+extension FfiConverterCallbackInterfaceStickyEventsListener : FfiConverter {
+    typealias SwiftType = StickyEventsListener
+    typealias FfiType = UInt64
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lift(_ handle: UInt64) throws -> SwiftType {
+        try handleMap.get(handle: handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lower(_ v: SwiftType) -> UInt64 {
+        return handleMap.insert(obj: v)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func write(_ v: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(v))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceStickyEventsListener_lift(_ handle: UInt64) throws -> StickyEventsListener {
+    return try FfiConverterCallbackInterfaceStickyEventsListener.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceStickyEventsListener_lower(_ v: StickyEventsListener) -> UInt64 {
+    return FfiConverterCallbackInterfaceStickyEventsListener.lower(v)
+}
+
+
+
+
+/**
  * A listener for the sync loop.
  *
  * Called after each successful sync response when using
@@ -52050,8 +54099,8 @@ public func FfiConverterCallbackInterfaceSyncListenerV2_lower(_ v: SyncListenerV
 /**
  * A listener for notifications generated from sync responses.
  *
- * This is called during sync for each event that triggers a notification
- * based on the user's push rules.
+ * This is called during sync for each event that triggers a notification based
+ * on the user's push rules.
  */
 public protocol SyncNotificationListener: AnyObject, Sendable {
     
@@ -54540,6 +56589,30 @@ fileprivate struct FfiConverterOptionTypeSentryConfig: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterOptionTypeSessionVerificationCancelInfo: FfiConverterRustBuffer {
+    typealias SwiftType = SessionVerificationCancelInfo?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeSessionVerificationCancelInfo.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeSessionVerificationCancelInfo.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterOptionTypeSpaceRoom: FfiConverterRustBuffer {
     typealias SwiftType = SpaceRoom?
 
@@ -55572,6 +57645,30 @@ fileprivate struct FfiConverterOptionSequenceTypeRelationType: FfiConverterRustB
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterOptionSequenceTypeRtcTransport: FfiConverterRustBuffer {
+    typealias SwiftType = [RtcTransport]?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterSequenceTypeRtcTransport.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterSequenceTypeRtcTransport.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterOptionDictionaryStringInt64: FfiConverterRustBuffer {
     typealias SwiftType = [String: Int64]?
 
@@ -56344,6 +58441,56 @@ fileprivate struct FfiConverterSequenceTypeSpaceRoom: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterSequenceTypeStickyEvent: FfiConverterRustBuffer {
+    typealias SwiftType = [StickyEvent]
+
+    public static func write(_ value: [StickyEvent], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeStickyEvent.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [StickyEvent] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [StickyEvent]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeStickyEvent.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTypeStickyEventRemoval: FfiConverterRustBuffer {
+    typealias SwiftType = [StickyEventRemoval]
+
+    public static func write(_ value: [StickyEventRemoval], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeStickyEventRemoval.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [StickyEventRemoval] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [StickyEventRemoval]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeStickyEventRemoval.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterSequenceTypeThreadListItem: FfiConverterRustBuffer {
     typealias SwiftType = [ThreadListItem]
 
@@ -56786,6 +58933,31 @@ fileprivate struct FfiConverterSequenceTypeRoomMessageEventMessageType: FfiConve
         seq.reserveCapacity(Int(len))
         for _ in 0 ..< len {
             seq.append(try FfiConverterTypeRoomMessageEventMessageType.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTypeRtcTransport: FfiConverterRustBuffer {
+    typealias SwiftType = [RtcTransport]
+
+    public static func write(_ value: [RtcTransport], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeRtcTransport.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [RtcTransport] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [RtcTransport]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeRtcTransport.read(from: &buf))
         }
         return seq
     }
@@ -57666,8 +59838,8 @@ public func messageEventContentNew(msgtype: MessageType)throws  -> RoomMessageEv
 })
 }
 /**
- * Parse a matrix entity from a given URI, be it either
- * a `matrix.to` link or a `matrix:` URI
+ * Parse a matrix entity from a given URI, be it either a `matrix.to` link or a
+ * `matrix:` URI
  */
 public func parseMatrixEntityFrom(uri: String) -> MatrixEntity?  {
     return try!  FfiConverterOptionTypeMatrixEntity.lift(try! rustCall() {
@@ -57708,13 +59880,14 @@ public func serverNameFromUserId(userId: String)throws  -> String  {
 })
 }
 /**
- * Create the actual url that can be used to setup the WebView or IFrame
- * that contains the widget.
+ * Create the actual url that can be used to setup the WebView or IFrame that
+ * contains the widget.
  *
  * # Arguments
- * * `widget_settings` - The widget settings to generate the url for.
- * * `room` - A Matrix room which is used to query the logged in username
- * * `props` - Properties from the client that can be used by a widget to adapt
+ *
+ * - `widget_settings` - The widget settings to generate the url for.
+ * - `room` - A Matrix room which is used to query the logged in username
+ * - `props` - Properties from the client that can be used by a widget to adapt
  * to the client. e.g. language, font-scale...
  */
 public func generateWebviewUrl(widgetSettings: WidgetSettings, room: Room, props: ClientProperties)async throws  -> String  {
@@ -57763,18 +59936,17 @@ public func makeWidgetDriver(settings: WidgetSettings)throws  -> WidgetDriverAnd
 })
 }
 /**
- * `WidgetSettings` are usually created from a state event.
- * (currently unimplemented)
+ * `WidgetSettings` are usually created from a state event. (currently
+ * unimplemented)
  *
- * In some cases the client wants to create custom `WidgetSettings`
- * for specific rooms based on other conditions.
- * This function returns a `WidgetSettings` object which can be used
- * to setup a widget using `run_client_widget_api`
- * and to generate the correct url for the widget.
+ * In some cases the client wants to create custom `WidgetSettings` for
+ * specific rooms based on other conditions. This function returns a
+ * `WidgetSettings` object which can be used to setup a widget using
+ * `run_client_widget_api` and to generate the correct url for the widget.
  *
  * # Arguments
  *
- * * `props` - A struct containing the configuration parameters for a element
+ * - `props` - A struct containing the configuration parameters for a element
  * call widget.
  */
 public func newVirtualElementCallWidget(props: VirtualElementCallWidgetProperties, config: VirtualElementCallWidgetConfig)throws  -> WidgetSettings  {
@@ -57862,7 +60034,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_func_message_event_content_new() != 60397) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_func_parse_matrix_entity_from() != 47063) {
+    if (uniffi_matrix_sdk_ffi_checksum_func_parse_matrix_entity_from() != 41615) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_func_create_caption_edit() != 45966) {
@@ -57871,7 +60043,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_func_server_name_from_user_id() != 45296) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_func_generate_webview_url() != 44877) {
+    if (uniffi_matrix_sdk_ffi_checksum_func_generate_webview_url() != 21892) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_func_get_element_call_required_permissions() != 65024) {
@@ -57880,7 +60052,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_func_make_widget_driver() != 34266) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_func_new_virtual_element_call_widget() != 51000) {
+    if (uniffi_matrix_sdk_ffi_checksum_func_new_virtual_element_call_widget() != 14288) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_roommessageeventcontentwithoutrelation_with_mentions() != 23475) {
@@ -57907,7 +60079,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_ssohandler_finish() != 52093) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_ssohandler_url() != 38378) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_ssohandler_url() != 9818) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_abort_oauth_auth() != 7594) {
@@ -57931,10 +60103,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_cached_avatar_url() != 30350) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_can_deactivate_account() != 12377) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_can_deactivate_account() != 46985) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_clear_caches() != 18813) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_clear_caches() != 12078) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_clear_user_status() != 10577) {
@@ -57946,10 +60118,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_create_room() != 3492) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_custom_login_with_jwt() != 56228) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_custom_login_with_jwt() != 58183) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_deactivate_account() != 50064) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_deactivate_account() != 53834) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_delete_pusher() != 29493) {
@@ -57959,6 +60131,9 @@ private let initializationResult: InitializationResult = {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_disable_well_known_lookup() != 38090) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_discover_rtc_transports() != 38965) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_display_name() != 13626) {
@@ -57985,7 +60160,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_dm_rooms() != 26367) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_invite_avatars_display_policy() != 48202) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_invite_avatars_display_policy() != 15140) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_max_media_upload_size() != 31461) {
@@ -57997,7 +60172,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_media_file() != 46613) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_media_preview_display_policy() != 56154) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_media_preview_display_policy() != 54801) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_media_thumbnail() != 29416) {
@@ -58012,13 +60187,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_recently_visited_rooms() != 31275) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_room() != 21053) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_room() != 19167) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_room_preview_from_room_alias() != 1624) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_room_preview_from_room_id() != 32950) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_room_preview_from_room_id() != 61718) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_session_verification_controller() != 58138) {
@@ -58030,7 +60205,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_get_url() != 18890) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_url_preview() != 13590) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_get_url_preview() != 44378) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_homeserver() != 42423) {
@@ -58060,7 +60235,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_is_report_room_api_supported() != 26132) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_is_room_alias_available() != 29606) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_is_room_alias_available() != 16005) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_is_sticky_events_supported() != 6866) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_is_user_status_supported() != 49650) {
@@ -58069,7 +60247,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_join_room_by_id() != 56087) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_join_room_by_id_or_alias() != 36531) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_join_room_by_id_or_alias() != 36557) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_knock() != 32237) {
@@ -58087,13 +60265,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_logout() != 12942) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_mark_all_rooms_as_read() != 20882) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_mark_all_rooms_as_read() != 2022) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_new_grant_login_with_qr_code_handler() != 23786) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_new_login_with_qr_code_handler() != 2903) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_new_login_with_qr_code_handler() != 14560) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_notification_client() != 20149) {
@@ -58111,10 +60289,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_optimize_stores() != 24510) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_pause() != 15854) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_pause() != 8061) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_register_notification_handler() != 47738) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_register_notification_handler() != 19168) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_remove_avatar() != 31550) {
@@ -58126,7 +60304,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_reset_supported_versions() != 61164) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_reset_well_known() != 52326) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_reset_well_known() != 35371) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_resolve_room_alias() != 40715) {
@@ -58150,16 +60328,19 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_rooms() != 64941) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_run_search_backfill() != 14130) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_search_users() != 51156) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_send_encrypted_to_device_message() != 36432) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_send_encrypted_to_device_message() != 23656) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_server() != 53378) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_server() != 55051) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_server_vendor_info() != 11469) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_server_vendor_info() != 22941) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_session() != 13261) {
@@ -58195,7 +60376,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_set_pusher() != 23660) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_set_user_status() != 4862) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_set_user_status() != 23) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_set_utd_delegate() != 58546) {
@@ -58210,7 +60391,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_start_sso_login() != 26018) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_custom_to_device_messages() != 60226) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_custom_to_device_messages() != 50580) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_duplicate_key_upload_errors() != 61081) {
@@ -58228,22 +60409,22 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_own_profile() != 44633) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_room_info() != 42276) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_room_info() != 7474) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_send_queue_status() != 3015) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_send_queue_updates() != 25278) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_subscribe_to_send_queue_updates() != 24108) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_sync_once_v2() != 36079) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_sync_once_v2() != 26789) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_sync_service() != 3217) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_sync_v2() != 34947) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_sync_v2() != 10162) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_tile_server() != 12042) {
@@ -58264,7 +60445,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_client_upload_media() != 27840) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_client_url_for_oauth() != 14390) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_client_url_for_oauth() != 57377) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_client_user_id() != 42220) {
@@ -58330,7 +60511,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_auto_enable_cross_signing() != 30673) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_backup_download_strategy() != 45874) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_backup_download_strategy() != 20957) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_build() != 26704) {
@@ -58387,7 +60568,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_server_name_or_homeserver_url() != 27197) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_session_paths() != 40724) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_session_paths() != 12862) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_set_session_delegate() != 12605) {
@@ -58399,7 +60580,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_sqlite_store() != 59413) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_system_is_memory_constrained() != 41143) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_system_is_memory_constrained() != 59608) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_clientbuilder_threads_enabled() != 10730) {
@@ -58414,7 +60595,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_contentscanner_scan() != 55879) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_backup_exists_on_server() != 29875) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_backup_exists_on_server() != 21920) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_backup_state() != 17664) {
@@ -58429,10 +60610,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_curve25519_key() != 31520) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_dehydrated_device_event_listener() != 50887) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_dehydrated_device_event_listener() != 32461) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_delete_dehydrated_device() != 30488) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_delete_dehydrated_device() != 50855) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_disable_recovery() != 40334) {
@@ -58450,10 +60631,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_has_devices_to_verify_against() != 53568) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_import_secrets_bundle() != 63785) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_import_secrets_bundle() != 51946) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_is_dehydrated_device_supported() != 63170) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_is_dehydrated_device_supported() != 45636) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_is_last_device() != 24421) {
@@ -58462,7 +60643,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_recover() != 50803) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_recover_and_fix_backup() != 61212) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_recover_and_fix_backup() != 34956) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_recover_and_reset() != 2527) {
@@ -58483,13 +60664,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_reset_recovery_key() != 28581) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_start_dehydrated_devices() != 49831) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_start_dehydrated_devices() != 2412) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_stop_dehydrated_devices() != 4775) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_stop_dehydrated_devices() != 55485) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_user_identity() != 37690) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_encryption_user_identity() != 18228) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_encryption_verification_state() != 53401) {
@@ -58510,10 +60691,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_identityresethandle_cancel() != 20914) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_identityresethandle_reset() != 3385) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_identityresethandle_reset() != 30627) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_secretsbundlewithuserid_contains_backup_key() != 21861) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_secretsbundlewithuserid_contains_backup_key() != 13305) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_useridentity_has_verification_violation() != 7724) {
@@ -58525,7 +60706,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_useridentity_master_key() != 30981) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_useridentity_pin() != 40348) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_useridentity_pin() != 54763) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_useridentity_was_previously_verified() != 37423) {
@@ -58549,7 +60730,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_timelineevent_timestamp() != 4201) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_livelocationsobserver_subscribe() != 8714) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_livelocationsobserver_subscribe() != 22247) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationclient_get_notification() != 64274) {
@@ -58573,13 +60754,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_contains_keywords_rules() != 47887) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_get_default_room_notification_mode() != 49990) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_get_default_room_notification_mode() != 33692) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_get_raw_push_rules() != 59675) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_get_room_notification_settings() != 14192) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_get_room_notification_settings() != 54808) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_get_rooms_with_user_defined_rules() != 65190) {
@@ -58609,7 +60790,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_set_custom_push_rule() != 26829) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_set_default_room_notification_mode() != 29556) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_set_default_room_notification_mode() != 8601) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_set_delegate() != 25839) {
@@ -58627,7 +60808,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_set_user_mention_enabled() != 49801) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_unmute_room() != 64791) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettings_unmute_room() != 59659) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_passwordstrengthestimator_estimate() != 43415) {
@@ -58654,16 +60835,28 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_continuationmessagesender_confirm() != 18414) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_grantloginwithqrcodehandler_generate() != 61870) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_grantloginwithqrcodehandler_generate() != 38241) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_grantloginwithqrcodehandler_scan() != 47395) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_grantloginwithqrcodehandler_scan() != 25900) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_loginwithqrcodehandler_generate() != 15861) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_grantloginwithqrcodetask_cancel() != 17878) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_loginwithqrcodehandler_scan() != 40418) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_grantloginwithqrcodetask_wait() != 50889) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_loginwithqrcodehandler_generate() != 30286) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_loginwithqrcodehandler_scan() != 34217) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_loginwithqrcodetask_cancel() != 1253) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_loginwithqrcodetask_wait() != 31155) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_qrcodedata_base_url() != 20926) {
@@ -58672,7 +60865,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_qrcodedata_intent() != 42531) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_qrcodedata_server_name() != 17844) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_qrcodedata_server_name() != 40553) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_qrcodedata_to_base64() != 8752) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_qrcodedata_to_bytes() != 34533) {
@@ -58720,7 +60916,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_clear_composer_draft() != 56827) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_decline_call() != 40439) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_decline_call() != 64142) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_discard_room_key() != 26947) {
@@ -58762,7 +60958,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_id() != 28686) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_ignore_device_trust_and_resend() != 33031) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_ignore_device_trust_and_resend() != 38639) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_ignore_user() != 10201) {
@@ -58822,10 +61018,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_load_or_fetch_event_with_relations() != 5676) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_load_user_receipt() != 24376) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_load_user_receipt() != 49162) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_mark_as_fully_read_unchecked() != 40862) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_mark_as_fully_read_unchecked() != 59574) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_mark_as_read() != 21259) {
@@ -58867,25 +61063,25 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_preview_room() != 10129) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_publish_room_alias_in_room_directory() != 45260) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_publish_room_alias_in_room_directory() != 227) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_raw_name() != 61864) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_redact() != 51147) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_redact() != 34543) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_remove_avatar() != 49932) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_remove_room_alias_from_room_directory() != 23464) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_remove_room_alias_from_room_directory() != 37712) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_report_content() != 18600) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_report_content() != 64920) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_report_room() != 57822) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_report_room() != 57804) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_reset_power_levels() != 61300) {
@@ -58903,13 +61099,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_send_live_location() != 29293) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_send_raw() != 33452) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_send_raw() != 29137) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_send_single_receipt() != 54263) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_send_single_receipt() != 44071) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_send_state_event_raw() != 1352) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_send_state_event_raw() != 54069) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_set_is_favourite() != 17735) {
@@ -58924,7 +61120,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_set_own_member_display_name() != 47962) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_set_thread_subscription() != 16350) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_set_thread_subscription() != 32594) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_set_topic() != 5022) {
@@ -58936,28 +61132,28 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_start_live_location_share() != 14892) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_state_events() != 9090) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_state_events() != 37294) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_stop_live_location_share() != 49334) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_call_decline_events() != 19237) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_call_decline_events() != 41573) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_identity_status_changes() != 7209) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_knock_requests() != 28083) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_knock_requests() != 30200) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_room_info_updates() != 21243) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_send_queue_updates() != 14598) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_send_queue_updates() != 56695) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_state_events() != 49220) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_state_events() != 6661) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_typing_notifications() != 60113) {
@@ -59002,10 +61198,22 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_room_update_room_visibility() != 27925) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_upload_avatar() != 25508) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_upload_avatar() != 40573) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_room_withdraw_verification_and_resend() != 20291) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_withdraw_verification_and_resend() != 56581) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_message_like_events() != 31308) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_send_sticky_raw() != 20102) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_sticky_events() != 3124) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_room_subscribe_to_sticky_events() != 17106) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_roommembersiterator_len() != 36990) {
@@ -59056,7 +61264,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_roompowerlevels_can_user_redact_other() != 42584) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_roompowerlevels_can_user_redact_own() != 59071) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_roompowerlevels_can_user_redact_own() != 60530) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_roompowerlevels_can_user_send_message() != 331) {
@@ -59089,7 +61297,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_roomdirectorysearch_results() != 42287) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_roomdirectorysearch_search() != 56447) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_roomdirectorysearch_search() != 33671) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_roomlist_entries_with_dynamic_adapters() != 15118) {
@@ -59173,7 +61381,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_searchservice_pagination_state() != 21986) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_searchservice_set_query() != 2525) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_searchservice_set_query() != 44250) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_searchservice_subscribe_to_pagination_state_updates() != 41707) {
@@ -59185,7 +61393,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_accept_verification_request() != 63394) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_acknowledge_verification_request() != 18373) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_acknowledge_verification_request() != 28973) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_approve_verification() != 26159) {
@@ -59197,10 +61405,16 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_decline_verification() != 61574) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_request_cancel_info() != 4040) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_request_device_verification() != 1050) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_request_user_verification() != 35126) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_sas_cancel_info() != 34680) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_sessionverificationcontroller_set_delegate() != 49952) {
@@ -59227,7 +61441,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_spaceroomlist_pagination_state() != 18118) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_spaceroomlist_reset() != 22706) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_spaceroomlist_reset() != 23197) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_spaceroomlist_rooms() != 44616) {
@@ -59254,7 +61468,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_get_space_room() != 27486) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_joined_parent_ids_of_child() != 8766) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_joined_parent_ids_of_child() != 27836) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_joined_parents_of_child() != 36617) {
@@ -59266,7 +61480,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_remove_child_from_space() != 20772) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_space_filters() != 38445) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_space_filters() != 58798) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_space_room_list() != 21044) {
@@ -59281,13 +61495,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_top_level_ancestors_of() != 61938) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_top_level_joined_spaces() != 60660) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_spaceservice_top_level_joined_spaces() != 25974) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_sqlitestorebuilder_cache_size() != 51603) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_sqlitestorebuilder_high_entropy_passphrase() != 44330) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_sqlitestorebuilder_high_entropy_passphrase() != 27261) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_sqlitestorebuilder_journal_size_limit() != 48797) {
@@ -59302,10 +61516,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_sqlitestorebuilder_pool_max_size() != 11712) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_sqlitestorebuilder_system_is_memory_constrained() != 21398) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_sqlitestorebuilder_system_is_memory_constrained() != 13762) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_syncservice_expire_sessions() != 59217) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_syncservice_expire_sessions() != 7864) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_syncservice_room_list_service() != 1335) {
@@ -59329,7 +61543,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_syncservicebuilder_with_parent_span() != 61147) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_syncservicebuilder_with_room_list_connection_id() != 56899) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_syncservicebuilder_with_room_list_connection_id() != 16274) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_syncservicebuilder_with_room_list_timeline_limit() != 21875) {
@@ -59365,10 +61579,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_sendattachmentjoinhandle_join() != 61070) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_sendhandle_abort() != 49988) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_sendhandle_abort() != 29352) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_sendhandle_try_resend() != 14844) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_sendhandle_try_resend() != 26565) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_abort_send() != 54321) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_add_listener() != 65368) {
@@ -59380,10 +61597,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_create_poll() != 47147) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_edit() != 45899) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_edit() != 6714) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_edit_revisions() != 40262) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_edit_revisions() != 1208) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_edit_with_attachment() != 28721) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_end_poll() != 8036) {
@@ -59395,7 +61615,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_fetch_members() != 39770) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_get_event_timeline_item_by_event_id() != 49000) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_get_event_timeline_item_by_event_id() != 43047) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_latest_event_id() != 55615) {
@@ -59404,7 +61624,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_load_reply_details() != 8357) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_mark_as_read() != 26178) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_mark_as_read() != 4509) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_paginate_backwards() != 27830) {
@@ -59416,22 +61636,28 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_pin_event() != 2293) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_redact_event() != 46975) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_redact_event() != 13285) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_retry_decryption() != 4954) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send() != 19080) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_retry_send() != 10265) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_audio() != 48107) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send() != 58715) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_file() != 1749) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_attachment() != 21735) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_image() != 27766) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_audio() != 45499) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_file() != 44250) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_image() != 50294) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_location() != 39599) {
@@ -59443,16 +61669,16 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_read_receipt() != 10485) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_reply() != 64045) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_reply() != 37856) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_video() != 5467) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_video() != 46403) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_voice_message() != 62779) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_voice_message() != 7232) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_with_extra_content() != 14666) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_timeline_send_with_extra_content() != 5571) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_timeline_subscribe_to_back_pagination_status() != 61171) {
@@ -59542,7 +61768,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_constructor_passwordstrengthestimator_new() != 13036) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_constructor_passwordstrengthestimator_with_modern_defaults2025() != 41863) {
+    if (uniffi_matrix_sdk_ffi_checksum_constructor_passwordstrengthestimator_with_modern_defaults2025() != 63712) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_constructor_passwordstrengthestimator_with_zxcvbn_defaults() != 29936) {
@@ -59551,10 +61777,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_constructor_span_current() != 54655) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_constructor_span_new() != 8416) {
+    if (uniffi_matrix_sdk_ffi_checksum_constructor_span_new() != 62951) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_constructor_span_new_bridge_span() != 11047) {
+    if (uniffi_matrix_sdk_ffi_checksum_constructor_span_new_bridge_span() != 56477) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_constructor_qrcodedata_from_bytes() != 49339) {
@@ -59635,7 +61861,7 @@ private let initializationResult: InitializationResult = {
     if (uniffi_matrix_sdk_ffi_checksum_method_verificationstatelistener_on_update() != 65323) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_matrix_sdk_ffi_checksum_method_livelocationslistener_on_update() != 7495) {
+    if (uniffi_matrix_sdk_ffi_checksum_method_livelocationslistener_on_update() != 53525) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_notificationsettingsdelegate_settings_did_change() != 63508) {
@@ -59675,6 +61901,12 @@ private let initializationResult: InitializationResult = {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_typingnotificationslistener_call() != 39527) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_roommessagelikeeventslistener_on_event() != 30590) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_matrix_sdk_ffi_checksum_method_stickyeventslistener_on_update() != 8844) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_matrix_sdk_ffi_checksum_method_roomdirectorysearchentrieslistener_on_update() != 58189) {
@@ -59791,6 +62023,7 @@ private let initializationResult: InitializationResult = {
     uniffiCallbackInitRoomListLoadingStateListener()
     uniffiCallbackInitRoomListServiceStateListener()
     uniffiCallbackInitRoomListServiceSyncIndicatorListener()
+    uniffiCallbackInitRoomMessageLikeEventsListener()
     uniffiCallbackInitRoomStateEventsListener()
     uniffiCallbackInitSearchServicePaginationStateListener()
     uniffiCallbackInitSearchServiceResultsListener()
@@ -59803,6 +62036,7 @@ private let initializationResult: InitializationResult = {
     uniffiCallbackInitSpaceRoomListSpaceListener()
     uniffiCallbackInitSpaceServiceJoinedSpacesListener()
     uniffiCallbackInitSpaceServiceSpaceFiltersListener()
+    uniffiCallbackInitStickyEventsListener()
     uniffiCallbackInitSyncListenerV2()
     uniffiCallbackInitSyncNotificationListener()
     uniffiCallbackInitSyncServiceStateObserver()

@@ -929,20 +929,19 @@ public enum CollectStrategy: Equatable, Hashable {
      */
     case allDevices
     /**
-     * Share with all devices, except errors for *verified* users cause sharing
+     * Share with all devices, except errors for _verified_ users cause sharing
      * to fail with an error.
      *
-     * In this strategy, if a verified user has an unsigned device,
-     * key sharing will fail with a
-     * [`SessionRecipientCollectionError::VerifiedUserHasUnsignedDevice`].
-     * If a verified user has replaced their identity, key
-     * sharing will fail with a
+     * In this strategy, if a verified user has an unsigned device, key sharing
+     * will fail with a
+     * [`SessionRecipientCollectionError::VerifiedUserHasUnsignedDevice`]. If a
+     * verified user has replaced their identity, key sharing will fail with a
      * [`SessionRecipientCollectionError::VerifiedUserChangedIdentity`].
      *
      * Otherwise, keys are shared with unsigned devices as normal.
      *
-     * Once the problematic devices are blacklisted or whitelisted the
-     * caller can retry to share a second time.
+     * Once the problematic devices are blacklisted or whitelisted the caller
+     * can retry to share a second time.
      *
      * Not recommended, per the guidance of [MSC4153].
      *
@@ -951,8 +950,8 @@ public enum CollectStrategy: Equatable, Hashable {
     case errorOnVerifiedUserProblem
     /**
      * Share based on identity. Only distribute to devices signed by their
-     * owner. If a user has no published identity he will not receive
-     * any room keys.
+     * owner. If a user has no published identity he will not receive any room
+     * keys.
      *
      * This is the recommended strategy: it is compliant with the guidance of
      * [MSC4153].
@@ -1066,15 +1065,15 @@ public enum IdentityState: Equatable, Hashable {
     case verified
     /**
      * Either this is the first identity we have seen for this user, or the
-     * user has acknowledged a change of identity explicitly e.g. by
-     * clicking OK on a notification.
+     * user has acknowledged a change of identity explicitly e.g. by clicking
+     * OK on a notification.
      */
     case pinned
     /**
      * The user's identity has changed since it was pinned. The user should be
-     * notified about this and given the opportunity to acknowledge the
-     * change, which will make the new identity pinned.
-     * When the user acknowledges the change, the app should call
+     * notified about this and given the opportunity to acknowledge the change,
+     * which will make the new identity pinned. When the user acknowledges the
+     * change, the app should call
      * [`crate::OtherUserIdentity::pin_current_master_key`].
      */
     case pinViolation
@@ -1277,8 +1276,8 @@ enum LoginQrCodeDecodeError: Swift.Error, Equatable, Hashable, Foundation.Locali
     case UrlParse(message: String)
     
     /**
-     * The QR code data contains an invalid intent, we expect the login
-     * intent or the reciprocate intent.
+     * The QR code data contains an invalid intent, we expect the login intent
+     * or the reciprocate intent.
      */
     case InvalidIntent(message: String)
     
@@ -1399,6 +1398,100 @@ public func FfiConverterTypeLoginQrCodeDecodeError_lift(_ buf: RustBuffer) throw
 #endif
 public func FfiConverterTypeLoginQrCodeDecodeError_lower(_ value: LoginQrCodeDecodeError) -> RustBuffer {
     return FfiConverterTypeLoginQrCodeDecodeError.lower(value)
+}
+
+
+/**
+ * Error type for the creation of a new [`QrCodeData`] struct.
+ */
+public 
+enum QrCodeCreationError: Swift.Error, Equatable, Hashable, Foundation.LocalizedError {
+
+    
+    
+    /**
+     * The base URL of the homeserver needs to be at most [`u8::MAX`] bytes
+     * long, otherwise it doesn't fit into the QR code.
+     */
+    case TooLongBaseUrl(message: String)
+    
+    /**
+     * The rendezvous ID of the channel needs to be at most [`u8::MAX`] bytes
+     * long, otherwise it doesn't fit into the QR code.
+     */
+    case TooLongRendezvousId(message: String)
+    
+
+    
+
+    
+
+    
+    public var errorDescription: String? {
+        String(reflecting: self)
+    }
+    
+}
+
+#if compiler(>=6)
+extension QrCodeCreationError: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeQrCodeCreationError: FfiConverterRustBuffer {
+    typealias SwiftType = QrCodeCreationError
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> QrCodeCreationError {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+
+        
+
+        
+        case 1: return .TooLongBaseUrl(
+            message: try FfiConverterString.read(from: &buf)
+        )
+        
+        case 2: return .TooLongRendezvousId(
+            message: try FfiConverterString.read(from: &buf)
+        )
+        
+
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: QrCodeCreationError, into buf: inout [UInt8]) {
+        switch value {
+
+        
+
+        
+        case .TooLongBaseUrl(_ /* message is ignored*/):
+            writeInt(&buf, Int32(1))
+        case .TooLongRendezvousId(_ /* message is ignored*/):
+            writeInt(&buf, Int32(2))
+
+        
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeQrCodeCreationError_lift(_ buf: RustBuffer) throws -> QrCodeCreationError {
+    return try FfiConverterTypeQrCodeCreationError.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeQrCodeCreationError_lower(_ value: QrCodeCreationError) -> RustBuffer {
+    return FfiConverterTypeQrCodeCreationError.lower(value)
 }
 
 
@@ -1583,8 +1676,7 @@ public func FfiConverterTypeSignatureState_lower(_ value: SignatureState) -> Rus
 
 
 /**
- * The trust level in the sender's device that is required to decrypt an
- * event.
+ * The trust level in the sender's device that is required to decrypt an event.
  */
 
 public enum TrustRequirement: Equatable, Hashable {
@@ -1713,9 +1805,9 @@ public enum UtdCause: Equatable, Hashable {
      * signed by its owner, and we were unable to securely find the device.
      *
      * This could be because the device has since been deleted, because we
-     * haven't yet downloaded it from the server, or because the session
-     * data was obtained from an insecure source (imported from a file,
-     * obtained from a legacy (asymmetric) backup, unsafe key forward, etc.)
+     * haven't yet downloaded it from the server, or because the session data
+     * was obtained from an insecure source (imported from a file, obtained
+     * from a legacy (asymmetric) backup, unsafe key forward, etc.)
      */
     case unknownDevice
     /**
@@ -1725,9 +1817,8 @@ public enum UtdCause: Equatable, Hashable {
      *
      * Device-historical means that the message was sent before the current
      * device existed (but the current user was probably a member of the room
-     * at the time the message was sent). Not to
-     * be confused with pre-join or pre-invite messages (see
-     * [`UtdCause::SentBeforeWeJoined`] for that).
+     * at the time the message was sent). Not to be confused with pre-join or
+     * pre-invite messages (see [`UtdCause::SentBeforeWeJoined`] for that).
      *
      * Expected message to user: "History is not available on this device".
      */
@@ -1741,10 +1832,10 @@ public enum UtdCause: Equatable, Hashable {
     case withheldForUnverifiedOrInsecureDevice
     /**
      * The keys for this event are missing, likely because the sender was
-     * unable to share them (e.g., failure to establish an Olm 1:1
-     * channel). Alternatively, the sender may have deliberately excluded
-     * this device by cherry-picking and blocking it, in which case, no action
-     * can be taken on our side.
+     * unable to share them (e.g., failure to establish an Olm 1:1 channel).
+     * Alternatively, the sender may have deliberately excluded this device by
+     * cherry-picking and blocking it, in which case, no action can be taken on
+     * our side.
      */
     case withheldBySender
     /**
@@ -1754,9 +1845,8 @@ public enum UtdCause: Equatable, Hashable {
      *
      * Device-historical means that the message was sent before the current
      * device existed (but the current user was probably a member of the room
-     * at the time the message was sent). Not to
-     * be confused with pre-join or pre-invite messages (see
-     * [`UtdCause::SentBeforeWeJoined`] for that).
+     * at the time the message was sent). Not to be confused with pre-join or
+     * pre-invite messages (see [`UtdCause::SentBeforeWeJoined`] for that).
      *
      * Expected message to user: "You need to verify this device".
      */
