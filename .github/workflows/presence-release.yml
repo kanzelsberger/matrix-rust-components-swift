@@ -7,8 +7,8 @@ permissions:
   contents: read
 
 env:
-  SDK_REVISION: 5637e7e0f8c1244b8b223f371ead3d97c9010062
-  RELEASE_VERSION: 26.9.29-mango.1
+  SDK_REVISION: 5142b2883dae70e6c6cba1f1f672887182cd7619
+  RELEASE_VERSION: 26.10.9-mango.1
   CARGO_INCREMENTAL: 0
 
 jobs:
